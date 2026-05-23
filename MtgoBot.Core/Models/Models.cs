@@ -37,6 +37,7 @@ public class Card
     /// Units reserved for owner redemption. These NEVER enter the trade pool.
     /// </summary>
     public int RedeemReserved { get; set; }
+    public int MaxPerTrade { get; set; } = 4;
 
     // ──────────────────────────────────────────────
     // Computed helpers (not persisted)
@@ -58,6 +59,9 @@ public class Card
     /// <summary>Effective max units the bot wants to hold.</summary>
     public int EffectiveMaxStock(int setDefault)
         => CustomMaxStock ?? setDefault;
+
+    public int EffectiveMaxPerTrade(int setDefault)
+        => MaxPerTrade > 0 ? MaxPerTrade : setDefault;
 }
 
 /// <summary>

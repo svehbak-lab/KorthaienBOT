@@ -214,6 +214,7 @@
             <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Salgs-mult.<input type="number" id="setRulesSell" step="0.01" style="width:90px"></label>
             <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Maks lager<input type="number" id="setRulesMax" step="1" style="width:80px"></label>
             <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Keep (behold alle kort)<input type="number" id="setRulesKeep" value="0" step="1" min="0" style="width:80px"></label>
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Maks per handel<input type="number" id="setRulesMaxPerTrade" value="4" step="1" min="1" style="width:80px" title="Maks antall av dette kortet en spiller kan kjøpe per handel"></label>
             <button class="btn-primary" onclick="saveCurrentSetRules()">💾 Lagre sett-regler</button>
           </div>
         </div>
@@ -224,7 +225,7 @@
             <thead>
               <tr>
                 <th onclick="sortSetCards('cardName')" style="cursor:pointer">Kortnavn ↕</th><th onclick="sortSetCards('rarity')" style="cursor:pointer">Rarity ↕</th><th onclick="sortSetCards('marketPriceTix')" style="cursor:pointer">Markedspris ↕</th>
-                <th onclick="sortSetCards('effectiveBuyPrice')" style="cursor:pointer">Kjøpspris ↕</th><th onclick="sortSetCards('effectiveSellPrice')" style="cursor:pointer">Salgspris ↕</th><th onclick="sortSetCards('redeemReserved')" style="cursor:pointer">Keep ↕</th><th onclick="sortSetCards('maxStock')" style="cursor:pointer">Maks lager ↕</th><th></th>
+                <th onclick="sortSetCards('effectiveBuyPrice')" style="cursor:pointer">Kjøpspris ↕</th><th onclick="sortSetCards('effectiveSellPrice')" style="cursor:pointer">Salgspris ↕</th><th onclick="sortSetCards('redeemReserved')" style="cursor:pointer">Keep ↕</th><th onclick="sortSetCards('maxStock')" style="cursor:pointer">Maks lager ↕</th><th onclick="sortSetCards('maxPerTrade')" style="cursor:pointer">Per handel ↕</th><th></th>
               </tr>
             </thead>
             <tbody id="setCardsBody">
@@ -518,11 +519,13 @@ async function saveCardRow(cardId) {
   const sell = parseFloat(document.getElementById('sell_' + cardId)?.value) || null;
   const keep = parseInt(document.getElementById('keep_'  + cardId)?.value) || 0;
   const max  = parseInt(document.getElementById('max_'   + cardId)?.value) || null;
+  const mpt  = parseInt(document.getElementById('mpt_'   + cardId)?.value) || 4;
   await fetchJson(`/api/cards/${cardId}/overrides`, 'PUT', {
     customBuyPrice:  buy,
     customSellPrice: sell,
     customMaxStock:  max,
-    redeemReserved:  keep
+    redeemReserved:  keep,
+    maxPerTrade:     mpt
   });
   toast('✅ Lagret');
 }

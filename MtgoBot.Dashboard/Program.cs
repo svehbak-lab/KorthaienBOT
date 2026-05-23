@@ -68,7 +68,8 @@ app.MapPut("/api/cards/{cardId}/overrides", async (
         req.CustomBuyPrice,
         req.CustomSellPrice,
         req.CustomMaxStock,
-        req.RedeemReserved);
+        req.RedeemReserved,
+        req.MaxPerTrade);
     return Results.Ok(new { message = $"Overrides updated for {cardId}" });
 })
 .WithSummary("Set per-card buy/sell/redeem overrides");
@@ -157,7 +158,8 @@ record CardOverrideRequest(
     decimal? CustomBuyPrice,
     decimal? CustomSellPrice,
     int? CustomMaxStock,
-    int RedeemReserved);
+    int RedeemReserved,
+    int MaxPerTrade = 4);
 
 record SetRulesRequest(
     decimal BuyMultiplier,

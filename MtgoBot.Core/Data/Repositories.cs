@@ -58,11 +58,11 @@ public class CardRepository
         await conn.ExecuteAsync("UPDATE cards SET market_price_tix = @Price WHERE card_id = @Id", new { Price = newPrice, Id = cardId });
     }
 
-    public async Task SetCardOverridesAsync(string cardId, decimal? customBuy, decimal? customSell, int? customMaxStock, int redeemReserved)
+    public async Task SetCardOverridesAsync(string cardId, decimal? customBuy, decimal? customSell, int? customMaxStock, int redeemReserved, int maxPerTrade = 4)
     {
         using var conn = Open();
-        await conn.ExecuteAsync("UPDATE cards SET custom_buy_price=@Buy, custom_sell_price=@Sell, custom_max_stock=@MaxStock, redeem_reserved=@Redeem WHERE card_id=@Id",
-            new { Buy = customBuy, Sell = customSell, MaxStock = customMaxStock, Redeem = redeemReserved, Id = cardId });
+        await conn.ExecuteAsync("UPDATE cards SET custom_buy_price=@Buy, custom_sell_price=@Sell, custom_max_stock=@MaxStock, redeem_reserved=@Redeem, max_per_trade=@MaxPerTrade WHERE card_id=@Id",
+            new { Buy = customBuy, Sell = customSell, MaxStock = customMaxStock, Redeem = redeemReserved, MaxPerTrade = maxPerTrade, Id = cardId });
     }
 
     public async Task ApplyKeepToSetAsync(string setCode, int keepValue)
