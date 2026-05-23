@@ -6,15 +6,15 @@
 <title>KorthaienBOT — Dashboard</title>
 <style>
   :root {
-    --bg:       #0f1117;
-    --surface:  #1a1d27;
-    --border:   #2a2d3d;
-    --accent:   #6c63ff;
-    --accent2:  #00d4aa;
-    --text:     #e8e9f0;
-    --muted:    #6b7280;
+    --bg:       #f0f4ff;
+    --surface:  #ffffff;
+    --border:   #d1d9f0;
+    --accent:   #4f46e5;
+    --accent2:  #059669;
+    --text:     #1e1b4b;
+    --muted:    #6366f1;
     --danger:   #ef4444;
-    --warn:     #f59e0b;
+    --warn:     #d97706;
     --success:  #10b981;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,14 +22,14 @@
 
   /* ── Layout ── */
   .shell { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
-  .sidebar { background: var(--surface); border-right: 1px solid var(--border); padding: 24px 0; display: flex; flex-direction: column; }
+  .sidebar { background: #1e1b4b; border-right: 1px solid var(--border); padding: 24px 0; display: flex; flex-direction: column; }
   .main { padding: 28px; overflow-y: auto; }
 
   /* ── Sidebar ── */
-  .logo { padding: 0 20px 24px; font-size: 18px; font-weight: 700; color: var(--accent); border-bottom: 1px solid var(--border); }
+  .logo { padding: 0 20px 24px; font-size: 18px; font-weight: 700; color: #ffffff; border-bottom: 1px solid var(--border); }
   .logo span { color: var(--accent2); }
-  nav a { display: flex; align-items: center; gap: 10px; padding: 11px 20px; color: var(--muted); text-decoration: none; font-size: 13px; transition: all .15s; }
-  nav a:hover, nav a.active { background: rgba(108,99,255,.12); color: var(--text); border-right: 2px solid var(--accent); }
+  nav a { display: flex; align-items: center; gap: 10px; padding: 11px 20px; color: #c7d2fe; text-decoration: none; font-size: 13px; transition: all .15s; }
+  nav a:hover, nav a.active { background: rgba(255,255,255,.15); color: #ffffff; border-right: 2px solid var(--accent); }
   nav a .icon { font-size: 16px; width: 20px; text-align: center; }
 
   /* ── Header ── */
