@@ -2536,3 +2536,48 @@ Did you mean to register the "Body (Inferred)" parameter(s) as a Service or appl
 2026-05-23 15:50:41.293 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - 200 null application/json; charset=utf-8 25.1751ms
 2026-05-23 15:50:44.756 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
 2026-05-23 15:50:44.757 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 6426.8853ms
+2026-05-23 15:57:48.219 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/credits - application/json 0
+2026-05-23 15:57:48.219 +00:00 [INF] Executing endpoint 'HTTP: GET /api/credits'
+2026-05-23 15:57:48.345 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 15:57:48.346 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 15:57:48.347 +00:00 [INF] Executed endpoint 'HTTP: GET /api/credits'
+2026-05-23 15:57:48.347 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/credits - 200 null application/json; charset=utf-8 128.5027ms
+2026-05-23 15:57:53.529 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 15:57:53.529 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 15:57:54.049 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 15:57:54.050 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 15:57:54.873 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 15:57:54.873 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 15:57:54.876 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 15:57:54.876 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 15:57:54.876 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 15:57:54.876 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 3.7046ms
+2026-05-23 15:57:59.596 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 15:57:59.597 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 6067.4458ms
+2026-05-23 15:57:59.901 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/credits - application/json 0
+2026-05-23 15:57:59.901 +00:00 [INF] Executing endpoint 'HTTP: GET /api/credits'
+2026-05-23 15:57:59.904 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 15:57:59.905 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 15:57:59.906 +00:00 [INF] Executed endpoint 'HTTP: GET /api/credits'
+2026-05-23 15:57:59.906 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/credits - 200 null application/json; charset=utf-8 5.1311ms
+2026-05-23 15:58:33.140 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 15:58:33.141 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 15:58:33.142 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 37076 text/html 2.4427ms
+2026-05-23 15:58:33.483 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 15:58:33.484 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 15:58:35.007 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 15:58:35.008 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 15:58:44.709 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 15:58:44.709 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 15:58:45.623 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 15:58:45.624 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 12140.1039ms
+2026-05-23 15:58:46.602 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 15:58:46.602 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 15:58:46.677 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 15:58:46.678 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 15:58:47.842 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 15:58:47.842 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 15:58:52.669 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 15:58:52.669 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 7959.9941ms
+2026-05-23 15:58:53.313 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 15:58:53.314 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 6636.5582ms
