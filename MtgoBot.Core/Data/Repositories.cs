@@ -1,256 +1,217 @@
 using Dapper;
 using MtgoBot.Core.Models;
+
 using Microsoft.Extensions.Logging;
+using Npgsql;
 
 namespace MtgoBot.Core.Data;
 
-// ══════════════════════════════════════════════════════════════════
-// CardRepository
-// Handles card + set lookups. The trade loop calls this heavily,
-// so queries are kept lean — no joins unless absolutely necessary.
-// ══════════════════════════════════════════════════════════════════
 public class CardRepository
 {
     private readonly DatabaseConnectionFactory _db;
     private readonly ILogger<CardRepository> _logger;
 
     public CardRepository(DatabaseConnectionFactory db, ILogger<CardRepository> logger)
-    {
-        _db = db;
-        _logger = logger;
-    }
+    { _db = db; _logger = logger; }
 
-    /// <summary>
-    /// Bulk-load cards by their IDs (e.g. all cards the user is offering).
-    /// Returns a dictionary keyed by CardId for O(1) lookups in the trade loop.
-    /// </summary>
+    private NpgsqlConnection Open() => (NpgsqlConnection)_db.CreateConnectionAsync().GetAwaiter().GetResult();
+
     public async Task<Dictionary<string, Card>> GetCardsByIdsAsync(IEnumerable<string> cardIds)
     {
-        await using var conn = _db.CreateConnectionAsync();
-        const string sql = """
-            SELECT c.card_id, c.card_name, c.set_code, c.rarity,
-                   c.market_price_tix, c.custom_buy_price, c.custom_sell_price,
-                   c.custom_max_stock, c.redeem_reserved
-            FROM   cards c
-            WHERE  c.card_id = ANY(@Ids)
-            """;
-        var rows = await (await conn).QueryAsync<Card>(sql, new { Ids = cardIds.ToArray() });
+        using var conn = Open();
+        var rows = await conn.QueryAsync<Card>("SELECT * FROM cards WHERE card_id = ANY(@Ids)", new { Ids = cardIds.ToArray() });
         return rows.ToDictionary(c => c.CardId);
     }
 
     public async Task<Card?> GetCardByIdAsync(string cardId)
     {
-        await using var conn = _db.CreateConnectionAsync();
-        const string sql = "SELECT * FROM cards WHERE card_id = @CardId";
-        return await (await conn).QuerySingleOrDefaultAsync<Card>(sql, new { CardId = cardId });
+        using var conn = Open();
+        return await conn.QuerySingleOrDefaultAsync<Card>("SELECT * FROM cards WHERE card_id = @Id", new { Id = cardId });
     }
 
     public async Task<MagicSet?> GetSetAsync(string setCode)
     {
-        await using var conn = _db.CreateConnectionAsync();
-        const string sql = "SELECT * FROM sets WHERE set_code = @SetCode";
-        return await (await conn).QuerySingleOrDefaultAsync<MagicSet>(sql, new { SetCode = setCode });
+        using var conn = Open();
+        return await conn.QuerySingleOrDefaultAsync<MagicSet>("SELECT * FROM sets WHERE set_code = @Code", new { Code = setCode });
     }
 
     public async Task<Dictionary<string, MagicSet>> GetAllSetsAsync()
     {
-        await using var conn = _db.CreateConnectionAsync();
-        const string sql = "SELECT * FROM sets";
-        var rows = await (await conn).QueryAsync<MagicSet>(sql);
+        using var conn = Open();
+        var rows = await conn.QueryAsync<MagicSet>("SELECT * FROM sets");
         return rows.ToDictionary(s => s.SetCode);
     }
 
-    /// <summary>Upsert a card's market price (called by price-feed updater).</summary>
     public async Task UpdateMarketPriceAsync(string cardId, decimal newPrice)
     {
-        await using var conn = _db.CreateConnectionAsync();
-        const string sql = """
-            UPDATE cards SET market_price_tix = @Price
-            WHERE  card_id = @CardId
-            """;
-        await (await conn).ExecuteAsync(sql, new { Price = newPrice, CardId = cardId });
+        using var conn = Open();
+        await conn.ExecuteAsync("UPDATE cards SET market_price_tix = @Price WHERE card_id = @Id", new { Price = newPrice, Id = cardId });
+    }
+
+    public async Task SetCardOverridesAsync(string cardId, decimal? customBuy, decimal? customSell, int? customMaxStock, int redeemReserved)
+    {
+        using var conn = Open();
+        await conn.ExecuteAsync("UPDATE cards SET custom_buy_price=@Buy, custom_sell_price=@Sell, custom_max_stock=@MaxStock, redeem_reserved=@Redeem WHERE card_id=@Id",
+            new { Buy = customBuy, Sell = customSell, MaxStock = customMaxStock, Redeem = redeemReserved, Id = cardId });
+    }
+
+    public async Task UpdateSetRulesAsync(string setCode, decimal buyMultiplier, decimal sellMultiplier, int maxStock)
+    {
+        using var conn = Open();
+        await conn.ExecuteAsync("UPDATE sets SET default_buy_multiplier=@Buy, default_sell_multiplier=@Sell, default_max_stock=@Max, updated_at=NOW() WHERE set_code=@Code",
+            new { Buy = buyMultiplier, Sell = sellMultiplier, Max = maxStock, Code = setCode });
     }
 }
 
-// ══════════════════════════════════════════════════════════════════
-// InventoryRepository
-// Reads and writes per-bot stock levels.
-// ══════════════════════════════════════════════════════════════════
 public class InventoryRepository
 {
     private readonly DatabaseConnectionFactory _db;
-
     public InventoryRepository(DatabaseConnectionFactory db) => _db = db;
+    private NpgsqlConnection Open() => (NpgsqlConnection)_db.CreateConnectionAsync().GetAwaiter().GetResult();
 
-    /// <summary>
-    /// Returns a map of cardId → quantity for one bot.
-    /// Loaded once per session start and updated in-memory during the trade,
-    /// then flushed to DB on commit.
-    /// </summary>
     public async Task<Dictionary<string, int>> GetBotInventoryAsync(string botId)
     {
-        await using var conn = _db.CreateConnectionAsync();
-        const string sql = """
-            SELECT card_id, quantity FROM bot_inventory
-            WHERE  bot_id = @BotId AND quantity > 0
-            """;
-        var rows = await (await conn).QueryAsync<BotInventoryEntry>(sql, new { BotId = botId });
+        using var conn = Open();
+        var rows = await conn.QueryAsync<BotInventoryEntry>("SELECT card_id, quantity FROM bot_inventory WHERE bot_id=@BotId AND quantity>0", new { BotId = botId });
         return rows.ToDictionary(r => r.CardId, r => r.Quantity);
     }
 
-    /// <summary>
-    /// Apply inventory deltas after a completed trade.
-    /// Positive delta = bot gained cards; negative = bot gave cards.
-    /// Uses a transaction so it's all-or-nothing.
-    /// </summary>
+    public async Task<Dictionary<string, int>> GetNetworkInventoryAsync()
+    {
+        using var conn = Open();
+        var rows = await conn.QueryAsync<BotInventoryEntry>("SELECT card_id, SUM(quantity) AS quantity FROM bot_inventory GROUP BY card_id");
+        return rows.ToDictionary(r => r.CardId, r => r.Quantity);
+    }
+
+    public async Task<Dictionary<string, decimal>> GetInventoryValueBySetAsync(string botId)
+    {
+        using var conn = Open();
+        var rows = await conn.QueryAsync("SELECT c.set_code, SUM(bi.quantity * c.market_price_tix) AS total_value FROM bot_inventory bi JOIN cards c ON bi.card_id=c.card_id WHERE bi.bot_id=@BotId AND bi.quantity>0 GROUP BY c.set_code", new { BotId = botId });
+        return rows.ToDictionary(r => (string)r.set_code, r => (decimal)r.total_value);
+    }
+
     public async Task ApplyInventoryDeltasAsync(string botId, Dictionary<string, int> deltas)
     {
-        await using var rawConn = await _db.CreateConnectionAsync();
-        // Dapper doesn't expose NpgsqlConnection directly, so we cast:
-        var conn = (Npgsql.NpgsqlConnection)rawConn;
+        using var conn = Open();
         await using var tx = await conn.BeginTransactionAsync();
         try
         {
             foreach (var (cardId, delta) in deltas)
-            {
-                const string sql = """
-                    INSERT INTO bot_inventory (bot_id, card_id, quantity)
-                    VALUES (@BotId, @CardId, @Delta)
-                    ON CONFLICT (bot_id, card_id)
-                    DO UPDATE SET quantity = GREATEST(0, bot_inventory.quantity + EXCLUDED.quantity)
-                    """;
-                await conn.ExecuteAsync(sql, new { BotId = botId, CardId = cardId, Delta = delta }, tx);
-            }
+                await conn.ExecuteAsync("INSERT INTO bot_inventory (bot_id,card_id,quantity) VALUES (@BotId,@CardId,@Delta) ON CONFLICT (bot_id,card_id) DO UPDATE SET quantity=GREATEST(0,bot_inventory.quantity+EXCLUDED.quantity)",
+                    new { BotId = botId, CardId = cardId, Delta = delta }, tx);
             await tx.CommitAsync();
         }
-        catch
-        {
-            await tx.RollbackAsync();
-            throw;
-        }
+        catch { await tx.RollbackAsync(); throw; }
     }
 
-    /// <summary>
-    /// How many of a card a bot currently holds (excluding redeem_reserved).
-    /// </summary>
     public async Task<int> GetAvailableStockAsync(string botId, string cardId, int redeemReserved)
     {
-        await using var conn = _db.CreateConnectionAsync();
-        const string sql = """
-            SELECT COALESCE(quantity, 0) FROM bot_inventory
-            WHERE bot_id = @BotId AND card_id = @CardId
-            """;
-        var total = await (await conn).QuerySingleOrDefaultAsync<int>(sql, new { BotId = botId, CardId = cardId });
+        using var conn = Open();
+        var total = await conn.QuerySingleOrDefaultAsync<int>("SELECT COALESCE(quantity,0) FROM bot_inventory WHERE bot_id=@BotId AND card_id=@CardId", new { BotId = botId, CardId = cardId });
         return Math.Max(0, total - redeemReserved);
+    }
+
+    public async Task QueueMuleTransfersAsync(string fromBotId, string toBotId, IEnumerable<TransferOrder> orders)
+    {
+        using var conn = Open();
+        foreach (var order in orders)
+            await conn.ExecuteAsync("INSERT INTO mule_transfer_queue (from_bot_id,to_bot_id,card_id,quantity,status) VALUES (@From,@To,@CardId,@Qty,'PENDING')",
+                new { From = fromBotId, To = toBotId, CardId = order.CardId, Qty = order.Quantity });
+    }
+
+    public async Task<IEnumerable<InventoryDashboardRow>> GetDashboardInventoryAsync(string? search = null, string? setCode = null)
+    {
+        using var conn = Open();
+        return await conn.QueryAsync<InventoryDashboardRow>("""
+            SELECT c.card_id, c.card_name, c.set_code, c.rarity, c.is_foil, c.market_price_tix,
+                COALESCE(c.custom_buy_price,  c.market_price_tix * s.default_buy_multiplier)  AS effective_buy_price,
+                COALESCE(c.custom_sell_price, c.market_price_tix * s.default_sell_multiplier) AS effective_sell_price,
+                COALESCE(c.custom_max_stock,  s.default_max_stock) AS max_stock,
+                c.redeem_reserved,
+                COALESCE(SUM(bi.quantity), 0) AS total_quantity,
+                STRING_AGG(bi.bot_id || ':' || bi.quantity, ' ') AS bot_distribution
+            FROM cards c
+            JOIN sets s ON c.set_code = s.set_code
+            LEFT JOIN bot_inventory bi ON c.card_id = bi.card_id AND bi.quantity > 0
+            WHERE (@Search IS NULL OR c.card_name ILIKE '%' || @Search || '%')
+              AND (@SetCode IS NULL OR c.set_code = @SetCode)
+            GROUP BY c.card_id, c.card_name, c.set_code, c.rarity, c.is_foil,
+                     c.market_price_tix, c.custom_buy_price, c.custom_sell_price,
+                     c.custom_max_stock, c.redeem_reserved,
+                     s.default_buy_multiplier, s.default_sell_multiplier, s.default_max_stock
+            HAVING COALESCE(SUM(bi.quantity), 0) > 0
+            ORDER BY c.market_price_tix DESC
+            """, new { Search = search, SetCode = setCode });
     }
 }
 
-// ══════════════════════════════════════════════════════════════════
-// CreditRepository
-// The shared credit wallet — must be ACID-safe.
-// ══════════════════════════════════════════════════════════════════
+public class InventoryDashboardRow
+{
+    public string CardId { get; set; } = string.Empty;
+    public string CardName { get; set; } = string.Empty;
+    public string SetCode { get; set; } = string.Empty;
+    public string Rarity { get; set; } = string.Empty;
+    public bool IsFoil { get; set; }
+    public decimal MarketPriceTix { get; set; }
+    public decimal EffectiveBuyPrice { get; set; }
+    public decimal EffectiveSellPrice { get; set; }
+    public int MaxStock { get; set; }
+    public int RedeemReserved { get; set; }
+    public int TotalQuantity { get; set; }
+    public string BotDistribution { get; set; } = string.Empty;
+    public string Status => TotalQuantity >= MaxStock ? "🛑 Maks nådd" : TotalQuantity <= RedeemReserved ? "🟡 Kun Redeem" : "🟢 Kjøper";
+}
+
 public class CreditRepository
 {
     private readonly DatabaseConnectionFactory _db;
     private readonly ILogger<CreditRepository> _logger;
-
     public CreditRepository(DatabaseConnectionFactory db, ILogger<CreditRepository> logger)
-    {
-        _db = db;
-        _logger = logger;
-    }
+    { _db = db; _logger = logger; }
+    private NpgsqlConnection Open() => (NpgsqlConnection)_db.CreateConnectionAsync().GetAwaiter().GetResult();
 
     public async Task<UserCredit> GetOrCreateUserAsync(string playerName)
     {
         var lower = playerName.ToLowerInvariant();
-        await using var conn = _db.CreateConnectionAsync();
-        const string sql = """
-            INSERT INTO users (player_name, credit_tix, last_trade_at)
-            VALUES (@Name, 0, NOW())
-            ON CONFLICT (player_name) DO NOTHING;
-            SELECT * FROM users WHERE player_name = @Name;
-            """;
-        return await (await conn).QuerySingleAsync<UserCredit>(sql, new { Name = lower });
+        using var conn = Open();
+        await conn.ExecuteAsync("INSERT INTO users (player_name,credit_tix,last_trade_at) VALUES (@Name,0,NOW()) ON CONFLICT (player_name) DO NOTHING", new { Name = lower });
+        return await conn.QuerySingleAsync<UserCredit>("SELECT * FROM users WHERE player_name=@Name", new { Name = lower });
     }
 
-    /// <summary>
-    /// Atomically apply a credit delta and write the audit log row.
-    /// Negative delta = user is spending credit.
-    /// Throws if the result would go negative.
-    /// </summary>
-    public async Task<decimal> ApplyCreditDeltaAsync(
-        string playerName,
-        string botId,
-        decimal delta,
-        string reason)
+    public async Task<decimal> ApplyCreditDeltaAsync(string playerName, string botId, decimal delta, string reason)
     {
         var lower = playerName.ToLowerInvariant();
-        await using var rawConn = await _db.CreateConnectionAsync();
-        var conn = (Npgsql.NpgsqlConnection)rawConn;
+        using var conn = Open();
         await using var tx = await conn.BeginTransactionAsync();
         try
         {
-            // Lock the user row for this transaction
-            const string lockSql = """
-                SELECT credit_tix FROM users
-                WHERE player_name = @Name
-                FOR UPDATE
-                """;
-            var currentBalance = await conn.QuerySingleOrDefaultAsync<decimal>(
-                lockSql, new { Name = lower }, tx);
-
-            var newBalance = currentBalance + delta;
-            if (newBalance < 0)
-                throw new InvalidOperationException(
-                    $"Credit underflow for {lower}: {currentBalance} + {delta} = {newBalance}");
-
-            const string updateSql = """
-                UPDATE users
-                SET credit_tix = @NewBalance, last_trade_at = NOW()
-                WHERE player_name = @Name
-                """;
-            await conn.ExecuteAsync(updateSql, new { NewBalance = newBalance, Name = lower }, tx);
-
-            const string logSql = """
-                INSERT INTO credit_log (player_name, bot_id, delta_amount, new_balance, reason)
-                VALUES (@Player, @Bot, @Delta, @NewBal, @Reason)
-                """;
-            await conn.ExecuteAsync(logSql,
-                new { Player = lower, Bot = botId, Delta = delta, NewBal = newBalance, Reason = reason },
-                tx);
-
+            var current = await conn.QuerySingleOrDefaultAsync<decimal>("SELECT credit_tix FROM users WHERE player_name=@Name FOR UPDATE", new { Name = lower }, tx);
+            var newBalance = current + delta;
+            if (newBalance < 0) throw new InvalidOperationException($"Credit underflow for {lower}");
+            await conn.ExecuteAsync("UPDATE users SET credit_tix=@Bal, last_trade_at=NOW() WHERE player_name=@Name", new { Bal = newBalance, Name = lower }, tx);
+            await conn.ExecuteAsync("INSERT INTO credit_log (player_name,bot_id,delta_amount,new_balance,reason) VALUES (@P,@B,@D,@N,@R)",
+                new { P = lower, B = botId, D = delta, N = newBalance, R = reason }, tx);
             await tx.CommitAsync();
-            _logger.LogInformation(
-                "Credit [{Player}]: {Delta:+0.0000;-0.0000} → {New:0.0000} TIX ({Reason})",
-                lower, delta, newBalance, reason);
-
+            _logger.LogInformation("Credit [{Player}]: {Delta:+0.0000;-0.0000} -> {New:0.0000}", lower, delta, newBalance);
             return newBalance;
         }
-        catch
-        {
-            await tx.RollbackAsync();
-            throw;
-        }
+        catch { await tx.RollbackAsync(); throw; }
     }
 
-    /// <summary>
-    /// Deletes credits for players inactive for more than <paramref name="days"/> days.
-    /// Run nightly via a scheduled task.
-    /// Returns the number of players purged.
-    /// </summary>
     public async Task<int> PurgeInactiveCreditAsync(int days = 90)
     {
-        await using var conn = _db.CreateConnectionAsync();
-        const string sql = """
-            DELETE FROM users
-            WHERE credit_tix > 0
-              AND last_trade_at < NOW() - INTERVAL '1 day' * @Days
-            RETURNING player_name
-            """;
-        var purged = await (await conn).QueryAsync<string>(sql, new { Days = days });
-        var list = purged.ToList();
-        _logger.LogInformation(
-            "🧹 Credit purge: removed stale credits for {Count} inactive players.", list.Count);
-        return list.Count;
+        using var conn = Open();
+        var purged = await conn.QueryAsync<string>("DELETE FROM users WHERE credit_tix>0 AND last_trade_at<NOW()-INTERVAL '1 day'*@Days RETURNING player_name", new { Days = days });
+        var count = purged.Count();
+        _logger.LogInformation("Credit purge: {Count} players.", count);
+        return count;
+    }
+
+    public async Task<IEnumerable<UserCredit>> GetAllCreditsAsync()
+    {
+        using var conn = Open();
+        return await conn.QueryAsync<UserCredit>("SELECT * FROM users WHERE credit_tix>0 ORDER BY credit_tix DESC");
     }
 }
+
+public record TransferOrder(string CardId, string CardName, int Quantity);

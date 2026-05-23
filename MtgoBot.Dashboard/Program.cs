@@ -1,5 +1,5 @@
 using MtgoBot.Core.Data;
-using MtgoBot.Core.Services;
+
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,14 +15,13 @@ builder.Services.AddSingleton<CardRepository>();
 builder.Services.AddSingleton<InventoryRepository>();
 builder.Services.AddSingleton<CreditRepository>();
 builder.Services.AddHttpClient("GoatBots");
-builder.Services.AddSingleton<PriceFeedService>();
 builder.Services.AddCors(o => o.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi();
 
 var app = builder.Build();
 app.UseCors();
-app.MapOpenApi();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 // ══════════════════════════════════════════════════════════════════
 // INVENTORY ROUTES
@@ -127,17 +126,6 @@ app.MapPost("/api/credits/purge-inactive", async (
 })
 .WithSummary("Purge credits for players inactive longer than N days");
 
-// ══════════════════════════════════════════════════════════════════
-// PRICE FEED ROUTES
-// ══════════════════════════════════════════════════════════════════
-
-/// <summary>Trigger a manual price feed refresh (normally runs at 05:35 daily).</summary>
-app.MapPost("/api/pricefeed/refresh", async (PriceFeedService feed) =>
-{
-    _ = Task.Run(() => feed.RunFeedCycleAsync());
-    return Results.Ok(new { message = "Price feed refresh started in background." });
-})
-.WithSummary("Manually trigger GoatBots price feed download");
 
 // ══════════════════════════════════════════════════════════════════
 // SYSTEM / STATUS ROUTES

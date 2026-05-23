@@ -1,0 +1,13 @@
+/workspaces/KorthaienBOT/MtgoBot.Core/bin/Debug/net9.0/MtgoBot.Core.deps.json
+/workspaces/KorthaienBOT/MtgoBot.Core/bin/Debug/net9.0/MtgoBot.Core.dll
+/workspaces/KorthaienBOT/MtgoBot.Core/bin/Debug/net9.0/MtgoBot.Core.pdb
+/workspaces/KorthaienBOT/MtgoBot.Core/obj/Debug/net9.0/MtgoBot.Core.csproj.AssemblyReference.cache
+/workspaces/KorthaienBOT/MtgoBot.Core/obj/Debug/net9.0/MtgoBot.Core.GeneratedMSBuildEditorConfig.editorconfig
+/workspaces/KorthaienBOT/MtgoBot.Core/obj/Debug/net9.0/MtgoBot.Core.AssemblyInfoInputs.cache
+/workspaces/KorthaienBOT/MtgoBot.Core/obj/Debug/net9.0/MtgoBot.Core.AssemblyInfo.cs
+/workspaces/KorthaienBOT/MtgoBot.Core/obj/Debug/net9.0/MtgoBot.Core.csproj.CoreCompileInputs.cache
+/workspaces/KorthaienBOT/MtgoBot.Core/obj/Debug/net9.0/MtgoBot.Core.sourcelink.json
+/workspaces/KorthaienBOT/MtgoBot.Core/obj/Debug/net9.0/MtgoBot.Core.dll
+/workspaces/KorthaienBOT/MtgoBot.Core/obj/Debug/net9.0/refint/MtgoBot.Core.dll
+/workspaces/KorthaienBOT/MtgoBot.Core/obj/Debug/net9.0/MtgoBot.Core.pdb
+/workspaces/KorthaienBOT/MtgoBot.Core/obj/Debug/net9.0/ref/MtgoBot.Core.dll
