@@ -150,30 +150,19 @@ app.MapGet("/api/sets/{setCode}/fullset-pricing", async (string setCode, MtgoBot
         "SELECT fullset_buy, fullset_sell, fullset_enabled FROM set_price_overrides WHERE set_code = @Code",
         new { Code = setCode });
     var autoCalc = await conn.QuerySingleOrDefaultAsync("""
-        WITH base_cards AS (
-            SELECT DISTINCT ON (c.card_name)
-                c.card_name, c.market_price_tix, c.custom_buy_price, c.custom_sell_price,
-                c.collector_number
-            FROM cards c
-            JOIN sets s ON c.set_code = s.set_code
-            WHERE c.set_code = @Code AND c.is_foil = false
-              AND (
-                s.base_set_size IS NULL
-                OR (
-                  c.collector_number IS NOT NULL
-                  AND CAST(SPLIT_PART(c.collector_number, '/', 1) AS INTEGER)
-                      <= s.base_set_size
-                )
-              )
-            ORDER BY c.card_name, c.market_price_tix ASC
-        )
         SELECT
-            SUM(COALESCE(bc.custom_buy_price,  bc.market_price_tix * s.default_buy_multiplier))  AS auto_buy,
-            SUM(COALESCE(bc.custom_sell_price, bc.market_price_tix * s.default_sell_multiplier)) AS auto_sell,
+            SUM(COALESCE(c.custom_buy_price,  c.market_price_tix * s.default_buy_multiplier))  AS auto_buy,
+            SUM(COALESCE(c.custom_sell_price, c.market_price_tix * s.default_sell_multiplier)) AS auto_sell,
             COUNT(*) AS card_count
-        FROM base_cards bc
-        CROSS JOIN sets s
-        WHERE s.set_code = @Code
+        FROM cards c
+        JOIN sets s ON c.set_code = s.set_code
+        WHERE c.set_code = @Code
+          AND c.is_foil = false
+          AND c.collector_number IS NOT NULL
+          AND (
+            s.base_set_size IS NULL
+            OR CAST(SPLIT_PART(c.collector_number, '/', 1) AS INTEGER) <= s.base_set_size
+          )
         """, new { Code = setCode });
     return Results.Ok(new {
         setCode,

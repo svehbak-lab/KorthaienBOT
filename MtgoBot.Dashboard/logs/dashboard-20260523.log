@@ -2945,3 +2945,202 @@ Did you mean to register the "Body (Inferred)" parameter(s) as a Service or appl
 2026-05-23 18:40:49.730 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 2.3011ms
 2026-05-23 18:40:54.645 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
 2026-05-23 18:40:54.645 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5674.5728ms
+2026-05-23 18:49:52.375 +00:00 [INF] Application is shutting down...
+2026-05-23 18:49:56.086 +00:00 [INF] Now listening on: http://localhost:5001
+2026-05-23 18:49:56.119 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 18:49:56.119 +00:00 [INF] Hosting environment: Production
+2026-05-23 18:49:56.119 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 18:49:57.246 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 18:49:57.329 +00:00 [INF] The file /index.html was not modified
+2026-05-23 18:49:57.334 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 87.4273ms
+2026-05-23 18:49:57.607 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 18:49:57.612 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 18:49:58.211 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 18:49:58.214 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:49:58.268 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:49:58.282 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 18:49:58.296 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:49:58.298 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 86.9679ms
+2026-05-23 18:49:59.344 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:49:59.346 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 18:49:59.875 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 18:49:59.876 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:49:59.879 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:49:59.880 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 18:49:59.883 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:49:59.883 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 8.2666ms
+2026-05-23 18:50:00.072 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - application/json 0
+2026-05-23 18:50:00.075 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 18:50:00.092 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory?set=DFT - application/json 0
+2026-05-23 18:50:00.092 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 18:50:00.153 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:50:00.155 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 18:50:00.173 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 18:50:00.176 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory?set=DFT - 200 null application/json; charset=utf-8 83.5291ms
+2026-05-23 18:50:00.221 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:50:00.223 +00:00 [INF] Writing value of type '<>f__AnonymousType4`7' as Json.
+2026-05-23 18:50:00.226 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 18:50:00.226 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - 200 null application/json; charset=utf-8 154.1264ms
+2026-05-23 18:50:05.379 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 18:50:05.380 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 7773.0807ms
+2026-05-23 18:50:06.994 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 18:50:06.994 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:50:06.997 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:50:06.997 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 18:50:06.997 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:50:06.997 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 3.418ms
+2026-05-23 18:50:07.186 +00:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5001/api/sets/DFT/rules - application/json 74
+2026-05-23 18:50:07.189 +00:00 [INF] CORS policy execution successful.
+2026-05-23 18:50:07.189 +00:00 [INF] Executing endpoint 'HTTP: PUT /api/sets/{setCode}/rules'
+2026-05-23 18:50:07.206 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:50:07.207 +00:00 [INF] Writing value of type '<>f__AnonymousType0`1' as Json.
+2026-05-23 18:50:07.209 +00:00 [INF] Executed endpoint 'HTTP: PUT /api/sets/{setCode}/rules'
+2026-05-23 18:50:07.209 +00:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5001/api/sets/DFT/rules - 200 null application/json; charset=utf-8 22.5463ms
+2026-05-23 18:50:07.325 +00:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5001/api/sets/DFT/fullset-pricing - application/json 61
+2026-05-23 18:50:07.325 +00:00 [INF] CORS policy execution successful.
+2026-05-23 18:50:07.325 +00:00 [INF] Executing endpoint 'HTTP: PUT /api/sets/{setCode}/fullset-pricing'
+2026-05-23 18:50:07.332 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:50:07.333 +00:00 [INF] Writing value of type '<>f__AnonymousType0`1' as Json.
+2026-05-23 18:50:07.334 +00:00 [INF] Executed endpoint 'HTTP: PUT /api/sets/{setCode}/fullset-pricing'
+2026-05-23 18:50:07.334 +00:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5001/api/sets/DFT/fullset-pricing - 200 null application/json; charset=utf-8 9.7781ms
+2026-05-23 18:50:07.395 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - application/json 0
+2026-05-23 18:50:07.395 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 18:50:07.406 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:50:07.406 +00:00 [INF] Writing value of type '<>f__AnonymousType4`7' as Json.
+2026-05-23 18:50:07.406 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 18:50:07.406 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - 200 null application/json; charset=utf-8 11.2772ms
+2026-05-23 18:51:48.311 +00:00 [INF] Application is shutting down...
+2026-05-23 18:51:52.173 +00:00 [INF] Now listening on: http://localhost:5001
+2026-05-23 18:51:52.205 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 18:51:52.205 +00:00 [INF] Hosting environment: Production
+2026-05-23 18:51:52.206 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 18:51:59.536 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 18:51:59.632 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 18:51:59.634 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 37857 text/html 98.8323ms
+2026-05-23 18:51:59.890 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 18:51:59.895 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 18:52:00.518 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 18:52:00.520 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:52:00.616 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:52:00.640 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 18:52:00.661 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:52:00.664 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 146.4536ms
+2026-05-23 18:52:01.746 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:52:01.748 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 18:52:02.074 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 18:52:02.075 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:52:02.079 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:52:02.079 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 18:52:02.081 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:52:02.081 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 7.2158ms
+2026-05-23 18:52:02.162 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory?set=DFT - application/json 0
+2026-05-23 18:52:02.162 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 18:52:02.211 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:52:02.212 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 18:52:02.221 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 18:52:02.221 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory?set=DFT - 200 null application/json; charset=utf-8 58.8115ms
+2026-05-23 18:52:02.262 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - application/json 0
+2026-05-23 18:52:02.264 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 18:52:02.461 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:52:02.462 +00:00 [INF] Writing value of type '<>f__AnonymousType4`7' as Json.
+2026-05-23 18:52:02.465 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 18:52:02.465 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - 200 null application/json; charset=utf-8 203.0055ms
+2026-05-23 18:52:07.310 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 18:52:07.311 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 7420.929ms
+2026-05-23 18:52:09.941 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 18:52:09.941 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:52:09.943 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:52:09.943 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 18:52:09.943 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:52:09.943 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 2.1039ms
+2026-05-23 18:52:10.055 +00:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5001/api/sets/DFT/rules - application/json 74
+2026-05-23 18:52:10.057 +00:00 [INF] CORS policy execution successful.
+2026-05-23 18:52:10.058 +00:00 [INF] Executing endpoint 'HTTP: PUT /api/sets/{setCode}/rules'
+2026-05-23 18:52:10.078 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:52:10.079 +00:00 [INF] Writing value of type '<>f__AnonymousType0`1' as Json.
+2026-05-23 18:52:10.080 +00:00 [INF] Executed endpoint 'HTTP: PUT /api/sets/{setCode}/rules'
+2026-05-23 18:52:10.080 +00:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5001/api/sets/DFT/rules - 200 null application/json; charset=utf-8 25.8724ms
+2026-05-23 18:52:10.134 +00:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5001/api/sets/DFT/fullset-pricing - application/json 61
+2026-05-23 18:52:10.134 +00:00 [INF] CORS policy execution successful.
+2026-05-23 18:52:10.134 +00:00 [INF] Executing endpoint 'HTTP: PUT /api/sets/{setCode}/fullset-pricing'
+2026-05-23 18:52:10.139 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:52:10.139 +00:00 [INF] Writing value of type '<>f__AnonymousType0`1' as Json.
+2026-05-23 18:52:10.140 +00:00 [INF] Executed endpoint 'HTTP: PUT /api/sets/{setCode}/fullset-pricing'
+2026-05-23 18:52:10.140 +00:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5001/api/sets/DFT/fullset-pricing - 200 null application/json; charset=utf-8 5.9815ms
+2026-05-23 18:52:10.184 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - application/json 0
+2026-05-23 18:52:10.185 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 18:52:10.195 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:52:10.195 +00:00 [INF] Writing value of type '<>f__AnonymousType4`7' as Json.
+2026-05-23 18:52:10.195 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 18:52:10.195 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - 200 null application/json; charset=utf-8 10.9931ms
+2026-05-23 18:52:15.363 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 18:52:15.374 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 18:52:15.374 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 37857 text/html 11.3223ms
+2026-05-23 18:52:15.522 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 18:52:15.523 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 18:52:16.048 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:52:16.048 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 18:52:17.207 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 18:52:17.208 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:52:17.210 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:52:17.211 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 18:52:17.213 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:52:17.213 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 5.8568ms
+2026-05-23 18:52:19.483 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 18:52:19.483 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:52:19.486 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:52:19.487 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 18:52:19.489 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:52:19.489 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 5.8673ms
+2026-05-23 18:52:19.552 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - application/json 0
+2026-05-23 18:52:19.553 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 18:52:19.581 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:52:19.581 +00:00 [INF] Writing value of type '<>f__AnonymousType4`7' as Json.
+2026-05-23 18:52:19.581 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 18:52:19.582 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - 200 null application/json; charset=utf-8 29.1411ms
+2026-05-23 18:52:19.644 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory?set=DFT - application/json 0
+2026-05-23 18:52:19.644 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 18:52:19.677 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:52:19.677 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 18:52:19.679 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 18:52:19.679 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory?set=DFT - 200 null application/json; charset=utf-8 35.1821ms
+2026-05-23 18:52:21.051 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 18:52:21.051 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5528.7953ms
+2026-05-23 18:53:35.751 +00:00 [INF] Application is shutting down...
+2026-05-23 18:53:39.491 +00:00 [INF] Now listening on: http://localhost:5001
+2026-05-23 18:53:39.542 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 18:53:39.543 +00:00 [INF] Hosting environment: Production
+2026-05-23 18:53:39.543 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 18:53:41.698 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 18:53:41.781 +00:00 [INF] The file /index.html was not modified
+2026-05-23 18:53:41.784 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 87.1782ms
+2026-05-23 18:53:42.008 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 18:53:42.013 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 18:53:42.795 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 18:53:42.798 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:53:42.832 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:53:42.843 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 18:53:42.861 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:53:42.862 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 66.0595ms
+2026-05-23 18:53:43.888 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:53:43.890 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 18:53:44.931 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 18:53:44.932 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:53:44.938 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:53:44.938 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 18:53:44.941 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 18:53:44.941 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 10.2249ms
+2026-05-23 18:53:45.011 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - application/json 0
+2026-05-23 18:53:45.012 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 18:53:45.021 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory?set=DFT - application/json 0
+2026-05-23 18:53:45.021 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 18:53:45.116 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:53:45.118 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 18:53:45.145 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 18:53:45.146 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory?set=DFT - 200 null application/json; charset=utf-8 125.0832ms
+2026-05-23 18:53:45.147 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 18:53:45.149 +00:00 [INF] Writing value of type '<>f__AnonymousType4`7' as Json.
+2026-05-23 18:53:45.152 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 18:53:45.152 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - 200 null application/json; charset=utf-8 141.6927ms
+2026-05-23 18:53:49.804 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 18:53:49.804 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 7795.7501ms

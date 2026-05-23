@@ -215,6 +215,7 @@
             <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Maks lager<input type="number" id="setRulesMax" step="1" style="width:80px"></label>
             <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Keep (behold alle kort)<input type="number" id="setRulesKeep" value="0" step="1" min="0" style="width:80px"></label>
             <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Maks per handel<input type="number" id="setRulesMaxPerTrade" value="4" step="1" min="1" style="width:80px" title="Maks antall av dette kortet en spiller kan kjøpe per handel"></label>
+            <div id="baseSetSizeInfo" style="font-size:11px; margin-top:4px"></div>
             <button class="btn-primary" onclick="saveCurrentSetRules()">💾 Lagre sett-regler</button>
           </div>
         </div>
@@ -500,6 +501,13 @@ async function loadSetCards() {
       document.getElementById('setRulesSell').value = s.defaultSellMultiplier;
       document.getElementById('setRulesMax').value  = s.defaultMaxStock;
       document.getElementById('setRulesBaseSize').value = s.baseSetSize || '';
+      const bsInfo = document.getElementById('baseSetSizeInfo');
+      if (bsInfo) {
+        bsInfo.textContent = s.baseSetSize 
+          ? `✅ Satt til ${s.baseSetSize} kort (oppdatert ${new Date(s.updatedAt).toLocaleDateString('no-NO')})`
+          : '⚠️ Ikke satt ennå';
+        bsInfo.style.color = s.baseSetSize ? '#059669' : '#d97706';
+      }
       document.getElementById('setRulesPanel').style.display = 'block';
     loadFullsetPricing(setCode);
     }
@@ -511,7 +519,10 @@ async function loadSetCards() {
     let url = `/api/inventory?set=${encodeURIComponent(setCode)}`;
     if (foil) url += '&foil=true';
     allSetCards = await fetchJson(url);
-    document.getElementById('setCardCount').textContent = allSetCards.length + ' kort';
+    const nonFoil = allSetCards.filter(c => !c.isFoil).length;
+    const foilCount = allSetCards.filter(c => c.isFoil).length;
+    document.getElementById('setCardCount').textContent = 
+      `${allSetCards.length} kort totalt (${nonFoil} normal · ${foilCount} foil)`;
     renderSetCards(allSetCards);
   } catch(e) {
     document.getElementById('setCardsBody').innerHTML = `<tr><td colspan="8" class="loading text-red">Feil: ${e.message}</td></tr>`;

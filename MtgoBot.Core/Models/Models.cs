@@ -11,6 +11,7 @@ public class MagicSet
     public decimal DefaultBuyMultiplier { get; set; } = 0.80m;
     public decimal DefaultSellMultiplier { get; set; } = 1.00m;
     public int DefaultMaxStock { get; set; } = 8;
+    public int? BaseSetSize { get; set; }
     public DateTime UpdatedAt { get; set; }
 }
 
