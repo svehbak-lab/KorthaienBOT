@@ -73,11 +73,11 @@ public class CardRepository
             new { Keep = keepValue, Code = setCode });
     }
 
-    public async Task UpdateSetRulesAsync(string setCode, decimal buyMultiplier, decimal sellMultiplier, int maxStock)
+    public async Task UpdateSetRulesAsync(string setCode, decimal buyMultiplier, decimal sellMultiplier, int maxStock, int? baseSetSize = null)
     {
         using var conn = Open();
-        await conn.ExecuteAsync("UPDATE sets SET default_buy_multiplier=@Buy, default_sell_multiplier=@Sell, default_max_stock=@Max, updated_at=NOW() WHERE set_code=@Code",
-            new { Buy = buyMultiplier, Sell = sellMultiplier, Max = maxStock, Code = setCode });
+        await conn.ExecuteAsync("UPDATE sets SET default_buy_multiplier=@Buy, default_sell_multiplier=@Sell, default_max_stock=@Max, base_set_size=@BaseSize, updated_at=NOW() WHERE set_code=@Code",
+            new { Buy = buyMultiplier, Sell = sellMultiplier, Max = maxStock, BaseSize = baseSetSize, Code = setCode });
     }
 }
 

@@ -1,3 +1,4 @@
+using Dapper;
 using MtgoBot.Core.Data;
 
 using Serilog;
@@ -87,7 +88,8 @@ app.MapPut("/api/sets/{setCode}/rules", async (
         setCode,
         req.BuyMultiplier,
         req.SellMultiplier,
-        req.MaxStock);
+        req.MaxStock,
+        req.BaseSetSize);
     return Results.Ok(new { message = $"Rules updated for set {setCode}" });
 })
 .WithSummary("Update set-level buy/sell multipliers and max stock");
@@ -136,6 +138,71 @@ app.MapPost("/api/credits/purge-inactive", async (
 .WithSummary("Purge credits for players inactive longer than N days");
 
 
+
+// ══════════════════════════════════════════════════════════════════
+// COMPLETE SET PRICING ROUTES
+// ══════════════════════════════════════════════════════════════════
+
+app.MapGet("/api/sets/{setCode}/fullset-pricing", async (string setCode, MtgoBot.Core.Data.DatabaseConnectionFactory dbf) =>
+{
+    using var conn = (Npgsql.NpgsqlConnection)await dbf.CreateConnectionAsync();
+    var existing = await conn.QuerySingleOrDefaultAsync(
+        "SELECT fullset_buy, fullset_sell, fullset_enabled FROM set_price_overrides WHERE set_code = @Code",
+        new { Code = setCode });
+    var autoCalc = await conn.QuerySingleOrDefaultAsync("""
+        WITH base_cards AS (
+            SELECT DISTINCT ON (c.card_name)
+                c.card_name, c.market_price_tix, c.custom_buy_price, c.custom_sell_price,
+                c.collector_number
+            FROM cards c
+            JOIN sets s ON c.set_code = s.set_code
+            WHERE c.set_code = @Code AND c.is_foil = false
+              AND (
+                s.base_set_size IS NULL
+                OR (
+                  c.collector_number IS NOT NULL
+                  AND CAST(SPLIT_PART(c.collector_number, '/', 1) AS INTEGER)
+                      <= s.base_set_size
+                )
+              )
+            ORDER BY c.card_name, c.market_price_tix ASC
+        )
+        SELECT
+            SUM(COALESCE(bc.custom_buy_price,  bc.market_price_tix * s.default_buy_multiplier))  AS auto_buy,
+            SUM(COALESCE(bc.custom_sell_price, bc.market_price_tix * s.default_sell_multiplier)) AS auto_sell,
+            COUNT(*) AS card_count
+        FROM base_cards bc
+        CROSS JOIN sets s
+        WHERE s.set_code = @Code
+        """, new { Code = setCode });
+    return Results.Ok(new {
+        setCode,
+        fullsetBuy     = (decimal?)(existing?.fullset_buy),
+        fullsetSell    = (decimal?)(existing?.fullset_sell),
+        fullsetEnabled = (bool?)(existing?.fullset_enabled) ?? false,
+        autoBuySum     = (decimal?)(autoCalc?.auto_buy) ?? 0m,
+        autoSellSum    = (decimal?)(autoCalc?.auto_sell) ?? 0m,
+        cardCount      = (int?)(autoCalc?.card_count) ?? 0
+    });
+})
+.WithSummary("Get complete set pricing for a set");
+
+app.MapPut("/api/sets/{setCode}/fullset-pricing", async (string setCode, FullsetPricingRequest req, MtgoBot.Core.Data.DatabaseConnectionFactory dbf) =>
+{
+    using var conn = (Npgsql.NpgsqlConnection)await dbf.CreateConnectionAsync();
+    await conn.ExecuteAsync("""
+        INSERT INTO set_price_overrides (set_code, fullset_buy, fullset_sell, fullset_enabled, updated_at)
+        VALUES (@Code, @Buy, @Sell, @Enabled, NOW())
+        ON CONFLICT (set_code) DO UPDATE SET
+            fullset_buy     = @Buy,
+            fullset_sell    = @Sell,
+            fullset_enabled = @Enabled,
+            updated_at      = NOW()
+        """, new { Code = setCode, Buy = req.FullsetBuy, Sell = req.FullsetSell, Enabled = req.FullsetEnabled });
+    return Results.Ok(new { message = $"Fullset pricing updated for {setCode}" });
+})
+.WithSummary("Set complete set buy/sell price");
+
 // ══════════════════════════════════════════════════════════════════
 // SYSTEM / STATUS ROUTES
 // ══════════════════════════════════════════════════════════════════
@@ -164,8 +231,11 @@ record CardOverrideRequest(
 record SetRulesRequest(
     decimal BuyMultiplier,
     decimal SellMultiplier,
-    int MaxStock);
+    int MaxStock,
+    int? BaseSetSize = null);
 
 record CreditAdjustRequest(decimal Delta, string? Reason);
 
 record ApplyKeepRequest(int KeepValue);
+
+record FullsetPricingRequest(decimal? FullsetBuy, decimal? FullsetSell, bool FullsetEnabled);
