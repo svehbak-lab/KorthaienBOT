@@ -112,7 +112,7 @@
     <div class="logo">Korthaien<span>BOT</span></div>
     <nav>
       <a href="#" class="active" onclick="showTab('inventory')"><span class="icon">📦</span> Inventory</a>
-      <a href="#" onclick="showTab('sets')"><span class="icon">🃏</span> Sett-filtre</a>
+      <a href="#" onclick="showTab('sets')"><span class="icon">🃏</span> Filtre</a>
       <a href="#" onclick="showTab('credits')"><span class="icon">💰</span> Kunde-credits</a>
       <a href="#" onclick="showTab('log')"><span class="icon">📋</span> System-logg</a>
       <a href="#" onclick="showTab('settings')"><span class="icon">⚙️</span> Innstillinger</a>
@@ -190,36 +190,45 @@
       </div>
       <div class="panel">
         <div class="panel-title">Globale standardverdier</div>
-        <div class="toolbar" style="gap:20px;">
-          <label>Standard kjøps-multiplier: <input type="number" id="globalBuy" value="0.80" step="0.01" min="0" max="2" style="width:80px"></label>
-          <label>Standard salgs-multiplier: <input type="number" id="globalSell" value="1.00" step="0.01" min="0" max="2" style="width:80px"></label>
-          <label>Maks standard lager: <input type="number" id="globalMax" value="8" step="1" min="0" style="width:70px"></label>
-          <label>Slette inaktiv credit etter: <input type="number" id="purgeDays" value="90" step="1" min="1" style="width:70px"> dager</label>
+        <div class="toolbar" style="gap:20px; flex-wrap:wrap">
+          <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Kjøps-multiplier<input type="number" id="globalBuy" value="0.80" step="0.01" style="width:90px"></label>
+          <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Salgs-multiplier<input type="number" id="globalSell" value="1.00" step="0.01" style="width:90px"></label>
+          <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Maks lager<input type="number" id="globalMax" value="8" step="1" style="width:80px"></label>
+          <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Slett credit etter (dager)<input type="number" id="purgeDays" value="90" step="1" style="width:80px"></label>
         </div>
       </div>
-      <div class="toolbar">
-        <input type="text" id="setSearch" placeholder="🔍  Søk sett..." oninput="filterSetsTable()" style="flex:1; min-width:220px">
-        <label class="toggle-wrap">
-          <span>Foil</span>
-          <label class="toggle"><input type="checkbox" id="setFoilToggle" onchange="filterSetsTable()"><span class="toggle-slider"></span></label>
-        </label>
+      <div class="panel">
+        <div class="panel-title">Velg sett</div>
+        <div class="toolbar">
+          <select id="setSelector" onchange="loadSetCards()" style="flex:1; min-width:300px; font-size:14px; padding:9px 12px">
+            <option value="">-- Velg et sett --</option>
+          </select>
+          <input type="text" id="setCardSearch" placeholder="🔍  Søk kortnavn..." oninput="filterSetCards()" style="flex:1">
+          <label class="toggle-wrap"><label class="toggle"><input type="checkbox" id="showNormal" onchange="filterSetCards()"><span class="toggle-slider"></span></label><span>Non-foil</span></label>
+          <label class="toggle-wrap"><label class="toggle"><input type="checkbox" id="showFoil" onchange="filterSetCards()"><span class="toggle-slider"></span></label><span>Foil ✨</span></label>
+        </div>
+        <div id="setCardCount" style="font-size:12px;color:var(--muted);margin-top:8px"></div>
+        <div id="setRulesPanel" style="display:none; margin-top:12px; padding:14px; background:#f8f9ff; border-radius:8px; border:1px solid var(--border)">
+          <div style="display:flex; gap:16px; align-items:flex-end; flex-wrap:wrap">
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Kjøps-mult.<input type="number" id="setRulesBuy" step="0.01" style="width:90px"></label>
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Salgs-mult.<input type="number" id="setRulesSell" step="0.01" style="width:90px"></label>
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Maks lager<input type="number" id="setRulesMax" step="1" style="width:80px"></label>
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Keep (behold alle kort)<input type="number" id="setRulesKeep" value="0" step="1" min="0" style="width:80px"></label>
+            <button class="btn-primary" onclick="saveCurrentSetRules()">💾 Lagre sett-regler</button>
+          </div>
+        </div>
       </div>
-      <div class="panel" style="padding:0">
+      <div class="panel" style="padding:0; overflow:hidden">
         <div class="tbl-wrap">
           <table>
             <thead>
               <tr>
-                <th>Sett</th>
-                <th>Navn</th>
-                <th>Kjøps-mult.</th>
-                <th>Salgs-mult.</th>
-                <th>Keep (behold)</th>
-                <th>Maks lager</th>
-                <th></th>
+                <th onclick="sortSetCards('cardName')" style="cursor:pointer">Kortnavn ↕</th><th onclick="sortSetCards('rarity')" style="cursor:pointer">Rarity ↕</th><th onclick="sortSetCards('marketPriceTix')" style="cursor:pointer">Markedspris ↕</th>
+                <th onclick="sortSetCards('effectiveBuyPrice')" style="cursor:pointer">Kjøpspris ↕</th><th onclick="sortSetCards('effectiveSellPrice')" style="cursor:pointer">Salgspris ↕</th><th onclick="sortSetCards('redeemReserved')" style="cursor:pointer">Keep ↕</th><th onclick="sortSetCards('maxStock')" style="cursor:pointer">Maks lager ↕</th><th></th>
               </tr>
             </thead>
-            <tbody id="setsBody">
-              <tr><td colspan="6" class="loading">Laster sett...</td></tr>
+            <tbody id="setCardsBody">
+              <tr><td colspan="8" class="loading muted">Velg et sett i menyen over</td></tr>
             </tbody>
           </table>
         </div>
@@ -338,7 +347,7 @@ function showTab(name) {
     a.classList.toggle('active', a.getAttribute('onclick')?.includes(name));
   });
   if (name === 'inventory') loadInventory();
-  if (name === 'sets')      loadSets();
+  if (name === 'sets')      { populateSetDropdown(); }
   if (name === 'credits')   loadCredits();
   if (name === 'log')       loadStatus();
 }
@@ -389,49 +398,144 @@ async function loadInventory() {
 }
 
 
-// ─── Sets ────────────────────────────────────────────────────────
-let allSets = [];
 
-async function loadSets() {
+// ─── Set card view ───────────────────────────────────────────────
+let allSetCards = [];
+let currentSetCode = '';
+
+async function populateSetDropdown() {
   try {
-    const sets = await fetchJson(`${API}/sets`);
-    allSets = Object.values(sets);
-    renderSets(allSets);
+    const sets = await fetchJson('/api/sets');
+    const sorted = Object.values(sets).sort((a,b) =>
+      (a.setName||a.setCode).localeCompare(b.setName||b.setCode));
+    const sel = document.getElementById('setSelector');
+    sel.innerHTML = '<option value="">-- Velg et sett --</option>' +
+      sorted.map(s => `<option value="${esc(s.setCode)}">${esc(s.setName || s.setCode)} (${esc(s.setCode)})</option>`).join('');
+  } catch(e) { console.error('Failed to load sets:', e); }
+}
+
+async function loadSetCards() {
+  const setCode = document.getElementById('setSelector').value;
+  const foil = false; // foil filtering done client-side
+  if (!setCode) {
+    document.getElementById('setRulesPanel').style.display = 'none';
+    document.getElementById('setCardsBody').innerHTML = '<tr><td colspan="8" class="loading muted">Velg et sett i menyen over</td></tr>';
+    return;
+  }
+  currentSetCode = setCode;
+
+  // Show set rules
+  try {
+    const sets = await fetchJson('/api/sets');
+    const s = sets[setCode];
+    if (s) {
+      document.getElementById('setRulesBuy').value  = s.defaultBuyMultiplier;
+      document.getElementById('setRulesSell').value = s.defaultSellMultiplier;
+      document.getElementById('setRulesMax').value  = s.defaultMaxStock;
+      document.getElementById('setRulesPanel').style.display = 'block';
+    }
+  } catch(e) {}
+
+  // Load cards
+  document.getElementById('setCardsBody').innerHTML = '<tr><td colspan="8" class="loading muted">Laster kort...</td></tr>';
+  try {
+    let url = `/api/inventory?set=${encodeURIComponent(setCode)}`;
+    if (foil) url += '&foil=true';
+    allSetCards = await fetchJson(url);
+    renderSetCards(allSetCards);
   } catch(e) {
-    document.getElementById('setsBody').innerHTML =
-      `<tr><td colspan="7" class="loading text-red">⚠️ Feil: ${e.message}</td></tr>`;
+    document.getElementById('setCardsBody').innerHTML = `<tr><td colspan="8" class="loading text-red">Feil: ${e.message}</td></tr>`;
   }
 }
 
-function filterSetsTable() {
-  const q = (document.getElementById('setSearch')?.value || '').toLowerCase();
-  const foil = document.getElementById('setFoilToggle')?.checked;
-  const filtered = allSets.filter(s =>
-    !q || s.setCode.toLowerCase().includes(q) || s.setName.toLowerCase().includes(q));
-  renderSets(filtered, foil);
+function filterSetCards() {
+  const q = document.getElementById('setCardSearch').value.toLowerCase();
+  const filtered = q ? allSetCards.filter(c => c.cardName.toLowerCase().includes(q)) : allSetCards;
+  renderSetCards(filtered);
 }
 
-function renderSets(sets, showFoil = false) {
-  document.getElementById('setsBody').innerHTML = sets.map(s => `
-    <tr id="set-${s.setCode}">
-      <td><span class="tag">${esc(s.setCode)}</span></td>
-      <td>${esc(s.setName)}${showFoil ? ' <span class="pill f">✨</span>' : ''}</td>
-      <td><input type="number" value="${s.defaultBuyMultiplier}" step="0.01" min="0" max="2" style="width:75px" class="set-buy"></td>
-      <td><input type="number" value="${s.defaultSellMultiplier}" step="0.01" min="0" max="2" style="width:75px" class="set-sell"></td>
-      <td><input type="number" value="0" step="1" min="0" style="width:65px" class="set-keep" title="Antall boten aldri selger"></td>
-      <td><input type="number" value="${s.defaultMaxStock}" step="1" min="0" style="width:65px" class="set-max"></td>
-      <td><button class="btn-primary btn-small" onclick="saveSetRules('${s.setCode}')">Lagre</button></td>
-    </tr>`).join('') || `<tr><td colspan="7" class="loading muted">Ingen sett funnet.</td></tr>`;
+
+let sortCol = 'marketPriceTix';
+let sortDir = -1; // -1 = desc, 1 = asc
+
+function sortSetCards(col) {
+  if (sortCol === col) sortDir *= -1;
+  else { sortCol = col; sortDir = col === 'cardName' || col === 'rarity' ? 1 : -1; }
+  renderSetCards(allSetCards);
+  // Update arrows
+  document.querySelectorAll('#setCardsPanel th').forEach(th => {
+    const txt = th.textContent.replace(' ↑','').replace(' ↓','').replace(' ↕','');
+    th.textContent = txt + ' ↕';
+  });
+  const headers = document.querySelectorAll('#setCardsPanel th');
+  const cols = ['cardName','rarity','marketPriceTix','effectiveBuyPrice','effectiveSellPrice','redeemReserved','maxStock'];
+  const idx = cols.indexOf(sortCol);
+  if (idx >= 0 && headers[idx]) {
+    const txt = headers[idx].textContent.replace(' ↑','').replace(' ↓','').replace(' ↕','');
+    headers[idx].textContent = txt + (sortDir === 1 ? ' ↑' : ' ↓');
+  }
 }
 
-async function saveSetRules(setCode) {
-  const row  = document.getElementById(`set-${setCode}`);
-  const buy  = parseFloat(row.querySelector('.set-buy').value);
-  const sell = parseFloat(row.querySelector('.set-sell').value);
-  const max  = parseInt(row.querySelector('.set-max').value);
-  await fetchJson(`${API}/sets/${setCode}/rules`, 'PUT', { buyMultiplier: buy, sellMultiplier: sell, maxStock: max });
-  toast(`✅ ${setCode} lagret`);
+function renderSetCards(cards) {
+  const tbody = document.getElementById('setCardsBody');
+  const showNormal = document.getElementById('showNormal')?.checked;
+  const showFoil   = document.getElementById('showFoil')?.checked;
+
+  // Foil filter
+  let filtered = (!showNormal && !showFoil) ? cards
+    : cards.filter(c => (showFoil && c.isFoil) || (showNormal && !c.isFoil));
+
+  // Sort
+  filtered = [...filtered].sort((a, b) => {
+    const av = a[sortCol], bv = b[sortCol];
+    if (typeof av === 'string') return av.localeCompare(bv) * sortDir;
+    return ((av || 0) - (bv || 0)) * sortDir;
+  });
+
+  const countEl = document.getElementById('setCardCount');
+  if (countEl) countEl.textContent = `${filtered.length} kort`;
+
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="8" class="loading muted">Ingen kort funnet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = filtered.map(c => `
+    <tr>
+      <td><strong>${esc(c.cardName)}</strong>${c.collectorNumber ? ' <span style="font-size:10px;color:#94a3b8">#'+c.collectorNumber+'</span>' : ''}${c.isFoil ? ' <span class="pill f">✨</span>' : ''}</td>
+      <td>${rarityPill(c.rarity)}</td>
+      <td class="mono">${c.marketPriceTix.toFixed(4)}</td>
+      <td><input type="number" value="${c.effectiveBuyPrice.toFixed(4)}" step="0.0001" style="width:80px" id="buy_${c.cardId}" class="mono"></td>
+      <td><input type="number" value="${c.effectiveSellPrice.toFixed(4)}" step="0.0001" style="width:80px" id="sell_${c.cardId}" class="mono"></td>
+      <td><input type="number" value="${c.redeemReserved}" step="1" min="0" style="width:60px" id="keep_${c.cardId}" class="mono"></td>
+      <td><input type="number" value="${c.maxStock}" step="1" min="0" style="width:60px" id="max_${c.cardId}" class="mono"></td>
+      <td><button class="btn-primary btn-small" onclick="saveCardRow('${esc(c.cardId)}')">💾</button></td>
+    </tr>`).join('');
 }
+
+
+async function saveCardRow(cardId) {
+  const buy  = parseFloat(document.getElementById('buy_'  + cardId)?.value) || null;
+  const sell = parseFloat(document.getElementById('sell_' + cardId)?.value) || null;
+  const keep = parseInt(document.getElementById('keep_'  + cardId)?.value) || 0;
+  const max  = parseInt(document.getElementById('max_'   + cardId)?.value) || null;
+  await fetchJson(`/api/cards/${cardId}/overrides`, 'PUT', {
+    customBuyPrice:  buy,
+    customSellPrice: sell,
+    customMaxStock:  max,
+    redeemReserved:  keep
+  });
+  toast('✅ Lagret');
+}
+
+async function saveCurrentSetRules() {
+  if (!currentSetCode) return;
+  const buy  = parseFloat(document.getElementById('setRulesBuy').value);
+  const sell = parseFloat(document.getElementById('setRulesSell').value);
+  const max  = parseInt(document.getElementById('setRulesMax').value);
+  await fetchJson(`/api/sets/${currentSetCode}/rules`, 'PUT', { buyMultiplier: buy, sellMultiplier: sell, maxStock: max });
+  toast(`✅ Regler lagret for ${currentSetCode}`); const keepVal = parseInt(document.getElementById('setRulesKeep').value); if (keepVal > 0) fetchJson(`/api/sets/${currentSetCode}/apply-keep`, 'POST', {keepValue: keepVal}); loadSetCards();
+}
+
 
 // ─── Credits ─────────────────────────────────────────────────────
 async function loadCredits() {

@@ -91,6 +91,13 @@ app.MapPut("/api/sets/{setCode}/rules", async (
 })
 .WithSummary("Update set-level buy/sell multipliers and max stock");
 
+app.MapPost("/api/sets/{setCode}/apply-keep", async (string setCode, ApplyKeepRequest req, CardRepository cards) =>
+{
+    await cards.ApplyKeepToSetAsync(setCode, req.KeepValue);
+    return Results.Ok(new { message = $"Keep={req.KeepValue} applied to all cards in {setCode}" });
+})
+.WithSummary("Set redeem_reserved for all cards in a set");
+
 /// <summary>List all sets with their current rules.</summary>
 app.MapGet("/api/sets", async (CardRepository cards) =>
     Results.Ok(await cards.GetAllSetsAsync()))
@@ -158,3 +165,5 @@ record SetRulesRequest(
     int MaxStock);
 
 record CreditAdjustRequest(decimal Delta, string? Reason);
+
+record ApplyKeepRequest(int KeepValue);

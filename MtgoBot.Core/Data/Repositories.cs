@@ -65,6 +65,14 @@ public class CardRepository
             new { Buy = customBuy, Sell = customSell, MaxStock = customMaxStock, Redeem = redeemReserved, Id = cardId });
     }
 
+    public async Task ApplyKeepToSetAsync(string setCode, int keepValue)
+    {
+        using var conn = Open();
+        await conn.ExecuteAsync(
+            "UPDATE cards SET redeem_reserved = @Keep WHERE set_code = @Code",
+            new { Keep = keepValue, Code = setCode });
+    }
+
     public async Task UpdateSetRulesAsync(string setCode, decimal buyMultiplier, decimal sellMultiplier, int maxStock)
     {
         using var conn = Open();
@@ -138,6 +146,7 @@ public class InventoryRepository
                 COALESCE(c.custom_sell_price, c.market_price_tix * s.default_sell_multiplier) AS effective_sell_price,
                 COALESCE(c.custom_max_stock,  s.default_max_stock) AS max_stock,
                 c.redeem_reserved,
+                c.collector_number,
                 COALESCE(SUM(bi.quantity), 0) AS total_quantity,
                 STRING_AGG(bi.bot_id || ':' || bi.quantity, ' ') AS bot_distribution
             FROM cards c
@@ -148,6 +157,7 @@ public class InventoryRepository
             GROUP BY c.card_id, c.card_name, c.set_code, c.rarity, c.is_foil,
                      c.market_price_tix, c.custom_buy_price, c.custom_sell_price,
                      c.custom_max_stock, c.redeem_reserved,
+                c.collector_number,
                      s.default_buy_multiplier, s.default_sell_multiplier, s.default_max_stock
             ORDER BY c.market_price_tix DESC
             """, new { Search = search, SetCode = setCode });
@@ -168,6 +178,7 @@ public class InventoryDashboardRow
     public int RedeemReserved { get; set; }
     public int TotalQuantity { get; set; }
     public string BotDistribution { get; set; } = string.Empty;
+    public string? CollectorNumber { get; set; }
     public string Status => TotalQuantity >= MaxStock ? "🛑 Maks nådd" : TotalQuantity <= RedeemReserved ? "🟡 Kun Redeem" : "🟢 Kjøper";
 }
 
