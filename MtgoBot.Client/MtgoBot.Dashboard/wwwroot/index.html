@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KorthaienBOT — Dashboard</title>
+<style>
+  :root {
+    --bg:       #0f1117;
+    --surface:  #1a1d27;
+    --border:   #2a2d3d;
+    --accent:   #6c63ff;
+    --accent2:  #00d4aa;
+    --text:     #e8e9f0;
+    --muted:    #6b7280;
+    --danger:   #ef4444;
+    --warn:     #f59e0b;
+    --success:  #10b981;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font: 14px/1.5 'Inter', system-ui, sans-serif; min-height: 100vh; }
+
+  /* ── Layout ── */
+  .shell { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+  .sidebar { background: var(--surface); border-right: 1px solid var(--border); padding: 24px 0; display: flex; flex-direction: column; }
+  .main { padding: 28px; overflow-y: auto; }
+
+  /* ── Sidebar ── */
+  .logo { padding: 0 20px 24px; font-size: 18px; font-weight: 700; color: var(--accent); border-bottom: 1px solid var(--border); }
+  .logo span { color: var(--accent2); }
+  nav a { display: flex; align-items: center; gap: 10px; padding: 11px 20px; color: var(--muted); text-decoration: none; font-size: 13px; transition: all .15s; }
+  nav a:hover, nav a.active { background: rgba(108,99,255,.12); color: var(--text); border-right: 2px solid var(--accent); }
+  nav a .icon { font-size: 16px; width: 20px; text-align: center; }
+
+  /* ── Header ── */
+  .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .page-title { font-size: 22px; font-weight: 700; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+  .badge.green { background: rgba(16,185,129,.15); color: var(--success); }
+  .badge.red   { background: rgba(239,68,68,.15);  color: var(--danger); }
+
+  /* ── Cards / Panels ── */
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+  .panel-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 16px; }
+
+  /* ── Stat tiles ── */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+  .stat .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+  .stat .value { font-size: 26px; font-weight: 700; }
+  .stat .value.accent  { color: var(--accent); }
+  .stat .value.accent2 { color: var(--accent2); }
+
+  /* ── Search & filters bar ── */
+  .toolbar { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
+  input[type=text], input[type=number], select {
+    background: var(--bg); border: 1px solid var(--border); color: var(--text);
+    border-radius: 6px; padding: 7px 12px; font-size: 13px; outline: none;
+    transition: border-color .15s;
+  }
+  input:focus, select:focus { border-color: var(--accent); }
+  input[type=text] { flex: 1; min-width: 200px; }
+
+  /* ── Buttons ── */
+  button {
+    padding: 7px 16px; border-radius: 6px; border: none; cursor: pointer;
+    font-size: 13px; font-weight: 600; transition: all .15s;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #7c75ff; }
+  .btn-secondary { background: var(--border); color: var(--text); }
+  .btn-secondary:hover { background: #353848; }
+  .btn-danger { background: rgba(239,68,68,.15); color: var(--danger); border: 1px solid var(--danger); }
+  .btn-small { padding: 4px 10px; font-size: 12px; }
+
+  /* ── Table ── */
+  .tbl-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 12px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:hover td { background: rgba(255,255,255,.02); }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+  .pill.r { background: rgba(239,68,68,.15); color: #fca5a5; }
+  .pill.u { background: rgba(245,158,11,.15); color: #fcd34d; }
+  .pill.c { background: rgba(107,114,128,.15); color: #9ca3af; }
+  .pill.m { background: rgba(168,85,247,.15); color: #d8b4fe; }
+  .pill.f { background: rgba(0,212,170,.15); color: var(--accent2); }
+  .status-icon { font-size: 14px; }
+
+  /* ── Tabs ── */
+  .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+  .tab { padding: 10px 18px; cursor: pointer; color: var(--muted); font-size: 13px; font-weight: 500; border-bottom: 2px solid transparent; transition: all .15s; }
+  .tab.active { color: var(--accent); border-color: var(--accent); }
+
+  /* ── Misc ── */
+  .muted { color: var(--muted); }
+  .text-green { color: var(--success); }
+  .text-warn  { color: var(--warn); }
+  .text-red   { color: var(--danger); }
+  .mono { font-family: 'Fira Code', monospace; }
+  .loading { color: var(--muted); padding: 40px; text-align: center; }
+  .edit-inline { display: none; }
+  .editable:hover .edit-inline { display: inline; }
+  .tag { display: inline-block; background: rgba(108,99,255,.15); color: var(--accent); border-radius: 4px; padding: 1px 6px; font-size: 11px; margin: 1px; }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="logo">Korthaien<span>BOT</span></div>
+    <nav>
+      <a href="#" class="active" onclick="showTab('inventory')"><span class="icon">📦</span> Inventory</a>
+      <a href="#" onclick="showTab('sets')"><span class="icon">🃏</span> Sett-filtre</a>
+      <a href="#" onclick="showTab('credits')"><span class="icon">💰</span> Kunde-credits</a>
+      <a href="#" onclick="showTab('log')"><span class="icon">📋</span> System-logg</a>
+      <a href="#" onclick="showTab('settings')"><span class="icon">⚙️</span> Innstillinger</a>
+    </nav>
+    <div style="margin-top:auto; padding:20px; font-size:11px; color:var(--muted);">
+      Priser: <a href="https://www.goatbots.com" target="_blank" style="color:var(--accent2)">GoatBots</a><br>
+      Sist oppdatert: <span id="lastFeed">—</span>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main class="main">
+
+    <!-- INVENTORY TAB -->
+    <div id="tab-inventory">
+      <div class="page-header">
+        <div class="page-title">Samlet Inventory</div>
+        <span class="badge green" id="botStatus">● Bot_1 Online</span>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat"><div class="label">Totalt unike kort</div><div class="value accent" id="statCards">—</div></div>
+        <div class="stat"><div class="label">Total verdi (TIX)</div><div class="value accent2" id="statValue">—</div></div>
+        <div class="stat"><div class="label">Reservert Redeem</div><div class="value" id="statRedeem">—</div></div>
+        <div class="stat"><div class="label">Aktive botter</div><div class="value" id="statBots">1</div></div>
+      </div>
+
+      <!-- Search toolbar -->
+      <div class="toolbar">
+        <input type="text" id="searchInput" placeholder="🔍  Søk kortnavn..." oninput="loadInventory()">
+        <select id="setFilter" onchange="loadInventory()">
+          <option value="">Alle sett</option>
+        </select>
+        <select id="rarityFilter" onchange="loadInventory()">
+          <option value="">Alle sjeldenhet</option>
+          <option value="M">Mythic</option>
+          <option value="R">Rare</option>
+          <option value="U">Uncommon</option>
+          <option value="C">Common</option>
+        </select>
+        <button class="btn-secondary btn-small" onclick="triggerPriceFeed()">🔄 Oppdater priser</button>
+      </div>
+
+      <!-- Table -->
+      <div class="panel" style="padding:0">
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Kortnavn</th>
+                <th>Sett</th>
+                <th>R</th>
+                <th>Totalt lager</th>
+                <th>Fordeling</th>
+                <th>Kjøpspris</th>
+                <th>Salgspris</th>
+                <th>Redeem</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="inventoryBody">
+              <tr><td colspan="10" class="loading">Laster inventory...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETS TAB -->
+    <div id="tab-sets" style="display:none">
+      <div class="page-header">
+        <div class="page-title">Sett-filtre & Regler</div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Globale standardverdier</div>
+        <div class="toolbar" style="gap:20px;">
+          <label>Standard kjøps-multiplier: <input type="number" id="globalBuy" value="0.80" step="0.01" min="0" max="2" style="width:80px"></label>
+          <label>Standard salgs-multiplier: <input type="number" id="globalSell" value="1.00" step="0.01" min="0" max="2" style="width:80px"></label>
+          <label>Maks standard lager: <input type="number" id="globalMax" value="8" step="1" min="0" style="width:70px"></label>
+          <label>Slette inaktiv credit etter: <input type="number" id="purgeDays" value="90" step="1" min="1" style="width:70px"> dager</label>
+        </div>
+      </div>
+      <div class="panel" style="padding:0">
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Sett</th>
+                <th>Navn</th>
+                <th>Kjøps-mult.</th>
+                <th>Salgs-mult.</th>
+                <th>Maks lager</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="setsBody">
+              <tr><td colspan="6" class="loading">Laster sett...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CREDITS TAB -->
+    <div id="tab-credits" style="display:none">
+      <div class="page-header">
+        <div class="page-title">Kunde-Credits</div>
+        <button class="btn-danger btn-small" onclick="purgeCredits()">🧹 Slette inaktive (90d)</button>
+      </div>
+      <div class="panel" style="padding:0">
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Spiller</th>
+                <th>Saldo (TIX)</th>
+                <th>Siste handel</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="creditsBody">
+              <tr><td colspan="4" class="loading">Laster credits...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOG TAB -->
+    <div id="tab-log" style="display:none">
+      <div class="page-header"><div class="page-title">System-logg</div></div>
+      <div class="panel">
+        <div class="panel-title">API Status</div>
+        <div id="statusBox" class="mono muted" style="font-size:12px">Sjekker...</div>
+      </div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div id="tab-settings" style="display:none">
+      <div class="page-header"><div class="page-title">Innstillinger</div></div>
+      <div class="panel">
+        <div class="panel-title">Prisingsregler (Tiers)</div>
+        <table>
+          <thead><tr><th>Tier</th><th>Min TIX</th><th>Max TIX</th><th>Kjøps-%</th><th>Salgs-%</th></tr></thead>
+          <tbody>
+            <tr><td>Dyrt</td><td>10</td><td>∞</td><td>90%</td><td>100%</td></tr>
+            <tr><td>Mellom</td><td>1</td><td>10</td><td>80%</td><td>100%</td></tr>
+            <tr><td>Bulk</td><td>0</td><td>1</td><td>fast 0.005</td><td>fast 0.010</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Foil-premium</div>
+        <label>Foil multiplier: <input type="number" id="foilMult" value="1.00" step="0.05" style="width:80px"> × normal pris</label>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const API = 'http://localhost:5050/api';
+
+// ─── Tab switching ───────────────────────────────────────────────
+function showTab(name) {
+  document.querySelectorAll('[id^=tab-]').forEach(el => el.style.display = 'none');
+  document.getElementById('tab-' + name).style.display = 'block';
+  document.querySelectorAll('nav a').forEach((a, i) => {
+    a.classList.toggle('active', a.getAttribute('onclick')?.includes(name));
+  });
+  if (name === 'inventory') loadInventory();
+  if (name === 'sets')      loadSets();
+  if (name === 'credits')   loadCredits();
+  if (name === 'log')       loadStatus();
+}
+
+// ─── Inventory ───────────────────────────────────────────────────
+async function loadInventory() {
+  const search = document.getElementById('searchInput').value;
+  const set    = document.getElementById('setFilter').value;
+  let url = `${API}/inventory?`;
+  if (search) url += `search=${encodeURIComponent(search)}&`;
+  if (set)    url += `set=${encodeURIComponent(set)}&`;
+
+  try {
+    const rows = await fetchJson(url);
+    const tbody = document.getElementById('inventoryBody');
+
+    if (!rows || rows.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="10" class="loading muted">Ingen kort funnet.</td></tr>`;
+      return;
+    }
+
+    // Update stats
+    document.getElementById('statCards').textContent = rows.length.toLocaleString();
+    const totalVal = rows.reduce((s, r) => s + (r.totalQuantity * r.marketPriceTix), 0);
+    document.getElementById('statValue').textContent = totalVal.toFixed(2);
+    const totalRedeem = rows.reduce((s, r) => s + r.redeemReserved, 0);
+    document.getElementById('statRedeem').textContent = totalRedeem;
+
+    tbody.innerHTML = rows.map(r => `
+      <tr>
+        <td><strong>${esc(r.cardName)}</strong>${r.isFoil ? ' <span class="pill f">Foil</span>' : ''}</td>
+        <td><span class="tag">${esc(r.setCode)}</span></td>
+        <td>${rarityPill(r.rarity)}</td>
+        <td class="mono">${r.totalQuantity} stk</td>
+        <td class="muted" style="font-size:11px">${esc(r.botDistribution || '—')}</td>
+        <td class="mono text-warn">${r.effectiveBuyPrice.toFixed(4)}</td>
+        <td class="mono text-green">${r.effectiveSellPrice.toFixed(4)}</td>
+        <td class="mono ${r.redeemReserved > 0 ? 'text-warn' : 'muted'}">${r.redeemReserved}</td>
+        <td>${r.status}</td>
+        <td><button class="btn-secondary btn-small" onclick="editCard('${esc(r.cardId)}','${esc(r.cardName)}',${r.effectiveBuyPrice},${r.effectiveSellPrice},${r.maxStock},${r.redeemReserved})">✏️</button></td>
+      </tr>`).join('');
+  } catch(e) {
+    document.getElementById('inventoryBody').innerHTML =
+      `<tr><td colspan="10" class="loading text-red">Feil: ${e.message}</td></tr>`;
+  }
+}
+
+// ─── Sets ────────────────────────────────────────────────────────
+async function loadSets() {
+  try {
+    const sets = await fetchJson(`${API}/sets`);
+    const vals = Object.values(sets);
+    const tbody = document.getElementById('setsBody');
+    tbody.innerHTML = vals.map(s => `
+      <tr id="set-${s.setCode}">
+        <td><span class="tag">${esc(s.setCode)}</span></td>
+        <td>${esc(s.setName)}</td>
+        <td><input type="number" value="${s.defaultBuyMultiplier}" step="0.01" style="width:70px" class="set-buy" data-set="${s.setCode}"></td>
+        <td><input type="number" value="${s.defaultSellMultiplier}" step="0.01" style="width:70px" class="set-sell" data-set="${s.setCode}"></td>
+        <td><input type="number" value="${s.defaultMaxStock}" step="1" style="width:60px" class="set-max" data-set="${s.setCode}"></td>
+        <td><button class="btn-primary btn-small" onclick="saveSetRules('${s.setCode}')">Lagre</button></td>
+      </tr>`).join('');
+  } catch(e) {
+    document.getElementById('setsBody').innerHTML =
+      `<tr><td colspan="6" class="loading text-red">Feil: ${e.message}</td></tr>`;
+  }
+}
+
+async function saveSetRules(setCode) {
+  const row  = document.getElementById(`set-${setCode}`);
+  const buy  = parseFloat(row.querySelector('.set-buy').value);
+  const sell = parseFloat(row.querySelector('.set-sell').value);
+  const max  = parseInt(row.querySelector('.set-max').value);
+  await fetchJson(`${API}/sets/${setCode}/rules`, 'PUT', { buyMultiplier: buy, sellMultiplier: sell, maxStock: max });
+  toast(`✅ ${setCode} oppdatert`);
+}
+
+// ─── Credits ─────────────────────────────────────────────────────
+async function loadCredits() {
+  try {
+    const credits = await fetchJson(`${API}/credits`);
+    document.getElementById('creditsBody').innerHTML = credits.map(c => `
+      <tr>
+        <td><strong>${esc(c.playerName)}</strong></td>
+        <td class="mono text-green">${c.creditTix.toFixed(4)} TIX</td>
+        <td class="muted">${new Date(c.lastTradeAt).toLocaleDateString('no-NO')}</td>
+        <td><button class="btn-secondary btn-small" onclick="adjustCredit('${esc(c.playerName)}')">Juster</button></td>
+      </tr>`).join('') || `<tr><td colspan="4" class="loading muted">Ingen credits.</td></tr>`;
+  } catch(e) {
+    document.getElementById('creditsBody').innerHTML =
+      `<tr><td colspan="4" class="loading text-red">Feil: ${e.message}</td></tr>`;
+  }
+}
+
+async function purgeCredits() {
+  if (!confirm('Slette credits for spillere inaktive >90 dager?')) return;
+  const r = await fetchJson(`${API}/credits/purge-inactive`, 'POST');
+  toast(`🧹 Slettet credits for ${r.purged} spillere`);
+  loadCredits();
+}
+
+async function adjustCredit(player) {
+  const delta  = parseFloat(prompt(`Juster credit for ${player} (positiv = legg til, negativ = trekk fra):`));
+  if (isNaN(delta)) return;
+  const reason = prompt('Årsak:') || 'Manuell justering';
+  await fetchJson(`${API}/credits/${player}/adjust`, 'POST', { delta, reason });
+  toast(`✅ Credit justert for ${player}`);
+  loadCredits();
+}
+
+// ─── Card edit modal ─────────────────────────────────────────────
+function editCard(id, name, buy, sell, max, redeem) {
+  const newBuy  = parseFloat(prompt(`Kjøpspris for ${name} (0=bruk filter, blank=behold):`, buy));
+  if (isNaN(newBuy)) return;
+  const newSell = parseFloat(prompt(`Salgspris for ${name}:`, sell));
+  const newMax  = parseInt(prompt(`Maks lager:`, max));
+  const newRed  = parseInt(prompt(`Redeem-reservert (låst til deg):`, redeem));
+
+  fetchJson(`${API}/cards/${id}/overrides`, 'PUT', {
+    customBuyPrice:  newBuy  || null,
+    customSellPrice: newSell || null,
+    customMaxStock:  newMax  || null,
+    redeemReserved:  newRed  || 0
+  }).then(() => { toast(`✅ ${name} oppdatert`); loadInventory(); });
+}
+
+// ─── Status ──────────────────────────────────────────────────────
+async function loadStatus() {
+  try {
+    const s = await fetchJson(`${API}/status`);
+    document.getElementById('statusBox').textContent = JSON.stringify(s, null, 2);
+  } catch(e) {
+    document.getElementById('statusBox').textContent = `API utilgjengelig: ${e.message}`;
+  }
+}
+
+async function triggerPriceFeed() {
+  await fetchJson(`${API}/pricefeed/refresh`, 'POST');
+  toast('🔄 Prisoppdatering startet i bakgrunnen...');
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────
+async function fetchJson(url, method = 'GET', body = null) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(url, opts);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+function rarityPill(r) {
+  const cls = { M: 'm', R: 'r', U: 'u', C: 'c' }[r] ?? 'c';
+  return `<span class="pill ${cls}">${r}</span>`;
+}
+
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function toast(msg) {
+  const el = document.createElement('div');
+  el.textContent = msg;
+  Object.assign(el.style, {
+    position:'fixed', bottom:'20px', right:'20px', background:'#1a1d27',
+    border:'1px solid #6c63ff', color:'#e8e9f0', padding:'10px 18px',
+    borderRadius:'8px', fontSize:'13px', zIndex:9999, boxShadow:'0 4px 20px rgba(0,0,0,.4)'
+  });
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+// ─── Init ────────────────────────────────────────────────────────
+loadInventory();
+document.getElementById('lastFeed').textContent = new Date().toLocaleTimeString('no-NO');
+</script>
+</body>
+</html>
