@@ -192,6 +192,54 @@ app.MapPut("/api/sets/{setCode}/fullset-pricing", async (string setCode, Fullset
 })
 .WithSummary("Set complete set buy/sell price");
 
+
+app.MapGet("/api/sets/{setCode}/fullset-foil-pricing", async (string setCode, MtgoBot.Core.Data.DatabaseConnectionFactory dbf) =>
+{
+    using var conn = (Npgsql.NpgsqlConnection)await dbf.CreateConnectionAsync();
+    var existing = await conn.QuerySingleOrDefaultAsync(
+        "SELECT fullset_foil_buy, fullset_foil_sell, fullset_foil_enabled FROM set_price_overrides WHERE set_code = @Code",
+        new { Code = setCode });
+    var autoCalc = await conn.QuerySingleOrDefaultAsync("""
+        SELECT
+            SUM(COALESCE(c.custom_buy_price,  c.market_price_tix * s.default_buy_multiplier))  AS auto_buy,
+            SUM(COALESCE(c.custom_sell_price, c.market_price_tix * s.default_sell_multiplier)) AS auto_sell,
+            COUNT(*) AS card_count
+        FROM cards c
+        JOIN sets s ON c.set_code = s.set_code
+        WHERE c.set_code = @Code
+          AND c.is_foil = true
+          AND c.collector_number IS NOT NULL
+          AND (s.base_set_size IS NULL
+            OR CAST(SPLIT_PART(c.collector_number, '/', 1) AS INTEGER) <= s.base_set_size)
+        """, new { Code = setCode });
+    return Results.Ok(new {
+        setCode,
+        fullsetBuy     = (decimal?)(existing?.fullset_foil_buy),
+        fullsetSell    = (decimal?)(existing?.fullset_foil_sell),
+        fullsetEnabled = (bool?)(existing?.fullset_foil_enabled) ?? false,
+        autoBuySum     = (decimal?)(autoCalc?.auto_buy) ?? 0m,
+        autoSellSum    = (decimal?)(autoCalc?.auto_sell) ?? 0m,
+        cardCount      = (int?)(autoCalc?.card_count) ?? 0
+    });
+})
+.WithSummary("Get foil complete set pricing");
+
+app.MapPut("/api/sets/{setCode}/fullset-foil-pricing", async (string setCode, FullsetPricingRequest req, MtgoBot.Core.Data.DatabaseConnectionFactory dbf) =>
+{
+    using var conn = (Npgsql.NpgsqlConnection)await dbf.CreateConnectionAsync();
+    await conn.ExecuteAsync("""
+        INSERT INTO set_price_overrides (set_code, fullset_foil_buy, fullset_foil_sell, fullset_foil_enabled, updated_at)
+        VALUES (@Code, @Buy, @Sell, @Enabled, NOW())
+        ON CONFLICT (set_code) DO UPDATE SET
+            fullset_foil_buy     = @Buy,
+            fullset_foil_sell    = @Sell,
+            fullset_foil_enabled = @Enabled,
+            updated_at           = NOW()
+        """, new { Code = setCode, Buy = req.FullsetBuy, Sell = req.FullsetSell, Enabled = req.FullsetEnabled });
+    return Results.Ok(new { message = $"Foil fullset pricing updated for {setCode}" });
+})
+.WithSummary("Set foil complete set pricing");
+
 // ══════════════════════════════════════════════════════════════════
 // SYSTEM / STATUS ROUTES
 // ══════════════════════════════════════════════════════════════════
