@@ -511,6 +511,7 @@ async function loadSetCards() {
     let url = `/api/inventory?set=${encodeURIComponent(setCode)}`;
     if (foil) url += '&foil=true';
     allSetCards = await fetchJson(url);
+    document.getElementById('setCardCount').textContent = allSetCards.length + ' kort';
     renderSetCards(allSetCards);
   } catch(e) {
     document.getElementById('setCardsBody').innerHTML = `<tr><td colspan="8" class="loading text-red">Feil: ${e.message}</td></tr>`;
@@ -562,12 +563,13 @@ function renderSetCards(cards) {
   });
 
   const countEl = document.getElementById('setCardCount');
-  if (countEl) countEl.textContent = `${filtered.length} kort`;
+  if (countEl) countEl.textContent = `${allSetCards.length} kort`;
 
   if (!filtered.length) {
     tbody.innerHTML = '<tr><td colspan="8" class="loading muted">Ingen kort funnet.</td></tr>';
     return;
   }
+  if (countEl) countEl.textContent = `${allSetCards.length} kort`;
   tbody.innerHTML = filtered.map(c => `
     <tr>
       <td><strong>${esc(c.cardName)}</strong>${c.collectorNumber ? ' <span style="font-size:10px;color:#94a3b8">#'+c.collectorNumber+'</span>' : ''}${c.isFoil ? ' <span class="pill f">✨</span>' : ''}</td>
