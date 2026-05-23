@@ -137,8 +137,13 @@ public class TradeEngine
         string botId,
         List<TradeWindowCard> userSideCards,
         List<TradeWindowCard> botSideCards,
-        decimal existingCredit)
+        decimal existingCredit,
+        IntradayVelocityTracker? velocity = null)
     {
+        if (velocity != null)
+            foreach (var card in botSideCards)
+                card.PriceTix = velocity.ApplyUplift(card.CardId, card.PriceTix);
+
         var balance = new TradeBalance
         {
             PlayerName  = playerName,
