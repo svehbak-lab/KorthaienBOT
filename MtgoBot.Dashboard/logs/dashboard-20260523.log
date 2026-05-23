@@ -28,3 +28,276 @@
 2026-05-23 10:53:54.372 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/favicon.ico - 404 0 null 12.3611ms
 2026-05-23 10:53:54.375 +00:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5000/favicon.ico, Response status code: 404
 2026-05-23 10:55:29.457 +00:00 [INF] Application is shutting down...
+2026-05-23 11:13:48.402 +00:00 [INF] Now listening on: http://localhost:5000
+2026-05-23 11:13:48.452 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 11:13:48.453 +00:00 [INF] Hosting environment: Production
+2026-05-23 11:13:48.453 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 11:13:52.184 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2026-05-23 11:13:52.291 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 11:13:52.293 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/index.html - 200 21593 text/html 109.5832ms
+2026-05-23 11:21:29.362 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2026-05-23 11:21:29.377 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 11:21:29.378 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/index.html - 200 21593 text/html 17.1017ms
+2026-05-23 11:22:30.505 +00:00 [INF] Application is shutting down...
+2026-05-23 11:24:49.879 +00:00 [INF] Now listening on: http://localhost:5000
+2026-05-23 11:24:49.948 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 11:24:49.949 +00:00 [INF] Hosting environment: Production
+2026-05-23 11:24:49.950 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 11:24:56.609 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2026-05-23 11:24:56.712 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 11:24:56.715 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/index.html - 200 21602 text/html 108.2018ms
+2026-05-23 11:25:27.265 +00:00 [INF] Application is shutting down...
+2026-05-23 13:05:05.787 +00:00 [INF] Now listening on: http://localhost:5000
+2026-05-23 13:05:05.829 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 13:05:05.829 +00:00 [INF] Hosting environment: Production
+2026-05-23 13:05:05.829 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 13:08:36.993 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2026-05-23 13:08:37.167 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 13:08:37.169 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/index.html - 200 22218 text/html 177.2507ms
+2026-05-23 13:09:24.560 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2026-05-23 13:09:24.562 +00:00 [INF] The file /index.html was not modified
+2026-05-23 13:09:24.563 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/index.html - 304 null text/html 3.0411ms
+2026-05-23 13:09:55.519 +00:00 [INF] Application is shutting down...
+2026-05-23 13:13:02.287 +00:00 [INF] Now listening on: http://localhost:5000
+2026-05-23 13:13:02.360 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 13:13:02.362 +00:00 [INF] Hosting environment: Production
+2026-05-23 13:13:02.363 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 13:13:05.001 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2026-05-23 13:13:05.121 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 13:13:05.123 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/index.html - 200 22257 text/html 124.6719ms
+2026-05-23 13:13:44.577 +00:00 [INF] Application is shutting down...
+2026-05-23 13:14:16.056 +00:00 [INF] Now listening on: http://localhost:5000
+2026-05-23 13:14:16.124 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 13:14:16.124 +00:00 [INF] Hosting environment: Production
+2026-05-23 13:14:16.125 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 13:14:18.980 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2026-05-23 13:14:19.081 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 13:14:19.084 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/index.html - 200 23067 text/html 105.051ms
+2026-05-23 13:14:44.906 +00:00 [INF] Application is shutting down...
+2026-05-23 13:14:54.534 +00:00 [INF] Now listening on: http://localhost:5000
+2026-05-23 13:14:54.595 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 13:14:54.596 +00:00 [INF] Hosting environment: Production
+2026-05-23 13:14:54.596 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 13:15:15.276 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2026-05-23 13:15:15.375 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 13:15:15.378 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/index.html - 200 22662 text/html 102.9401ms
+2026-05-23 13:16:53.056 +00:00 [INF] Application is shutting down...
+2026-05-23 13:22:02.607 +00:00 [INF] Now listening on: http://localhost:5000
+2026-05-23 13:22:02.667 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 13:22:02.667 +00:00 [INF] Hosting environment: Production
+2026-05-23 13:22:02.668 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 13:22:10.042 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2026-05-23 13:22:10.136 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 13:22:10.138 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/index.html - 200 22662 text/html 97.9462ms
+2026-05-23 13:22:49.277 +00:00 [INF] Application is shutting down...
+2026-05-23 13:32:57.321 +00:00 [INF] Now listening on: http://localhost:5000
+2026-05-23 13:32:57.359 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 13:32:57.359 +00:00 [INF] Hosting environment: Production
+2026-05-23 13:32:57.359 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 13:33:04.331 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2026-05-23 13:33:04.423 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 13:33:04.425 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/index.html - 200 22662 text/html 95.5948ms
+2026-05-23 13:33:28.232 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2026-05-23 13:33:28.247 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 13:33:28.248 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/index.html - 200 22662 text/html 16.0416ms
+2026-05-23 13:33:31.450 +00:00 [INF] Application is shutting down...
+2026-05-23 13:34:02.702 +00:00 [INF] Now listening on: http://localhost:5000
+2026-05-23 13:34:02.745 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 13:34:02.745 +00:00 [INF] Hosting environment: Production
+2026-05-23 13:34:02.745 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 13:34:35.513 +00:00 [INF] Application is shutting down...
+2026-05-23 13:35:09.082 +00:00 [INF] Now listening on: http://localhost:5000
+2026-05-23 13:35:09.121 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 13:35:09.121 +00:00 [INF] Hosting environment: Production
+2026-05-23 13:35:09.121 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 13:35:16.625 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2026-05-23 13:35:16.738 +00:00 [INF] The file /index.html was not modified
+2026-05-23 13:35:16.742 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/index.html - 304 null text/html 118.6078ms
+2026-05-23 13:35:34.332 +00:00 [INF] Application is shutting down...
+2026-05-23 13:35:38.706 +00:00 [INF] Now listening on: http://localhost:5000
+2026-05-23 13:35:38.759 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 13:35:38.759 +00:00 [INF] Hosting environment: Production
+2026-05-23 13:35:38.760 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 13:35:40.447 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/inventory - null null
+2026-05-23 13:35:40.543 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 13:35:42.233 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 13:35:42.244 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 13:35:59.530 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 13:35:59.589 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/inventory - 200 null application/json; charset=utf-8 19143.4922ms
+2026-05-23 13:37:08.457 +00:00 [INF] Application is shutting down...
+O.IOException: Failed to bind to address http://127.0.0.1:5000: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (98): Address already in use
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.DefaultAddressStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2026-05-23 13:37:13.148 +00:00 [INF] Now listening on: http://localhost:5000
+2026-05-23 13:37:13.199 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 13:37:13.200 +00:00 [INF] Hosting environment: Production
+2026-05-23 13:37:13.200 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 13:37:35.721 +00:00 [INF] Application is shutting down...
+2026-05-23 13:37:41.766 +00:00 [INF] Now listening on: http://localhost:5000
+2026-05-23 13:37:41.826 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 13:37:41.827 +00:00 [INF] Hosting environment: Production
+2026-05-23 13:37:41.828 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 13:37:43.743 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2026-05-23 13:37:43.830 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 13:37:43.834 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/index.html - 200 22662 text/html 90.7031ms
+2026-05-23 13:38:26.082 +00:00 [INF] Application is shutting down...
+2026-05-23 13:38:48.963 +00:00 [INF] Now listening on: http://localhost:5000
+2026-05-23 13:38:49.001 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 13:38:49.002 +00:00 [INF] Hosting environment: Production
+2026-05-23 13:38:49.002 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 13:38:49.262 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/sets - null null
+2026-05-23 13:38:49.363 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 13:38:49.677 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 13:38:49.686 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 13:38:49.696 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 13:38:49.698 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/sets - 200 null application/json; charset=utf-8 436.8268ms
+2026-05-23 13:38:52.238 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2026-05-23 13:38:52.261 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 13:38:52.262 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/index.html - 200 22662 text/html 24.3524ms
+2026-05-23 13:39:42.207 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/sets - null null
+2026-05-23 13:39:42.216 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 13:39:42.247 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 13:39:42.248 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 13:39:42.261 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 13:39:42.262 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/sets - 200 null application/json; charset=utf-8 55.4003ms
+2026-05-23 13:40:18.132 +00:00 [INF] Application is shutting down...
+l.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.DefaultAddressStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__14_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2026-05-23 13:40:22.961 +00:00 [INF] Now listening on: http://localhost:5001
+2026-05-23 13:40:23.001 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 13:40:23.002 +00:00 [INF] Hosting environment: Production
+2026-05-23 13:40:23.002 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 13:40:39.025 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 13:40:39.113 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 13:40:39.115 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 22662 text/html 91.3153ms
+2026-05-23 13:40:41.281 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/favicon.ico - null null
+2026-05-23 13:40:41.293 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/favicon.ico - 404 0 null 12.5652ms
+2026-05-23 13:40:41.296 +00:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5001/favicon.ico, Response status code: 404
+2026-05-23 13:41:23.435 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 13:41:23.439 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 13:41:23.439 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 22662 text/html 3.7208ms
+2026-05-23 13:41:45.867 +00:00 [INF] Application is shutting down...
+2026-05-23 13:42:09.750 +00:00 [INF] Now listening on: http://localhost:5001
+2026-05-23 13:42:09.808 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 13:42:09.809 +00:00 [INF] Hosting environment: Production
+2026-05-23 13:42:09.809 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 13:42:18.316 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 13:42:18.410 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 13:42:18.412 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 22662 text/html 97.3228ms
+2026-05-23 13:42:30.550 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 13:42:30.562 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 13:42:30.563 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 22662 text/html 12.2534ms
+2026-05-23 13:42:55.791 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 13:42:55.793 +00:00 [INF] The file /index.html was not modified
+2026-05-23 13:42:55.793 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 2.2253ms
+2026-05-23 13:43:28.838 +00:00 [INF] Application is shutting down...
+2026-05-23 13:44:25.150 +00:00 [INF] Now listening on: http://localhost:5001
+2026-05-23 13:44:25.195 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 13:44:25.195 +00:00 [INF] Hosting environment: Production
+2026-05-23 13:44:25.195 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 13:44:34.102 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 13:44:34.273 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 13:44:34.275 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 22641 text/html 175.5541ms
+2026-05-23 13:44:34.436 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 13:44:34.441 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 13:44:35.881 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 13:44:35.894 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 13:44:35.956 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 13:44:35.969 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 13:44:35.980 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 13:44:35.981 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 100.2361ms
+2026-05-23 13:44:36.112 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 13:44:36.115 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 13:44:41.340 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 13:44:41.341 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 6904.9586ms
+2026-05-23 13:45:49.408 +00:00 [INF] Application is shutting down...
+2026-05-23 13:46:12.750 +00:00 [INF] Now listening on: http://localhost:5001
+2026-05-23 13:46:12.785 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 13:46:12.785 +00:00 [INF] Hosting environment: Production
+2026-05-23 13:46:12.785 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 13:46:14.156 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory?search=Lightning - null null
+2026-05-23 13:46:14.261 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 13:46:14.706 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 13:46:14.715 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 13:46:14.744 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 13:46:14.746 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory?search=Lightning - 200 null application/json; charset=utf-8 593.2844ms
+2026-05-23 13:46:23.561 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 13:46:23.582 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 13:46:23.583 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 22641 text/html 21.2781ms
+2026-05-23 13:46:23.814 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 13:46:23.816 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 13:46:24.849 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 13:46:24.849 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 13:46:25.572 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 13:46:25.573 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 13:46:25.586 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 13:46:25.593 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 13:46:25.599 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 13:46:25.600 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 27.5973ms
+2026-05-23 13:46:30.361 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 13:46:30.363 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 6548.063ms
+2026-05-23 13:47:15.132 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 13:47:15.134 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 13:47:15.134 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 25848 text/html 1.7038ms
+2026-05-23 13:47:15.393 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 13:47:15.393 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 13:47:15.901 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 13:47:15.901 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 13:47:17.629 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 13:47:17.630 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 13:47:17.632 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 13:47:17.632 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 13:47:17.633 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 13:47:17.633 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 3.9195ms
+2026-05-23 13:47:20.232 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 13:47:20.235 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 13:47:20.236 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 25848 text/html 3.5781ms
+2026-05-23 13:47:20.296 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 13:47:20.297 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 4904.0523ms
+2026-05-23 13:47:20.455 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 13:47:20.456 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 13:47:20.991 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 13:47:20.991 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 13:47:21.689 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 13:47:21.689 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 13:47:21.690 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 13:47:21.691 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 13:47:21.691 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 13:47:21.691 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 2.3496ms
+2026-05-23 13:47:25.900 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 13:47:25.903 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5447.7572ms

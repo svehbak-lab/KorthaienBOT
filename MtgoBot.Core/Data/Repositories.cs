@@ -6,6 +6,16 @@ using Npgsql;
 
 namespace MtgoBot.Core.Data;
 
+// Enable snake_case → PascalCase mapping globally for Dapper
+public static class DapperConfig
+{
+    public static void Initialize()
+    {
+        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+    }
+}
+
+
 public class CardRepository
 {
     private readonly DatabaseConnectionFactory _db;
@@ -139,7 +149,6 @@ public class InventoryRepository
                      c.market_price_tix, c.custom_buy_price, c.custom_sell_price,
                      c.custom_max_stock, c.redeem_reserved,
                      s.default_buy_multiplier, s.default_sell_multiplier, s.default_max_stock
-            HAVING COALESCE(SUM(bi.quantity), 0) > 0
             ORDER BY c.market_price_tix DESC
             """, new { Search = search, SetCode = setCode });
     }

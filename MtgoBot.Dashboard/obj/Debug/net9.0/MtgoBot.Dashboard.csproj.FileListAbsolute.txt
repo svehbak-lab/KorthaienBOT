@@ -34,7 +34,6 @@
 /workspaces/KorthaienBOT/MtgoBot.Dashboard/obj/Debug/net9.0/rjsmrazor.dswa.cache.json
 /workspaces/KorthaienBOT/MtgoBot.Dashboard/obj/Debug/net9.0/rjsmcshtml.dswa.cache.json
 /workspaces/KorthaienBOT/MtgoBot.Dashboard/obj/Debug/net9.0/scopedcss/bundle/MtgoBot.Dashboard.styles.css
-/workspaces/KorthaienBOT/MtgoBot.Dashboard/obj/Debug/net9.0/compressed/ufhkioic3a-{0}-dssbx90sag-dssbx90sag.gz
 /workspaces/KorthaienBOT/MtgoBot.Dashboard/obj/Debug/net9.0/staticwebassets.build.json
 /workspaces/KorthaienBOT/MtgoBot.Dashboard/obj/Debug/net9.0/staticwebassets.build.json.cache
 /workspaces/KorthaienBOT/MtgoBot.Dashboard/obj/Debug/net9.0/staticwebassets.development.json
@@ -46,3 +45,5 @@
 /workspaces/KorthaienBOT/MtgoBot.Dashboard/obj/Debug/net9.0/MtgoBot.Dashboard.pdb
 /workspaces/KorthaienBOT/MtgoBot.Dashboard/obj/Debug/net9.0/MtgoBot.Dashboard.genruntimeconfig.cache
 /workspaces/KorthaienBOT/MtgoBot.Dashboard/obj/Debug/net9.0/ref/MtgoBot.Dashboard.dll
+/workspaces/KorthaienBOT/MtgoBot.Dashboard/bin/Debug/net9.0/appsettings.json
+/workspaces/KorthaienBOT/MtgoBot.Dashboard/obj/Debug/net9.0/compressed/ufhkioic3a-{0}-hghgot809m-hghgot809m.gz

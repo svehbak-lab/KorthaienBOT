@@ -2,6 +2,7 @@ using MtgoBot.Core.Data;
 
 using Serilog;
 
+MtgoBot.Core.Data.DapperConfig.Initialize();
 var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new Serilog.LoggerConfiguration()

@@ -165,7 +165,7 @@
               <tr>
                 <th>Kortnavn</th>
                 <th>Sett</th>
-                <th>R</th>
+                <th>Sjeldenhet</th>
                 <th>Totalt lager</th>
                 <th>Fordeling</th>
                 <th>Kjøpspris</th>
@@ -197,6 +197,13 @@
           <label>Slette inaktiv credit etter: <input type="number" id="purgeDays" value="90" step="1" min="1" style="width:70px"> dager</label>
         </div>
       </div>
+      <div class="toolbar">
+        <input type="text" id="setSearch" placeholder="🔍  Søk sett..." oninput="filterSetsTable()" style="flex:1; min-width:220px">
+        <label class="toggle-wrap">
+          <span>Foil</span>
+          <label class="toggle"><input type="checkbox" id="setFoilToggle" onchange="filterSetsTable()"><span class="toggle-slider"></span></label>
+        </label>
+      </div>
       <div class="panel" style="padding:0">
         <div class="tbl-wrap">
           <table>
@@ -206,6 +213,7 @@
                 <th>Navn</th>
                 <th>Kjøps-mult.</th>
                 <th>Salgs-mult.</th>
+                <th>Keep (behold)</th>
                 <th>Maks lager</th>
                 <th></th>
               </tr>
@@ -276,7 +284,51 @@
 </div>
 
 <script>
-const API = 'http://localhost:5050/api';
+const API = '/api';
+
+
+const SET_NAMES = {
+  "MH3":"Modern Horizons 3","MH2":"Modern Horizons 2","MH1":"Modern Horizons",
+  "OTJ":"Outlaws of Thunder Junction","MKM":"Murders at Karlov Manor",
+  "LCI":"Lost Caverns of Ixalan","WOE":"Wilds of Eldraine","MOM":"March of the Machine",
+  "ONE":"Phyrexia All Will Be One","BRO":"The Brothers War","DMU":"Dominaria United",
+  "SNC":"Streets of New Capenna","NEO":"Kamigawa Neon Dynasty","VOW":"Innistrad Crimson Vow",
+  "MID":"Innistrad Midnight Hunt","AFR":"Adventures in the Forgotten Realms",
+  "STX":"Strixhaven","KHM":"Kaldheim","ZNR":"Zendikar Rising","M21":"Core Set 2021",
+  "IKO":"Ikoria","THB":"Theros Beyond Death","ELD":"Throne of Eldraine",
+  "M20":"Core Set 2020","WAR":"War of the Spark","RNA":"Ravnica Allegiance",
+  "GRN":"Guilds of Ravnica","M19":"Core Set 2019","DOM":"Dominaria",
+  "RIX":"Rivals of Ixalan","XLN":"Ixalan","HOU":"Hour of Devastation",
+  "AKH":"Amonkhet","AER":"Aether Revolt","KLD":"Kaladesh",
+  "EMN":"Eldritch Moon","SOI":"Shadows Over Innistrad","OGW":"Oath of the Gatewatch",
+  "BFZ":"Battle for Zendikar","DTK":"Dragons of Tarkir","FRF":"Fate Reforged",
+  "KTK":"Khans of Tarkir","M15":"Core Set 2015","JOU":"Journey into Nyx",
+  "BNG":"Born of the Gods","THS":"Theros","M14":"Core Set 2014","DGM":"Dragon Maze",
+  "GTC":"Gatecrash","RTR":"Return to Ravnica","M13":"Core Set 2013",
+  "AVR":"Avacyn Restored","DKA":"Dark Ascension","ISD":"Innistrad",
+  "M12":"Core Set 2012","NPH":"New Phyrexia","MBS":"Mirrodin Besieged",
+  "SOM":"Scars of Mirrodin","M11":"Core Set 2011","ROE":"Rise of the Eldrazi",
+  "WWK":"Worldwake","ZEN":"Zendikar","M10":"Core Set 2010","ARB":"Alara Reborn",
+  "CFX":"Conflux","ALA":"Shards of Alara","LRW":"Lorwyn","MOR":"Morningtide",
+  "SHM":"Shadowmoor","EVE":"Eventide","10E":"Tenth Edition","FUT":"Future Sight",
+  "PLC":"Planar Chaos","TSP":"Time Spiral","RAV":"Ravnica","GPT":"Guildpact",
+  "DIS":"Dissension","SOK":"Saviors of Kamigawa","BOK":"Betrayers of Kamigawa",
+  "CHK":"Champions of Kamigawa","5DN":"Fifth Dawn","DST":"Darksteel",
+  "MRD":"Mirrodin","8ED":"Eighth Edition","SCG":"Scourge","LGN":"Legions",
+  "ONS":"Onslaught","JUD":"Judgment","TOR":"Torment","ODY":"Odyssey",
+  "APC":"Apocalypse","PLS":"Planeshift","INV":"Invasion","PCY":"Prophecy",
+  "NEM":"Nemesis","MMQ":"Mercadian Masques","UDS":"Urza Destiny",
+  "ULG":"Urza Legacy","USG":"Urza Saga","EXO":"Exodus","STH":"Stronghold",
+  "TMP":"Tempest","WTH":"Weatherlight","VIS":"Visions","MIR":"Mirage",
+  "ALL":"Alliances","ICE":"Ice Age","HML":"Homelands","FEM":"Fallen Empires",
+  "DRK":"The Dark","LEG":"Legends","ATQ":"Antiquities","ARN":"Arabian Nights",
+  "2ED":"Unlimited Edition","1E":"Limited Edition Alpha","2XM":"Double Masters 2022",
+  "2X2":"Double Masters","CMR":"Commander Legends","MH2":"Modern Horizons 2",
+  "LTR":"Lord of the Rings","STA":"Strixhaven Mystical Archive","SLD":"Secret Lair",
+  "MOC":"March of the Machine Commander","WHO":"Doctor Who","SPG":"Special Guests",
+  "DSK":"Duskmourn","FDN":"Foundations","BLB":"Bloomburrow","MH3":"Modern Horizons 3"
+};
+function setName(code) { return SET_NAMES[code] || code; }
 
 // ─── Tab switching ───────────────────────────────────────────────
 function showTab(name) {
@@ -303,6 +355,8 @@ async function loadInventory() {
     const rows = await fetchJson(url);
     const tbody = document.getElementById('inventoryBody');
 
+    // Filter out cards with no name
+    rows = rows.filter(r => r.cardName && r.cardName.length > 0);
     if (!rows || rows.length === 0) {
       tbody.innerHTML = `<tr><td colspan="10" class="loading muted">Ingen kort funnet.</td></tr>`;
       return;
@@ -334,25 +388,40 @@ async function loadInventory() {
   }
 }
 
+
 // ─── Sets ────────────────────────────────────────────────────────
+let allSets = [];
+
 async function loadSets() {
   try {
     const sets = await fetchJson(`${API}/sets`);
-    const vals = Object.values(sets);
-    const tbody = document.getElementById('setsBody');
-    tbody.innerHTML = vals.map(s => `
-      <tr id="set-${s.setCode}">
-        <td><span class="tag">${esc(s.setCode)}</span></td>
-        <td>${esc(s.setName)}</td>
-        <td><input type="number" value="${s.defaultBuyMultiplier}" step="0.01" style="width:70px" class="set-buy" data-set="${s.setCode}"></td>
-        <td><input type="number" value="${s.defaultSellMultiplier}" step="0.01" style="width:70px" class="set-sell" data-set="${s.setCode}"></td>
-        <td><input type="number" value="${s.defaultMaxStock}" step="1" style="width:60px" class="set-max" data-set="${s.setCode}"></td>
-        <td><button class="btn-primary btn-small" onclick="saveSetRules('${s.setCode}')">Lagre</button></td>
-      </tr>`).join('');
+    allSets = Object.values(sets);
+    renderSets(allSets);
   } catch(e) {
     document.getElementById('setsBody').innerHTML =
-      `<tr><td colspan="6" class="loading text-red">Feil: ${e.message}</td></tr>`;
+      `<tr><td colspan="7" class="loading text-red">⚠️ Feil: ${e.message}</td></tr>`;
   }
+}
+
+function filterSetsTable() {
+  const q = (document.getElementById('setSearch')?.value || '').toLowerCase();
+  const foil = document.getElementById('setFoilToggle')?.checked;
+  const filtered = allSets.filter(s =>
+    !q || s.setCode.toLowerCase().includes(q) || s.setName.toLowerCase().includes(q));
+  renderSets(filtered, foil);
+}
+
+function renderSets(sets, showFoil = false) {
+  document.getElementById('setsBody').innerHTML = sets.map(s => `
+    <tr id="set-${s.setCode}">
+      <td><span class="tag">${esc(s.setCode)}</span></td>
+      <td>${esc(s.setName)}${showFoil ? ' <span class="pill f">✨</span>' : ''}</td>
+      <td><input type="number" value="${s.defaultBuyMultiplier}" step="0.01" min="0" max="2" style="width:75px" class="set-buy"></td>
+      <td><input type="number" value="${s.defaultSellMultiplier}" step="0.01" min="0" max="2" style="width:75px" class="set-sell"></td>
+      <td><input type="number" value="0" step="1" min="0" style="width:65px" class="set-keep" title="Antall boten aldri selger"></td>
+      <td><input type="number" value="${s.defaultMaxStock}" step="1" min="0" style="width:65px" class="set-max"></td>
+      <td><button class="btn-primary btn-small" onclick="saveSetRules('${s.setCode}')">Lagre</button></td>
+    </tr>`).join('') || `<tr><td colspan="7" class="loading muted">Ingen sett funnet.</td></tr>`;
 }
 
 async function saveSetRules(setCode) {
@@ -361,7 +430,7 @@ async function saveSetRules(setCode) {
   const sell = parseFloat(row.querySelector('.set-sell').value);
   const max  = parseInt(row.querySelector('.set-max').value);
   await fetchJson(`${API}/sets/${setCode}/rules`, 'PUT', { buyMultiplier: buy, sellMultiplier: sell, maxStock: max });
-  toast(`✅ ${setCode} oppdatert`);
+  toast(`✅ ${setCode} lagret`);
 }
 
 // ─── Credits ─────────────────────────────────────────────────────
