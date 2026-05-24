@@ -110,6 +110,9 @@ public class TradeWindowCard
 {
     public string CardId { get; set; } = string.Empty;
     public string CardName { get; set; } = string.Empty;
+    public string SetCode { get; set; } = string.Empty;
+    public int CollectorNumber { get; set; }
+    public bool IsFoil { get; set; }
     public int Quantity { get; set; }
     public TradeSide Side { get; set; }
 
@@ -191,4 +194,11 @@ public class ReplenishQueue
         }
         return null;
     }
+}
+
+public class FullsetPricing
+{
+    public decimal? FullsetBuy     { get; set; }
+    public decimal? FullsetSell    { get; set; }
+    public bool     FullsetEnabled { get; set; }
 }

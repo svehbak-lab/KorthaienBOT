@@ -529,6 +529,29 @@ async function loadBots() {
             </div>
           </div>
 
+          <!-- Fullset bot rules (only for FULLSET bots) -->
+          ${b.bot_type === 'FULLSET' ? `
+          <div style="background:#fdf4ff; border-radius:8px; padding:12px; margin-bottom:12px; border:1px solid #e9d5ff">
+            <div style="font-size:11px;font-weight:700;color:#7e22ce;margin-bottom:8px">🎁 Fullset-bot regler</div>
+            <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center">
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px">
+                <input type="checkbox" class="bot-fs-buy" ${b.fullset_buy_enabled ? 'checked' : ''}>
+                Kjøp komplette sett fra kunder
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px">
+                <input type="checkbox" class="bot-fs-sell" ${b.fullset_sell_enabled ? 'checked' : ''}>
+                Selg komplette sett til kunder
+              </label>
+              <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
+                Maks sett per handel
+                <input type="number" value="${b.max_sets_per_trade||1}" step="1" min="1" style="width:70px" class="bot-max-sets">
+              </label>
+              <div style="font-size:11px;color:#94a3b8">
+                Priser settes i <strong>Filtre → Komplett sett-prising</strong> per sett.<br>
+                Restbeløp lagres som kunde-credit automatisk.
+              </div>
+            </div>
+          </div>` : ''}
           <!-- Set-specific overrides -->
           <div style="background:#f0fdf4; border-radius:8px; padding:12px; margin-bottom:12px; border:1px solid #bbf7d0">
             <div style="font-size:11px;font-weight:700;color:#065f46;margin-bottom:8px">🎯 Sett-spesifikke regler</div>
@@ -672,9 +695,12 @@ async function saveBot(botId, accountName) {
   const cardXfer       = card.querySelector('.bot-card-transfer-sel').value || null;
   const fullsetXfer    = card.querySelector('.bot-fullset-transfer-sel')?.value || null;
   const tradeMsg       = card.querySelector('.bot-trade-msg')?.value || null;
+  const fsBuy      = card.querySelector('.bot-fs-buy')?.checked ?? false;
+  const fsSell     = card.querySelector('.bot-fs-sell')?.checked ?? true;
+  const maxSets    = parseInt(card.querySelector('.bot-max-sets')?.value) || 1;
   await fetchJson(`/api/bots/${botId}`, 'PUT', {
     accountName, botType: type, description: desc,
-    transferTo: transfer, tixReserve, maxLocalStock: maxLocal, cardTransferTo: cardXfer, fullsetTransferTo: fullsetXfer, tradeMessage: tradeMsg, fullsetTransferTo: fullsetXfer
+    transferTo: transfer, tixReserve, maxLocalStock: maxLocal, cardTransferTo: cardXfer, fullsetTransferTo: fullsetXfer, tradeMessage: tradeMsg, fullsetBuyEnabled: fsBuy, fullsetSellEnabled: fsSell, maxSetsPerTrade: maxSets, fullsetTransferTo: fullsetXfer
   });
   toast(`✅ ${botId} lagret`);
   loadBots();

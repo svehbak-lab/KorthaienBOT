@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MtgoBot.Dashboard")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+46d6aa71bc854bf2515e5c6eadd94898ce9286b2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4ba300da49fdb5d2ede04450dd8665ae892d0402")]
 [assembly: System.Reflection.AssemblyProductAttribute("MtgoBot.Dashboard")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MtgoBot.Dashboard")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -73,6 +73,48 @@ public class CardRepository
             new { Keep = keepValue, Code = setCode });
     }
 
+
+
+
+    public async Task<FullsetPricing?> GetFullsetPricingAsync(string setCode, bool isFoil)
+    {
+        using var conn = Open();
+        if (isFoil)
+            return await conn.QuerySingleOrDefaultAsync<FullsetPricing>("""
+                SELECT fullset_foil_buy AS fullset_buy, fullset_foil_sell AS fullset_sell,
+                       fullset_foil_enabled AS fullset_enabled
+                FROM set_price_overrides WHERE set_code = @Code
+                """, new { Code = setCode });
+        return await conn.QuerySingleOrDefaultAsync<FullsetPricing>(
+            "SELECT fullset_buy, fullset_sell, fullset_enabled FROM set_price_overrides WHERE set_code = @Code",
+            new { Code = setCode });
+    }
+
+    public async Task<decimal> GetPlayerCreditAsync(string playerName)
+    {
+        using var conn = Open();
+        return await conn.QuerySingleOrDefaultAsync<decimal>(
+            "SELECT COALESCE(balance_tix, 0) FROM users WHERE username = @Name",
+            new { Name = playerName });
+    }
+
+    public async Task<List<MagicSet>> GetActiveSetsAsync()
+    {
+        using var conn = Open();
+        var rows = await conn.QueryAsync<MagicSet>(
+            "SELECT * FROM sets ORDER BY set_code LIMIT 50");
+        return rows.ToList();
+    }
+
+    public async Task<List<Card>> SearchCardsByNameAsync(string name)
+    {
+        using var conn = Open();
+        var rows = await conn.QueryAsync<Card>(
+            "SELECT * FROM cards WHERE card_name ILIKE @Name AND is_foil = false ORDER BY market_price_tix DESC LIMIT 5",
+            new { Name = $"%{name}%" });
+        return rows.ToList();
+    }
+
     public async Task UpdateSetRulesAsync(string setCode, decimal buyMultiplier, decimal sellMultiplier, int maxStock, int? baseSetSize = null)
     {
         using var conn = Open();
