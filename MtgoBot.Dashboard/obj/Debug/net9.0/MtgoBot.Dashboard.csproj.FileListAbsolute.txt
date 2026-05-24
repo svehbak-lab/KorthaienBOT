@@ -46,4 +46,4 @@
 /workspaces/KorthaienBOT/MtgoBot.Dashboard/obj/Debug/net9.0/MtgoBot.Dashboard.genruntimeconfig.cache
 /workspaces/KorthaienBOT/MtgoBot.Dashboard/obj/Debug/net9.0/ref/MtgoBot.Dashboard.dll
 /workspaces/KorthaienBOT/MtgoBot.Dashboard/bin/Debug/net9.0/appsettings.json
-/workspaces/KorthaienBOT/MtgoBot.Dashboard/obj/Debug/net9.0/compressed/ufhkioic3a-{0}-wz8ke2xi1f-wz8ke2xi1f.gz
+/workspaces/KorthaienBOT/MtgoBot.Dashboard/obj/Debug/net9.0/compressed/ufhkioic3a-{0}-1jgdeap7ss-1jgdeap7ss.gz

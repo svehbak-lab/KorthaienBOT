@@ -114,9 +114,7 @@
       <a href="#" class="active" onclick="showTab('inventory')"><span class="icon">📦</span> Inventory</a>
       <a href="#" onclick="showTab('sets')"><span class="icon">🃏</span> Filtre</a>
       <a href="#" onclick="showTab('credits')"><span class="icon">💰</span> Kunde-credits</a>
-      <a href="#" onclick="showTab('log')"><span class="icon">📋</span> System-logg</a>
       <a href="#" onclick="showTab('bots',this)"><span class="icon">🤖</span> Botter</a>
-      <a href="#" onclick="showTab('settings')"><span class="icon">⚙️</span> Innstillinger</a>
     </nav>
     <div style="margin-top:auto; padding:20px; font-size:11px; color:var(--muted);">
       Priser: <a href="https://www.goatbots.com" target="_blank" style="color:var(--accent2)">GoatBots</a><br>
@@ -126,6 +124,12 @@
 
   <!-- ── Main ── -->
   <main class="main">
+
+    <!-- BOT STATUS BAR (shown on all pages) -->
+    <div id="botStatusBar" style="display:flex; gap:12px; padding:8px 32px; background:#1e1b4b; border-bottom:1px solid #312e81; flex-wrap:wrap">
+      <span style="font-size:11px;color:#94a3b8;align-self:center">BOTTER:</span>
+      <div id="botStatusItems" style="display:flex;gap:12px;flex-wrap:wrap"></div>
+    </div>
 
     <!-- INVENTORY TAB -->
     <div id="tab-inventory">
@@ -376,13 +380,21 @@ const SET_NAMES = {
 function setName(code) { return SET_NAMES[code] || code; }
 
 // ─── Tab switching ───────────────────────────────────────────────
+let allBotIds = [];
+let allSetCards = [];
+let currentSetCode = '';
+let sortCol = 'marketPriceTix';
+let sortDir = -1;
+loadBotStatusBar();
+setInterval(loadBotStatusBar, 30000); // refresh every 30s
+
 function showTab(name) {
   document.querySelectorAll('[id^=tab-]').forEach(el => el.style.display = 'none');
   document.getElementById('tab-' + name).style.display = 'block';
   document.querySelectorAll('nav a').forEach((a, i) => {
     a.classList.toggle('active', a.getAttribute('onclick')?.includes(name));
   });
-  if (name === 'inventory') loadInventory();
+  if (name === 'inventory') { loadInventory(); loadPnl('today'); }
   if (name === 'sets')      { populateSetDropdown(); }
   if (name === 'credits')   loadCredits();
   if (name === 'log')       loadStatus();
@@ -440,12 +452,11 @@ async function loadInventory() {
 
 
 // ─── Bots ────────────────────────────────────────────────────────
-let allBotIds = [];
 
 async function loadBots() {
   try {
     const bots = await fetchJson('/api/bots');
-    allBotIds = bots.map(b => b.bot_id);
+    allBotIds = bots.map(b => b.bot_id); // update global
     const container = document.getElementById('botsContainer');
 
     container.innerHTML = bots.map(b => `
@@ -781,8 +792,6 @@ async function saveFullsetPricing() {
 }
 
 // ─── Set card view ───────────────────────────────────────────────
-let allSetCards = [];
-let currentSetCode = '';
 
 async function populateSetDropdown() {
   try {
@@ -850,8 +859,6 @@ function filterSetCards() {
 }
 
 
-let sortCol = 'marketPriceTix';
-let sortDir = -1; // -1 = desc, 1 = asc
 
 function sortSetCards(col) {
   if (sortCol === col) sortDir *= -1;

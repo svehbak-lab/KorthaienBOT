@@ -90,6 +90,18 @@ public class CardRepository
             new { Code = setCode });
     }
 
+    public async Task SetCreditAsync(string playerName, decimal newBalance)
+    {
+        using var conn = Open();
+        await conn.ExecuteAsync("""
+            INSERT INTO users (username, balance_tix, last_trade)
+            VALUES (@Name, @Balance, NOW())
+            ON CONFLICT (username) DO UPDATE SET
+                balance_tix = @Balance,
+                last_trade  = NOW()
+            """, new { Name = playerName, Balance = newBalance });
+    }
+
     public async Task<decimal> GetPlayerCreditAsync(string playerName)
     {
         using var conn = Open();
