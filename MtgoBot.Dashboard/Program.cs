@@ -139,6 +139,91 @@ app.MapPost("/api/credits/purge-inactive", async (
 
 
 
+
+
+// Bot set-specific rules
+app.MapGet("/api/bots/{botId}/set-rules", async (string botId, MtgoBot.Core.Data.DatabaseConnectionFactory dbf) =>
+{
+    using var conn = (Npgsql.NpgsqlConnection)await dbf.CreateConnectionAsync();
+    var rules = await conn.QueryAsync(
+        "SELECT * FROM bot_set_rules WHERE bot_id = @BotId ORDER BY set_code",
+        new { BotId = botId });
+    return Results.Ok(rules);
+});
+
+app.MapPut("/api/bots/{botId}/set-rules/{setCode}", async (string botId, string setCode, BotSetRuleRequest req, MtgoBot.Core.Data.DatabaseConnectionFactory dbf) =>
+{
+    using var conn = (Npgsql.NpgsqlConnection)await dbf.CreateConnectionAsync();
+    await conn.ExecuteAsync("""
+        INSERT INTO bot_set_rules (bot_id, set_code, max_local_stock, keep_local, max_per_trade, buy_multiplier, sell_multiplier, updated_at)
+        VALUES (@BotId, @SetCode, @MaxLocal, @Keep, @Mpt, @Buy, @Sell, NOW())
+        ON CONFLICT (bot_id, set_code) DO UPDATE SET
+            max_local_stock  = @MaxLocal,
+            keep_local       = @Keep,
+            max_per_trade    = @Mpt,
+            buy_multiplier   = @Buy,
+            sell_multiplier  = @Sell,
+            updated_at       = NOW()
+        """, new { BotId = botId, SetCode = setCode, MaxLocal = req.MaxLocalStock, Keep = req.KeepLocal, Mpt = req.MaxPerTrade, Buy = req.BuyMultiplier, Sell = req.SellMultiplier });
+    return Results.Ok(new { message = $"Set rule saved for {botId}/{setCode}" });
+});
+
+app.MapDelete("/api/bots/{botId}/set-rules/{setCode}", async (string botId, string setCode, MtgoBot.Core.Data.DatabaseConnectionFactory dbf) =>
+{
+    using var conn = (Npgsql.NpgsqlConnection)await dbf.CreateConnectionAsync();
+    await conn.ExecuteAsync("DELETE FROM bot_set_rules WHERE bot_id=@BotId AND set_code=@SetCode",
+        new { BotId = botId, SetCode = setCode });
+    return Results.Ok(new { message = "Deleted" });
+});
+
+// ══════════════════════════════════════════════════════════════════
+// BOTS ROUTES
+// ══════════════════════════════════════════════════════════════════
+
+app.MapGet("/api/bots", async (MtgoBot.Core.Data.DatabaseConnectionFactory dbf) =>
+{
+    using var conn = (Npgsql.NpgsqlConnection)await dbf.CreateConnectionAsync();
+    var bots = await conn.QueryAsync("""
+        SELECT b.bot_id, b.account_name, b.bot_type, b.description,
+               b.transfer_to, b.tix_reserve, b.max_local_stock, b.card_transfer_to, b.fullset_transfer_to, b.trade_message, b.fullset_transfer_to,
+               b.is_online, b.last_seen,
+               COALESCE(SUM(bi.quantity), 0) AS total_cards
+        FROM bots b
+        LEFT JOIN bot_inventory bi ON b.bot_id = bi.bot_id
+        GROUP BY b.bot_id, b.account_name, b.bot_type, b.description,
+                 b.transfer_to, b.is_online, b.last_seen
+        ORDER BY b.bot_type, b.bot_id
+        """);
+    return Results.Ok(bots);
+});
+
+app.MapPut("/api/bots/{botId}", async (string botId, BotUpdateRequest req, MtgoBot.Core.Data.DatabaseConnectionFactory dbf) =>
+{
+    using var conn = (Npgsql.NpgsqlConnection)await dbf.CreateConnectionAsync();
+    await conn.ExecuteAsync("""
+        INSERT INTO bots (bot_id, account_name, bot_type, description, transfer_to, tix_reserve, max_local_stock, card_transfer_to, is_online)
+        VALUES (@BotId, @Account, @Type, @Desc, @TransferTo, @TixReserve, @MaxLocal, @CardXfer, false)
+        ON CONFLICT (bot_id) DO UPDATE SET
+            account_name     = @Account,
+            bot_type         = @Type,
+            description      = @Desc,
+            transfer_to      = @TransferTo,
+            tix_reserve      = @TixReserve,
+            max_local_stock      = @MaxLocal,
+            card_transfer_to     = @CardXfer,
+            fullset_transfer_to  = @FullsetXfer,
+            trade_message        = @TradeMsg
+        """, new { BotId = botId, Account = req.AccountName, Type = req.BotType, Desc = req.Description, TransferTo = req.TransferTo, TixReserve = req.TixReserve, MaxLocal = req.MaxLocalStock, CardXfer = req.CardTransferTo, FullsetXfer = req.FullsetTransferTo, TradeMsg = req.TradeMessage });
+    return Results.Ok(new { message = $"Bot {botId} updated" });
+});
+
+app.MapDelete("/api/bots/{botId}", async (string botId, MtgoBot.Core.Data.DatabaseConnectionFactory dbf) =>
+{
+    using var conn = (Npgsql.NpgsqlConnection)await dbf.CreateConnectionAsync();
+    await conn.ExecuteAsync("DELETE FROM bots WHERE bot_id = @BotId", new { BotId = botId });
+    return Results.Ok(new { message = $"Bot {botId} deleted" });
+});
+
 // ══════════════════════════════════════════════════════════════════
 // COMPLETE SET PRICING ROUTES
 // ══════════════════════════════════════════════════════════════════
@@ -276,3 +361,7 @@ record CreditAdjustRequest(decimal Delta, string? Reason);
 record ApplyKeepRequest(int KeepValue);
 
 record FullsetPricingRequest(decimal? FullsetBuy, decimal? FullsetSell, bool FullsetEnabled);
+
+record BotUpdateRequest(string AccountName, string BotType, string? Description, string? TransferTo, int TixReserve = 500, int MaxLocalStock = 4, string? CardTransferTo = null, string? FullsetTransferTo = null, string? TradeMessage = null);
+
+record BotSetRuleRequest(int? MaxLocalStock, int? KeepLocal, int? MaxPerTrade, decimal? BuyMultiplier = null, decimal? SellMultiplier = null);

@@ -129,6 +129,88 @@ public class InventoryRepository
         return Math.Max(0, total - redeemReserved);
     }
 
+
+    /// <summary>
+    /// Network inventory aggregated across bots of a specific type (e.g. TRADE bots only).
+    /// Used for network-wide keep calculations.
+    /// </summary>
+    public async Task<Dictionary<string, int>> GetNetworkInventoryByBotTypeAsync(string botType)
+    {
+        using var conn = Open();
+        var rows = await conn.QueryAsync<BotInventoryEntry>("""
+            SELECT bi.card_id, SUM(bi.quantity) AS quantity
+            FROM bot_inventory bi
+            JOIN bots b ON bi.bot_id = b.bot_id
+            WHERE b.bot_type = @BotType AND bi.quantity > 0
+            GROUP BY bi.card_id
+            """, new { BotType = botType });
+        return rows.ToDictionary(r => r.CardId, r => r.Quantity);
+    }
+
+    /// <summary>
+    /// Per-bot stock for a specific card, filtered by bot type.
+    /// Used to decide which bot to pull from during mule transfer.
+    /// </summary>
+    public async Task<Dictionary<string, int>> GetCardStockPerBotAsync(string cardId, string botType)
+    {
+        using var conn = Open();
+        var rows = await conn.QueryAsync("""
+            SELECT bi.bot_id, bi.quantity
+            FROM bot_inventory bi
+            JOIN bots b ON bi.bot_id = b.bot_id
+            WHERE bi.card_id = @CardId AND b.bot_type = @BotType AND bi.quantity > 0
+            """, new { CardId = cardId, BotType = botType });
+        return rows.ToDictionary(r => (string)r.bot_id, r => (int)r.quantity);
+    }
+
+    /// <summary>
+    /// Available-for-sale quantity: network total minus network-wide keep target.
+    /// This is what trade bots use to decide how many to offer in a trade window.
+    /// </summary>
+    public async Task<int> GetAvailableForSaleAsync(string cardId, int keepTarget)
+    {
+        using var conn = Open();
+        var networkTotal = await conn.QuerySingleOrDefaultAsync<int>("""
+            SELECT COALESCE(SUM(bi.quantity), 0)
+            FROM bot_inventory bi
+            JOIN bots b ON bi.bot_id = b.bot_id
+            WHERE bi.card_id = @CardId AND b.bot_type = 'TRADE'
+            """, new { CardId = cardId });
+
+        var muleTotal = await conn.QuerySingleOrDefaultAsync<int>("""
+            SELECT COALESCE(SUM(bi.quantity), 0)
+            FROM bot_inventory bi
+            JOIN bots b ON bi.bot_id = b.bot_id
+            WHERE bi.card_id = @CardId AND b.bot_type = 'MULE'
+            """, new { CardId = cardId });
+
+        // Available = network trade stock - what's still needed for keep target
+        int alreadyInMule = muleTotal;
+        int stillNeeded   = Math.Max(0, keepTarget - alreadyInMule);
+        int available     = Math.Max(0, networkTotal - stillNeeded);
+        return available;
+    }
+
+
+    /// <summary>Get quantity of a specific card on a specific bot.</summary>
+    public async Task<int> GetCardQuantityAsync(string botId, string cardId)
+    {
+        using var conn = Open();
+        return await conn.QuerySingleOrDefaultAsync<int>(
+            "SELECT COALESCE(quantity,0) FROM bot_inventory WHERE bot_id=@BotId AND card_id=@CardId",
+            new { BotId = botId, CardId = cardId });
+    }
+
+    /// <summary>Get all TRADE bots with their TIX reserve targets.</summary>
+    public async Task<Dictionary<string, int>> GetBotsWithReservesAsync(string botType)
+    {
+        using var conn = Open();
+        var rows = await conn.QueryAsync(
+            "SELECT bot_id, tix_reserve FROM bots WHERE bot_type = @BotType",
+            new { BotType = botType });
+        return rows.ToDictionary(r => (string)r.bot_id, r => (int)r.tix_reserve);
+    }
+
     public async Task QueueMuleTransfersAsync(string fromBotId, string toBotId, IEnumerable<TransferOrder> orders)
     {
         using var conn = Open();

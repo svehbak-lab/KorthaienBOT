@@ -3868,3 +3868,1279 @@ Did you mean to register the "Body (Inferred)" parameter(s) as a Service or appl
 2026-05-23 19:18:35.142 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory?set=DFT - 200 null application/json; charset=utf-8 148.045ms
 2026-05-23 19:18:37.709 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
 2026-05-23 19:18:37.710 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 7953.2767ms
+2026-05-23 19:21:11.628 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 19:21:11.639 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 19:21:11.639 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 41888 text/html 10.7847ms
+2026-05-23 19:21:11.780 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 19:21:11.780 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 19:21:12.325 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:21:12.325 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 19:21:17.621 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 19:21:17.621 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 19:21:17.623 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:21:17.623 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 19:21:17.625 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 19:21:17.625 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 4.4865ms
+2026-05-23 19:21:17.739 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 19:21:17.739 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5959.4082ms
+2026-05-23 19:21:20.180 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 19:21:20.180 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 19:21:20.181 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:21:20.182 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 19:21:20.182 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 19:21:20.182 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 1.9516ms
+2026-05-23 19:21:20.311 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets/AER/fullset-pricing - application/json 0
+2026-05-23 19:21:20.311 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 19:21:20.337 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:21:20.338 +00:00 [INF] Writing value of type '<>f__AnonymousType4`7' as Json.
+2026-05-23 19:21:20.338 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 19:21:20.340 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/AER/fullset-pricing - 200 null application/json; charset=utf-8 28.7349ms
+2026-05-23 19:21:20.420 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets/AER/fullset-foil-pricing - application/json 0
+2026-05-23 19:21:20.421 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets/{setCode}/fullset-foil-pricing'
+2026-05-23 19:21:20.442 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory?set=AER - application/json 0
+2026-05-23 19:21:20.442 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 19:21:20.444 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:21:20.444 +00:00 [INF] Writing value of type '<>f__AnonymousType4`7' as Json.
+2026-05-23 19:21:20.444 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets/{setCode}/fullset-foil-pricing'
+2026-05-23 19:21:20.446 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/AER/fullset-foil-pricing - 200 null application/json; charset=utf-8 23.9708ms
+2026-05-23 19:21:20.453 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:21:20.453 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 19:21:20.454 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 19:21:20.454 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory?set=AER - 200 null application/json; charset=utf-8 12.6175ms
+2026-05-23 19:21:24.603 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 19:21:24.603 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 19:21:24.604 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:21:24.604 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 19:21:24.605 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 19:21:24.605 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 1.9292ms
+2026-05-23 19:21:24.734 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-foil-pricing - application/json 0
+2026-05-23 19:21:24.734 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets/{setCode}/fullset-foil-pricing'
+2026-05-23 19:21:24.762 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:21:24.763 +00:00 [INF] Writing value of type '<>f__AnonymousType4`7' as Json.
+2026-05-23 19:21:24.763 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets/{setCode}/fullset-foil-pricing'
+2026-05-23 19:21:24.763 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-foil-pricing - 200 null application/json; charset=utf-8 28.7076ms
+2026-05-23 19:21:24.850 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - application/json 0
+2026-05-23 19:21:24.851 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 19:21:24.871 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:21:24.871 +00:00 [INF] Writing value of type '<>f__AnonymousType4`7' as Json.
+2026-05-23 19:21:24.871 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 19:21:24.871 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - 200 null application/json; charset=utf-8 20.3893ms
+2026-05-23 19:21:24.878 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory?set=DFT - application/json 0
+2026-05-23 19:21:24.878 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 19:21:24.904 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:21:24.904 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 19:21:24.906 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 19:21:24.906 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory?set=DFT - 200 null application/json; charset=utf-8 28.6373ms
+2026-05-23 19:21:43.443 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 19:21:43.443 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 19:21:43.444 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:21:43.444 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 19:21:43.444 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 19:21:43.444 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 1.6966ms
+2026-05-23 19:21:43.558 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets/SOS/fullset-pricing - application/json 0
+2026-05-23 19:21:43.558 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 19:21:43.562 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets/SOS/fullset-foil-pricing - application/json 0
+2026-05-23 19:21:43.562 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets/{setCode}/fullset-foil-pricing'
+2026-05-23 19:21:43.585 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:21:43.585 +00:00 [INF] Writing value of type '<>f__AnonymousType4`7' as Json.
+2026-05-23 19:21:43.585 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 19:21:43.585 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/SOS/fullset-pricing - 200 null application/json; charset=utf-8 27.6796ms
+2026-05-23 19:21:43.594 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:21:43.594 +00:00 [INF] Writing value of type '<>f__AnonymousType4`7' as Json.
+2026-05-23 19:21:43.594 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets/{setCode}/fullset-foil-pricing'
+2026-05-23 19:21:43.594 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/SOS/fullset-foil-pricing - 200 null application/json; charset=utf-8 32.6387ms
+2026-05-23 19:21:43.601 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory?set=SOS - application/json 0
+2026-05-23 19:21:43.601 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 19:21:43.612 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:21:43.613 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 19:21:43.614 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 19:21:43.614 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory?set=SOS - 200 null application/json; charset=utf-8 13.3359ms
+2026-05-23 19:22:09.451 +00:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5001/api/sets/SOS/rules - application/json 71
+2026-05-23 19:22:09.454 +00:00 [INF] CORS policy execution successful.
+2026-05-23 19:22:09.454 +00:00 [INF] Executing endpoint 'HTTP: PUT /api/sets/{setCode}/rules'
+2026-05-23 19:22:09.471 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:22:09.472 +00:00 [INF] Writing value of type '<>f__AnonymousType0`1' as Json.
+2026-05-23 19:22:09.473 +00:00 [INF] Executed endpoint 'HTTP: PUT /api/sets/{setCode}/rules'
+2026-05-23 19:22:09.473 +00:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5001/api/sets/SOS/rules - 200 null application/json; charset=utf-8 22.8012ms
+2026-05-23 19:22:09.548 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 19:22:09.549 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 19:22:09.550 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:22:09.550 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 19:22:09.550 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 19:22:09.550 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 1.7899ms
+2026-05-23 19:22:09.665 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets/SOS/fullset-pricing - application/json 0
+2026-05-23 19:22:09.665 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 19:22:09.670 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets/SOS/fullset-foil-pricing - application/json 0
+2026-05-23 19:22:09.670 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets/{setCode}/fullset-foil-pricing'
+2026-05-23 19:22:09.696 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory?set=SOS - application/json 0
+2026-05-23 19:22:09.697 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 19:22:09.718 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:22:09.718 +00:00 [INF] Writing value of type '<>f__AnonymousType4`7' as Json.
+2026-05-23 19:22:09.718 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 19:22:09.718 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/SOS/fullset-pricing - 200 null application/json; charset=utf-8 53.4526ms
+2026-05-23 19:22:09.720 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:22:09.721 +00:00 [INF] Writing value of type '<>f__AnonymousType4`7' as Json.
+2026-05-23 19:22:09.722 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets/{setCode}/fullset-foil-pricing'
+2026-05-23 19:22:09.722 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/SOS/fullset-foil-pricing - 200 null application/json; charset=utf-8 52.3933ms
+2026-05-23 19:22:09.735 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:22:09.735 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 19:22:09.739 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 19:22:09.740 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory?set=SOS - 200 null application/json; charset=utf-8 43.1095ms
+2026-05-23 19:23:27.045 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 19:23:27.045 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 19:23:27.047 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:23:27.047 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 19:23:27.047 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 19:23:27.047 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 2.0522ms
+2026-05-23 19:23:30.372 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 19:23:30.379 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 19:23:30.379 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 41804 text/html 7.156ms
+2026-05-23 19:23:30.525 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 19:23:30.525 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 19:23:31.150 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:23:31.150 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 19:23:32.651 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 19:23:32.652 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 19:23:32.653 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:23:32.653 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 19:23:32.655 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 19:23:32.655 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 4.0065ms
+2026-05-23 19:23:34.534 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 19:23:34.534 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 19:23:34.536 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:23:34.536 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 19:23:34.537 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 19:23:34.537 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 3.2518ms
+2026-05-23 19:23:34.598 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - application/json 0
+2026-05-23 19:23:34.598 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 19:23:34.612 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory?set=DFT - application/json 0
+2026-05-23 19:23:34.612 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 19:23:34.623 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:23:34.625 +00:00 [INF] Writing value of type '<>f__AnonymousType4`7' as Json.
+2026-05-23 19:23:34.625 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 19:23:34.625 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - 200 null application/json; charset=utf-8 26.8583ms
+2026-05-23 19:23:34.627 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-foil-pricing - application/json 0
+2026-05-23 19:23:34.629 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets/{setCode}/fullset-foil-pricing'
+2026-05-23 19:23:34.667 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:23:34.667 +00:00 [INF] Writing value of type '<>f__AnonymousType4`7' as Json.
+2026-05-23 19:23:34.667 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets/{setCode}/fullset-foil-pricing'
+2026-05-23 19:23:34.667 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-foil-pricing - 200 null application/json; charset=utf-8 40.244ms
+2026-05-23 19:23:34.681 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:23:34.682 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 19:23:34.685 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 19:23:34.685 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory?set=DFT - 200 null application/json; charset=utf-8 73.634ms
+2026-05-23 19:23:36.524 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 19:23:36.524 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5998.8881ms
+2026-05-23 19:23:39.947 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/status - application/json 0
+2026-05-23 19:23:39.947 +00:00 [INF] Executing endpoint 'HTTP: GET /api/status'
+2026-05-23 19:23:39.948 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:23:39.950 +00:00 [INF] Writing value of type '<>f__AnonymousType6`3' as Json.
+2026-05-23 19:23:39.950 +00:00 [INF] Executed endpoint 'HTTP: GET /api/status'
+2026-05-23 19:23:39.950 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/status - 200 null application/json; charset=utf-8 3.3942ms
+2026-05-23 19:23:41.430 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/credits - application/json 0
+2026-05-23 19:23:41.430 +00:00 [INF] Executing endpoint 'HTTP: GET /api/credits'
+2026-05-23 19:23:41.436 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:23:41.439 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 19:23:41.441 +00:00 [INF] Executed endpoint 'HTTP: GET /api/credits'
+2026-05-23 19:23:41.441 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/credits - 200 null application/json; charset=utf-8 11.1429ms
+2026-05-23 19:23:42.510 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 19:23:42.510 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 19:23:42.512 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:23:42.512 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 19:23:42.512 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 19:23:42.512 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 2.3308ms
+2026-05-23 19:23:44.397 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 19:23:44.397 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 19:23:44.895 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 19:23:44.895 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 19:23:49.981 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 19:23:49.981 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5584.2819ms
+2026-05-23 21:21:40.979 +00:00 [INF] Now listening on: http://localhost:5001
+2026-05-23 21:21:41.014 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 21:21:41.014 +00:00 [INF] Hosting environment: Production
+2026-05-23 21:21:41.014 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 21:21:47.637 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:21:47.802 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 21:21:47.803 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 46762 text/html 168.4668ms
+2026-05-23 21:21:48.043 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:21:48.048 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:21:48.128 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:21:48.129 +00:00 [ERR] Connection id "0HNLP2561T7D5", Request id "0HNLP2561T7D5:00000001": An unhandled exception was thrown by the application.
+Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (111): Connection refused
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken, Boolean isFirstAttempt)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|213_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken, Boolean isFirstAttempt)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|34_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at MtgoBot.Core.Data.DatabaseConnectionFactory.CreateConnectionAsync() in /workspaces/KorthaienBOT/MtgoBot.Core/Data/DatabaseConnectionFactory.cs:line 31
+   at MtgoBot.Core.Data.InventoryRepository.Open() in /workspaces/KorthaienBOT/MtgoBot.Core/Data/Repositories.cs:line 88
+   at MtgoBot.Core.Data.InventoryRepository.GetDashboardInventoryAsync(String search, String setCode) in /workspaces/KorthaienBOT/MtgoBot.Core/Data/Repositories.cs:line 204
+   at Program.<>c.<<<Main>$>b__0_1>d.MoveNext() in /workspaces/KorthaienBOT/MtgoBot.Dashboard/Program.cs:line 41
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2026-05-23 21:21:48.228 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 500 0 null 184.7204ms
+2026-05-23 21:21:50.937 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:21:50.948 +00:00 [INF] The file /index.html was not modified
+2026-05-23 21:21:50.948 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 10.9027ms
+2026-05-23 21:21:51.115 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:21:51.116 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:21:51.118 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:21:51.118 +00:00 [ERR] Connection id "0HNLP2561T7D7", Request id "0HNLP2561T7D7:00000001": An unhandled exception was thrown by the application.
+Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (111): Connection refused
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken, Boolean isFirstAttempt)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|213_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken, Boolean isFirstAttempt)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|34_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at MtgoBot.Core.Data.DatabaseConnectionFactory.CreateConnectionAsync() in /workspaces/KorthaienBOT/MtgoBot.Core/Data/DatabaseConnectionFactory.cs:line 31
+   at MtgoBot.Core.Data.InventoryRepository.Open() in /workspaces/KorthaienBOT/MtgoBot.Core/Data/Repositories.cs:line 88
+   at MtgoBot.Core.Data.InventoryRepository.GetDashboardInventoryAsync(String search, String setCode) in /workspaces/KorthaienBOT/MtgoBot.Core/Data/Repositories.cs:line 204
+   at Program.<>c.<<<Main>$>b__0_1>d.MoveNext() in /workspaces/KorthaienBOT/MtgoBot.Dashboard/Program.cs:line 41
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2026-05-23 21:21:51.123 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 500 0 null 8.1322ms
+2026-05-23 21:21:55.500 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 21:21:55.500 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:21:55.503 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:21:55.503 +00:00 [ERR] Connection id "0HNLP2561T7D8", Request id "0HNLP2561T7D8:00000001": An unhandled exception was thrown by the application.
+Npgsql.NpgsqlException (0x80004005): Failed to connect to 127.0.0.1:5432
+ ---> System.Net.Sockets.SocketException (111): Connection refused
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken, Boolean isFirstAttempt)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|213_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken, Boolean isFirstAttempt)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|34_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at MtgoBot.Core.Data.DatabaseConnectionFactory.CreateConnectionAsync() in /workspaces/KorthaienBOT/MtgoBot.Core/Data/DatabaseConnectionFactory.cs:line 31
+   at MtgoBot.Core.Data.CardRepository.Open() in /workspaces/KorthaienBOT/MtgoBot.Core/Data/Repositories.cs:line 27
+   at MtgoBot.Core.Data.CardRepository.GetAllSetsAsync() in /workspaces/KorthaienBOT/MtgoBot.Core/Data/Repositories.cs:line 50
+   at Program.<>c.<<<Main>$>b__0_6>d.MoveNext() in /workspaces/KorthaienBOT/MtgoBot.Dashboard/Program.cs:line 106
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+2026-05-23 21:21:55.506 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 500 0 null 6.5508ms
+2026-05-23 21:22:25.619 +00:00 [INF] Application is shutting down...
+2026-05-23 21:22:29.512 +00:00 [INF] Now listening on: http://localhost:5001
+2026-05-23 21:22:29.550 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 21:22:29.550 +00:00 [INF] Hosting environment: Production
+2026-05-23 21:22:29.550 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 21:22:32.259 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:22:32.375 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 21:22:32.378 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 46762 text/html 119.4039ms
+2026-05-23 21:22:32.707 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:22:32.716 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:22:34.287 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 21:22:34.291 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:22:34.369 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:22:34.381 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 21:22:34.395 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:22:34.397 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 110.2079ms
+2026-05-23 21:22:35.476 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:22:35.478 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:22:36.229 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 21:22:36.229 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:22:36.233 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:22:36.234 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 21:22:36.237 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:22:36.237 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 8.0528ms
+2026-05-23 21:22:36.345 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-foil-pricing - application/json 0
+2026-05-23 21:22:36.348 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets/{setCode}/fullset-foil-pricing'
+2026-05-23 21:22:36.491 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - application/json 0
+2026-05-23 21:22:36.494 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 21:22:36.548 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory?set=DFT - application/json 0
+2026-05-23 21:22:36.548 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:22:36.605 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:22:36.605 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:22:36.607 +00:00 [INF] Writing value of type '<>f__AnonymousType6`7' as Json.
+2026-05-23 21:22:36.607 +00:00 [INF] Writing value of type '<>f__AnonymousType6`7' as Json.
+2026-05-23 21:22:36.609 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets/{setCode}/fullset-pricing'
+2026-05-23 21:22:36.610 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets/{setCode}/fullset-foil-pricing'
+2026-05-23 21:22:36.610 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-foil-pricing - 200 null application/json; charset=utf-8 265.1656ms
+2026-05-23 21:22:36.610 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets/DFT/fullset-pricing - 200 null application/json; charset=utf-8 119.2095ms
+2026-05-23 21:22:36.634 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:22:36.635 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:22:36.644 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:22:36.645 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory?set=DFT - 200 null application/json; charset=utf-8 96.9323ms
+2026-05-23 21:22:39.265 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:22:39.266 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:22:40.464 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:22:40.465 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:22:41.470 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 21:22:41.471 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:22:41.473 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:22:41.473 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 21:22:41.473 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:22:41.473 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 3.3767ms
+2026-05-23 21:22:42.340 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:22:42.341 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 9634.3193ms
+2026-05-23 21:22:45.751 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:22:45.751 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 6486.8174ms
+2026-05-23 21:23:10.383 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:23:10.402 +00:00 [INF] The file /index.html was not modified
+2026-05-23 21:23:10.402 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 19.7649ms
+2026-05-23 21:23:10.546 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:23:10.547 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:23:11.171 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:23:11.171 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:23:11.418 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:23:11.422 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 21:23:11.422 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 46762 text/html 3.49ms
+2026-05-23 21:23:11.608 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:23:11.608 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 1061.6973ms
+2026-05-23 21:23:11.631 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:23:11.631 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:23:12.212 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:23:12.212 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:23:12.645 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 21:23:12.646 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:23:12.647 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:23:12.648 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 21:23:12.649 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:23:12.649 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 3.9779ms
+2026-05-23 21:23:13.841 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:23:13.841 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:23:14.959 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:23:14.960 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:23:17.608 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:23:17.608 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5977.1596ms
+2026-05-23 21:23:19.692 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:23:19.692 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5851.0859ms
+2026-05-23 21:24:08.656 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:24:08.656 +00:00 [INF] The file /index.html was not modified
+2026-05-23 21:24:08.656 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 0.6111ms
+2026-05-23 21:24:08.796 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:24:08.796 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:24:09.378 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:24:09.378 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:24:14.679 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:24:14.679 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5883.5031ms
+2026-05-23 21:24:23.802 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:24:23.804 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 21:24:23.805 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 46853 text/html 2.4458ms
+2026-05-23 21:24:23.947 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:24:23.947 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:24:24.496 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:24:24.496 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:24:25.449 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:24:25.450 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:24:25.458 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:24:25.459 +00:00 [ERR] Connection id "0HNLP25JBNKCA", Request id "0HNLP25JBNKCA:00000001": An unhandled exception was thrown by the application.
+Npgsql.PostgresException (0x80004005): 42703: column b.description does not exist
+
+POSITION: 46
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Dapper.SqlMapper.QueryAsync[T](IDbConnection cnn, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 434
+   at Program.<>c.<<<Main>$>b__0_10>d.MoveNext() in /workspaces/KorthaienBOT/MtgoBot.Dashboard/Program.cs:line 150
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+  Exception data:
+    Severity: ERROR
+    SqlState: 42703
+    MessageText: column b.description does not exist
+    Position: 46
+    File: parse_relation.c
+    Line: 3722
+    Routine: errorMissingColumn
+2026-05-23 21:24:25.686 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 500 0 null 236.8285ms
+2026-05-23 21:24:27.748 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:24:27.748 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:24:27.750 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:24:27.750 +00:00 [ERR] Connection id "0HNLP25JBNKCB", Request id "0HNLP25JBNKCB:00000001": An unhandled exception was thrown by the application.
+Npgsql.PostgresException (0x80004005): 42703: column b.description does not exist
+
+POSITION: 46
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Dapper.SqlMapper.QueryAsync[T](IDbConnection cnn, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 434
+   at Program.<>c.<<<Main>$>b__0_10>d.MoveNext() in /workspaces/KorthaienBOT/MtgoBot.Dashboard/Program.cs:line 150
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+  Exception data:
+    Severity: ERROR
+    SqlState: 42703
+    MessageText: column b.description does not exist
+    Position: 46
+    File: parse_relation.c
+    Line: 3722
+    Routine: errorMissingColumn
+2026-05-23 21:24:27.755 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 500 0 null 7.4611ms
+2026-05-23 21:24:29.146 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:24:29.146 +00:00 [INF] The file /index.html was not modified
+2026-05-23 21:24:29.146 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 0.389ms
+2026-05-23 21:24:29.221 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:24:29.221 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5274.6102ms
+2026-05-23 21:24:29.262 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:24:29.263 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:24:30.012 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:24:30.012 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:24:30.049 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:24:30.050 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:24:30.051 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:24:30.051 +00:00 [ERR] Connection id "0HNLP25JBNKCE", Request id "0HNLP25JBNKCE:00000001": An unhandled exception was thrown by the application.
+Npgsql.PostgresException (0x80004005): 42703: column b.description does not exist
+
+POSITION: 46
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Dapper.SqlMapper.QueryAsync[T](IDbConnection cnn, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 434
+   at Program.<>c.<<<Main>$>b__0_10>d.MoveNext() in /workspaces/KorthaienBOT/MtgoBot.Dashboard/Program.cs:line 150
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+  Exception data:
+    Severity: ERROR
+    SqlState: 42703
+    MessageText: column b.description does not exist
+    Position: 46
+    File: parse_relation.c
+    Line: 3722
+    Routine: errorMissingColumn
+2026-05-23 21:24:30.056 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 500 0 null 6.7415ms
+2026-05-23 21:24:34.942 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:24:34.943 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5680.7117ms
+2026-05-23 21:26:03.596 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:26:03.596 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 21:26:03.597 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 46849 text/html 0.7706ms
+2026-05-23 21:26:03.727 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:26:03.727 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:26:04.328 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:26:04.328 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:26:05.975 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:26:05.976 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:26:05.979 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:26:05.980 +00:00 [ERR] Connection id "0HNLP25JBNKCH", Request id "0HNLP25JBNKCH:00000001": An unhandled exception was thrown by the application.
+Npgsql.PostgresException (0x80004005): 42703: column b.description does not exist
+
+POSITION: 46
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Dapper.SqlMapper.QueryAsync[T](IDbConnection cnn, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 434
+   at Program.<>c.<<<Main>$>b__0_10>d.MoveNext() in /workspaces/KorthaienBOT/MtgoBot.Dashboard/Program.cs:line 150
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+  Exception data:
+    Severity: ERROR
+    SqlState: 42703
+    MessageText: column b.description does not exist
+    Position: 46
+    File: parse_relation.c
+    Line: 3722
+    Routine: errorMissingColumn
+2026-05-23 21:26:05.998 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 500 0 null 22.7409ms
+2026-05-23 21:26:07.653 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:26:07.654 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 21:26:07.654 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 46849 text/html 0.5042ms
+2026-05-23 21:26:07.715 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:26:07.720 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 3993.1757ms
+2026-05-23 21:26:07.775 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:26:07.775 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:26:08.337 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:26:08.337 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:26:09.423 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:26:09.423 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:26:09.428 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:26:09.428 +00:00 [ERR] Connection id "0HNLP25JBNKCK", Request id "0HNLP25JBNKCK:00000001": An unhandled exception was thrown by the application.
+Npgsql.PostgresException (0x80004005): 42703: column b.description does not exist
+
+POSITION: 46
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Dapper.SqlMapper.QueryAsync[T](IDbConnection cnn, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 434
+   at Program.<>c.<<<Main>$>b__0_10>d.MoveNext() in /workspaces/KorthaienBOT/MtgoBot.Dashboard/Program.cs:line 150
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+  Exception data:
+    Severity: ERROR
+    SqlState: 42703
+    MessageText: column b.description does not exist
+    Position: 46
+    File: parse_relation.c
+    Line: 3722
+    Routine: errorMissingColumn
+2026-05-23 21:26:09.434 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 500 0 null 11.2154ms
+2026-05-23 21:26:13.696 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:26:13.699 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5923.2868ms
+2026-05-23 21:26:37.891 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - null null
+2026-05-23 21:26:37.891 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:26:37.893 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:26:37.893 +00:00 [ERR] Connection id "0HNLP25JBNKCL", Request id "0HNLP25JBNKCL:00000001": An unhandled exception was thrown by the application.
+Npgsql.PostgresException (0x80004005): 42703: column b.description does not exist
+
+POSITION: 46
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
+   at Dapper.SqlMapper.QueryAsync[T](IDbConnection cnn, Type effectiveType, CommandDefinition command) in /_/Dapper/SqlMapper.Async.cs:line 434
+   at Program.<>c.<<<Main>$>b__0_10>d.MoveNext() in /workspaces/KorthaienBOT/MtgoBot.Dashboard/Program.cs:line 150
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Http.RequestDelegateFactory.ExecuteTaskResult[T](Task`1 task, HttpContext httpContext)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpProtocol.ProcessRequests[TContext](IHttpApplication`1 application)
+  Exception data:
+    Severity: ERROR
+    SqlState: 42703
+    MessageText: column b.description does not exist
+    Position: 46
+    File: parse_relation.c
+    Line: 3722
+    Routine: errorMissingColumn
+2026-05-23 21:26:37.896 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 500 0 null 4.7015ms
+2026-05-23 21:27:11.670 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - null null
+2026-05-23 21:27:11.671 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:27:11.672 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:27:11.672 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:27:11.682 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:27:11.683 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 12.1349ms
+2026-05-23 21:27:44.003 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:27:44.004 +00:00 [INF] The file /index.html was not modified
+2026-05-23 21:27:44.004 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 0.4937ms
+2026-05-23 21:27:44.210 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:27:44.210 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:27:44.975 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:27:44.975 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:27:45.810 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:27:45.810 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:27:45.813 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:27:45.814 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:27:45.814 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:27:45.815 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 5.2432ms
+2026-05-23 21:27:47.517 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:27:47.517 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 21:27:47.517 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 46849 text/html 0.6394ms
+2026-05-23 21:27:47.656 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:27:47.656 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:27:47.671 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:27:47.671 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 3461.3933ms
+2026-05-23 21:27:48.144 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:27:48.144 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:27:49.248 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:27:49.248 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:27:49.249 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:27:49.249 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:27:49.249 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:27:49.250 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 2.0674ms
+2026-05-23 21:27:51.232 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:27:51.233 +00:00 [INF] The file /index.html was not modified
+2026-05-23 21:27:51.233 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 0.4654ms
+2026-05-23 21:27:51.289 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:27:51.289 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 3632.975ms
+2026-05-23 21:27:51.333 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:27:51.333 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:27:51.966 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:27:51.967 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:27:52.082 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 21:27:52.082 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:27:52.083 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:27:52.084 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 21:27:52.085 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:27:52.085 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 3.4014ms
+2026-05-23 21:27:53.732 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:27:53.733 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:27:53.737 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:27:53.737 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:27:53.737 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:27:53.737 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 4.5988ms
+2026-05-23 21:27:56.929 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:27:56.929 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5595.9873ms
+2026-05-23 21:28:34.993 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:28:34.993 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:28:34.997 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:28:34.997 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:28:34.997 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:28:34.997 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 3.681ms
+2026-05-23 21:28:35.894 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/status - application/json 0
+2026-05-23 21:28:35.894 +00:00 [INF] Executing endpoint 'HTTP: GET /api/status'
+2026-05-23 21:28:35.895 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:28:35.897 +00:00 [INF] Writing value of type '<>f__AnonymousType8`3' as Json.
+2026-05-23 21:28:35.898 +00:00 [INF] Executed endpoint 'HTTP: GET /api/status'
+2026-05-23 21:28:35.898 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/status - 200 null application/json; charset=utf-8 3.4523ms
+2026-05-23 21:28:36.615 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:28:36.615 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:28:36.616 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:28:36.616 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:28:36.617 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:28:36.617 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 2.2838ms
+2026-05-23 21:28:38.045 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:28:38.046 +00:00 [INF] The file /index.html was not modified
+2026-05-23 21:28:38.046 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 0.5206ms
+2026-05-23 21:28:38.150 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:28:38.150 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:28:38.665 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:28:38.666 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:28:39.416 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:28:39.416 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:28:39.419 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:28:39.419 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:28:39.419 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:28:39.419 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 3.4711ms
+2026-05-23 21:28:43.666 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:28:43.667 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5516.7742ms
+2026-05-23 21:29:00.885 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 21:29:00.886 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:29:00.887 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:29:00.887 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 21:29:00.890 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:29:00.891 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 5.4224ms
+2026-05-23 21:29:01.649 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:29:01.649 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:29:02.238 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:29:02.238 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:29:02.379 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:29:02.379 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:29:02.382 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:29:02.382 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:29:02.382 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:29:02.382 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 3.3739ms
+2026-05-23 21:29:07.589 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:29:07.590 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5940.5753ms
+2026-05-23 21:29:33.699 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/credits - application/json 0
+2026-05-23 21:29:33.700 +00:00 [INF] Executing endpoint 'HTTP: GET /api/credits'
+2026-05-23 21:29:33.703 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:29:33.704 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:29:33.704 +00:00 [INF] Executed endpoint 'HTTP: GET /api/credits'
+2026-05-23 21:29:33.704 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/credits - 200 null application/json; charset=utf-8 5.2139ms
+2026-05-23 21:29:34.530 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:29:34.530 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:29:34.532 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:29:34.532 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:29:34.532 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:29:34.532 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 1.8044ms
+2026-05-23 21:29:35.502 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:29:35.502 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:29:35.988 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:29:35.988 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:29:36.501 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 21:29:36.502 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:29:36.503 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:29:36.503 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 21:29:36.506 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:29:36.506 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 4.8558ms
+2026-05-23 21:29:37.271 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:29:37.271 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:29:37.273 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:29:37.273 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:29:37.273 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:29:37.273 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 2.4096ms
+2026-05-23 21:29:41.482 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:29:41.483 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5981.2479ms
+2026-05-23 21:29:54.119 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:29:54.119 +00:00 [INF] The file /index.html was not modified
+2026-05-23 21:29:54.119 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 0.5064ms
+2026-05-23 21:29:54.229 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:29:54.229 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:29:54.719 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:29:54.719 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:29:58.688 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:29:58.688 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:29:58.689 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:29:58.689 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:29:58.690 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:29:58.690 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 2.196ms
+2026-05-23 21:30:00.011 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:30:00.011 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5781.9624ms
+2026-05-23 21:30:07.156 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:30:07.157 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:30:07.158 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:30:07.158 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:30:07.158 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:30:07.158 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 1.7458ms
+2026-05-23 21:31:35.573 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/status - application/json 0
+2026-05-23 21:31:35.573 +00:00 [INF] Executing endpoint 'HTTP: GET /api/status'
+2026-05-23 21:31:35.574 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:31:35.574 +00:00 [INF] Writing value of type '<>f__AnonymousType8`3' as Json.
+2026-05-23 21:31:35.574 +00:00 [INF] Executed endpoint 'HTTP: GET /api/status'
+2026-05-23 21:31:35.574 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/status - 200 null application/json; charset=utf-8 0.8513ms
+2026-05-23 21:31:35.948 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:31:35.948 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:31:35.949 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:31:35.949 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:31:35.949 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:31:35.950 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 2.6845ms
+2026-05-23 21:31:38.398 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:31:38.399 +00:00 [INF] The file /index.html was not modified
+2026-05-23 21:31:38.399 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 0.532ms
+2026-05-23 21:31:38.511 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:31:38.512 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:31:39.004 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:31:39.004 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:31:43.923 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:31:43.924 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5412.5531ms
+2026-05-23 21:31:55.691 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:31:55.692 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:31:56.216 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:31:56.216 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:31:57.992 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:31:57.992 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:31:57.993 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:31:57.994 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:31:57.994 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:31:57.994 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 2.4738ms
+2026-05-23 21:32:01.141 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:32:01.142 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5450.3455ms
+2026-05-23 21:32:44.041 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:32:44.041 +00:00 [INF] The file /index.html was not modified
+2026-05-23 21:32:44.041 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 0.4859ms
+2026-05-23 21:32:44.235 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:32:44.235 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:32:44.735 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:32:44.735 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:32:45.201 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:32:45.201 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:32:45.202 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:32:45.202 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:32:45.202 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:32:45.202 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 1.4626ms
+2026-05-23 21:32:46.419 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:32:46.419 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 21:32:46.419 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 46849 text/html 0.5056ms
+2026-05-23 21:32:46.535 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:32:46.535 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 2299.7745ms
+2026-05-23 21:32:46.540 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:32:46.541 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:32:47.106 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:32:47.106 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:32:50.399 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:32:50.400 +00:00 [INF] The file /index.html was not modified
+2026-05-23 21:32:50.400 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 0.3625ms
+2026-05-23 21:32:50.479 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:32:50.479 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 3938.3202ms
+2026-05-23 21:32:50.548 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:32:50.548 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:32:51.084 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:32:51.084 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:32:51.477 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:32:51.477 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:32:51.478 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:32:51.479 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:32:51.479 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:32:51.479 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 2.2225ms
+2026-05-23 21:32:52.374 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:32:52.374 +00:00 [INF] The file /index.html was not modified
+2026-05-23 21:32:52.375 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 0.3284ms
+2026-05-23 21:32:52.433 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:32:52.433 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 1885.1257ms
+2026-05-23 21:32:52.461 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:32:52.461 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:32:52.986 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:32:52.986 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:32:53.271 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:32:53.271 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:32:53.273 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:32:53.273 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:32:53.273 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:32:53.274 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 2.9967ms
+2026-05-23 21:32:57.774 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:32:57.775 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5314.2114ms
+2026-05-23 21:33:10.256 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:33:10.257 +00:00 [INF] The file /index.html was not modified
+2026-05-23 21:33:10.258 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 1.6712ms
+2026-05-23 21:33:10.366 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:33:10.366 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:33:10.863 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:33:10.864 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:33:15.858 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:33:15.859 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5492.258ms
+2026-05-23 21:33:19.281 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:33:19.283 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:33:19.285 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:33:19.285 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:33:19.285 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:33:19.285 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 3.6325ms
+2026-05-23 21:33:52.949 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:33:52.949 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:33:52.950 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:33:52.950 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:33:52.951 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:33:52.951 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 1.555ms
+2026-05-23 21:33:53.477 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:33:53.477 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:33:53.478 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:33:53.478 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:33:53.479 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:33:53.479 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 1.9394ms
+2026-05-23 21:33:53.571 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:33:53.571 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:33:53.572 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:33:53.572 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:33:53.572 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:33:53.572 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 1.1453ms
+2026-05-23 21:33:53.748 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:33:53.748 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:33:53.749 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:33:53.749 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:33:53.749 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:33:53.749 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 1.3994ms
+2026-05-23 21:33:54.707 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:33:54.709 +00:00 [INF] The file /index.html was not modified
+2026-05-23 21:33:54.710 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 2.6108ms
+2026-05-23 21:33:54.850 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:33:54.850 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:33:55.332 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:33:55.332 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:33:56.638 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:33:56.638 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:33:56.639 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:33:56.639 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:33:56.639 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:33:56.639 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 1.6793ms
+2026-05-23 21:33:57.829 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 21:33:57.829 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:33:57.830 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:33:57.830 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 21:33:57.833 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:33:57.833 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 3.9893ms
+2026-05-23 21:33:59.017 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:33:59.017 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:34:00.179 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:34:00.179 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:34:00.758 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:34:00.759 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5908.7738ms
+2026-05-23 21:34:04.870 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:34:04.871 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5854.224ms
+2026-05-23 21:34:53.993 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:34:53.993 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:34:53.994 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:34:53.994 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:34:53.994 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:34:53.994 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 1.2999ms
+2026-05-23 21:34:55.166 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:34:55.166 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:34:55.642 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:34:55.642 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:35:00.686 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:35:00.687 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5520.6417ms
+2026-05-23 21:35:48.079 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:35:48.080 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:35:48.081 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:35:48.081 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:35:48.081 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:35:48.081 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 1.2834ms
+2026-05-23 21:37:19.294 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:37:19.294 +00:00 [INF] The file /index.html was not modified
+2026-05-23 21:37:19.294 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 0.3062ms
+2026-05-23 21:37:19.486 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:37:19.486 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:37:19.983 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:37:19.984 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:37:20.245 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:37:20.246 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:37:20.247 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:37:20.247 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:37:20.248 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:37:20.248 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 2.5411ms
+2026-05-23 21:37:21.444 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/sets - application/json 0
+2026-05-23 21:37:21.445 +00:00 [INF] Executing endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:37:21.449 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:37:21.449 +00:00 [INF] Writing value of type 'Dictionary`2' as Json.
+2026-05-23 21:37:21.449 +00:00 [INF] Executed endpoint 'HTTP: GET /api/sets'
+2026-05-23 21:37:21.450 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/sets - 200 null application/json; charset=utf-8 5.2937ms
+2026-05-23 21:37:22.265 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:37:22.265 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:37:22.267 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:37:22.267 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:37:22.267 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:37:22.267 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 2.0498ms
+2026-05-23 21:37:25.526 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:37:25.526 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 6040.5526ms
+2026-05-23 21:39:28.610 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:39:28.611 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 21:39:28.611 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 46850 text/html 0.6635ms
+2026-05-23 21:39:28.797 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:39:28.797 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:39:29.506 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:39:29.506 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:39:29.804 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:39:29.804 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:39:29.809 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:39:29.809 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:39:29.809 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:39:29.809 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 4.6689ms
+2026-05-23 21:39:34.423 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:39:34.423 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5626.3065ms
+2026-05-23 21:47:19.676 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:47:19.677 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 21:47:19.680 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 46850 text/html 3.1796ms
+2026-05-23 21:47:19.898 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:47:19.898 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:47:20.606 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:47:20.607 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:47:25.784 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:47:25.785 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5886.5349ms
+2026-05-23 21:48:00.301 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:48:00.301 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 21:48:00.301 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 47121 text/html 0.5546ms
+2026-05-23 21:48:00.536 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:48:00.536 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:48:01.074 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:48:01.075 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:48:02.229 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:48:02.229 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:48:02.231 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:48:02.231 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:48:02.231 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:48:02.231 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 2.2008ms
+2026-05-23 21:48:06.239 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:48:06.239 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5702.8777ms
+2026-05-23 21:49:13.470 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:49:13.471 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 21:49:13.471 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 47121 text/html 0.6267ms
+2026-05-23 21:49:13.648 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:49:13.648 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:49:14.152 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:49:14.152 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:49:14.645 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:49:14.645 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:49:14.646 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:49:14.646 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:49:14.646 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:49:14.646 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 1.2653ms
+2026-05-23 21:49:19.013 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:49:19.013 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5365.107ms
+2026-05-23 21:49:48.755 +00:00 [INF] Request starting HTTP/1.1 DELETE http://localhost:5001/api/bots/Bot_1 - application/json 0
+2026-05-23 21:49:48.757 +00:00 [INF] CORS policy execution successful.
+2026-05-23 21:49:48.758 +00:00 [INF] Executing endpoint 'HTTP: DELETE /api/bots/{botId}'
+2026-05-23 21:49:48.764 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:49:48.764 +00:00 [INF] Writing value of type '<>f__AnonymousType0`1' as Json.
+2026-05-23 21:49:48.766 +00:00 [INF] Executed endpoint 'HTTP: DELETE /api/bots/{botId}'
+2026-05-23 21:49:48.766 +00:00 [INF] Request finished HTTP/1.1 DELETE http://localhost:5001/api/bots/Bot_1 - 200 null application/json; charset=utf-8 10.6582ms
+2026-05-23 21:49:48.831 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:49:48.831 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:49:48.832 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:49:48.832 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:49:48.832 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:49:48.832 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 1.1297ms
+2026-05-23 21:50:02.793 +00:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5001/api/bots/KorthaienbotFullsets - application/json 131
+2026-05-23 21:50:02.793 +00:00 [INF] CORS policy execution successful.
+2026-05-23 21:50:02.793 +00:00 [INF] Executing endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:50:02.803 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:50:02.803 +00:00 [INF] Writing value of type '<>f__AnonymousType0`1' as Json.
+2026-05-23 21:50:02.804 +00:00 [INF] Executed endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:50:02.804 +00:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5001/api/bots/KorthaienbotFullsets - 200 null application/json; charset=utf-8 10.895ms
+2026-05-23 21:50:02.849 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:50:02.850 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:50:02.851 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:50:02.851 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:50:02.852 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:50:02.852 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 2.3767ms
+2026-05-23 21:50:08.738 +00:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5001/api/bots/Korthaienbot01 - application/json 129
+2026-05-23 21:50:08.738 +00:00 [INF] CORS policy execution successful.
+2026-05-23 21:50:08.738 +00:00 [INF] Executing endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:50:08.740 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:50:08.740 +00:00 [INF] Writing value of type '<>f__AnonymousType0`1' as Json.
+2026-05-23 21:50:08.740 +00:00 [INF] Executed endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:50:08.740 +00:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5001/api/bots/Korthaienbot01 - 200 null application/json; charset=utf-8 2.5603ms
+2026-05-23 21:50:08.854 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:50:08.854 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:50:08.856 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:50:08.856 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:50:08.856 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:50:08.856 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 2.0294ms
+2026-05-23 21:50:12.405 +00:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5001/api/bots/Korthaienbot02 - application/json 129
+2026-05-23 21:50:12.405 +00:00 [INF] CORS policy execution successful.
+2026-05-23 21:50:12.405 +00:00 [INF] Executing endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:50:12.407 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:50:12.407 +00:00 [INF] Writing value of type '<>f__AnonymousType0`1' as Json.
+2026-05-23 21:50:12.407 +00:00 [INF] Executed endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:50:12.407 +00:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5001/api/bots/Korthaienbot02 - 200 null application/json; charset=utf-8 2.4078ms
+2026-05-23 21:50:12.529 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:50:12.530 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:50:12.530 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:50:12.530 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:50:12.531 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:50:12.531 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 1.1187ms
+2026-05-23 21:51:35.980 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:51:35.981 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 21:51:35.981 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 47121 text/html 0.7427ms
+2026-05-23 21:51:36.208 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:51:36.208 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:51:36.733 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:51:36.734 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:51:39.567 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:51:39.567 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:51:39.568 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:51:39.569 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:51:39.569 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:51:39.569 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 1.6873ms
+2026-05-23 21:51:41.507 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:51:41.508 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5299.4289ms
+2026-05-23 21:52:15.988 +00:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5001/api/bots/KorthaienbotFullsets - application/json 131
+2026-05-23 21:52:15.988 +00:00 [INF] CORS policy execution successful.
+2026-05-23 21:52:15.988 +00:00 [INF] Executing endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:52:15.990 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:52:15.990 +00:00 [INF] Writing value of type '<>f__AnonymousType0`1' as Json.
+2026-05-23 21:52:15.990 +00:00 [INF] Executed endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:52:15.990 +00:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5001/api/bots/KorthaienbotFullsets - 200 null application/json; charset=utf-8 1.8389ms
+2026-05-23 21:52:16.044 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:52:16.044 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:52:16.045 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:52:16.045 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:52:16.045 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:52:16.045 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 1.1471ms
+2026-05-23 21:52:21.118 +00:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5001/api/bots/Korthaienbot01 - application/json 129
+2026-05-23 21:52:21.118 +00:00 [INF] CORS policy execution successful.
+2026-05-23 21:52:21.118 +00:00 [INF] Executing endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:52:21.185 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:52:21.185 +00:00 [INF] Writing value of type '<>f__AnonymousType0`1' as Json.
+2026-05-23 21:52:21.185 +00:00 [INF] Executed endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:52:21.185 +00:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5001/api/bots/Korthaienbot01 - 200 null application/json; charset=utf-8 67.872ms
+2026-05-23 21:52:21.233 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:52:21.233 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:52:21.235 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:52:21.235 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:52:21.235 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:52:21.235 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 2.4196ms
+2026-05-23 21:52:28.067 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - null null
+2026-05-23 21:52:28.068 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:52:28.070 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:52:28.071 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:52:28.071 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:52:28.071 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 3.7695ms
+2026-05-23 21:53:04.594 +00:00 [INF] Application is shutting down...
+2026-05-23 21:53:08.426 +00:00 [INF] Now listening on: http://localhost:5001
+2026-05-23 21:53:08.459 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-05-23 21:53:08.459 +00:00 [INF] Hosting environment: Production
+2026-05-23 21:53:08.459 +00:00 [INF] Content root path: /workspaces/KorthaienBOT/MtgoBot.Dashboard
+2026-05-23 21:53:09.724 +00:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5001/api/bots/Korthaienbot01 - application/json 129
+2026-05-23 21:53:09.825 +00:00 [INF] Executing endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:53:10.097 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:53:10.100 +00:00 [INF] Writing value of type '<>f__AnonymousType0`1' as Json.
+2026-05-23 21:53:10.110 +00:00 [INF] Executed endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:53:10.111 +00:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5001/api/bots/Korthaienbot01 - 200 null application/json; charset=utf-8 389.0948ms
+2026-05-23 21:53:10.166 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - null null
+2026-05-23 21:53:10.169 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:53:10.197 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:53:10.202 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:53:10.221 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:53:10.222 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 55.3848ms
+2026-05-23 21:53:12.708 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:53:12.728 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 21:53:12.728 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 47121 text/html 19.8295ms
+2026-05-23 21:53:12.925 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:53:12.926 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:53:13.880 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:53:13.880 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:53:13.898 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:53:13.898 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:53:13.898 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:53:13.899 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 18.7726ms
+2026-05-23 21:53:14.246 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:53:14.248 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:53:19.624 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:53:19.624 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 6698.8187ms
+2026-05-23 21:53:20.424 +00:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5001/api/bots/KorthaienbotFullsets - application/json 131
+2026-05-23 21:53:20.426 +00:00 [INF] CORS policy execution successful.
+2026-05-23 21:53:20.427 +00:00 [INF] Executing endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:53:20.430 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:53:20.430 +00:00 [INF] Writing value of type '<>f__AnonymousType0`1' as Json.
+2026-05-23 21:53:20.431 +00:00 [INF] Executed endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:53:20.431 +00:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5001/api/bots/KorthaienbotFullsets - 200 null application/json; charset=utf-8 6.756ms
+2026-05-23 21:53:20.555 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:53:20.555 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:53:20.556 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:53:20.556 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:53:20.556 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:53:20.557 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 1.9048ms
+2026-05-23 21:53:24.521 +00:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5001/api/bots/Korthaienbot01 - application/json 129
+2026-05-23 21:53:24.522 +00:00 [INF] CORS policy execution successful.
+2026-05-23 21:53:24.522 +00:00 [INF] Executing endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:53:24.524 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:53:24.524 +00:00 [INF] Writing value of type '<>f__AnonymousType0`1' as Json.
+2026-05-23 21:53:24.524 +00:00 [INF] Executed endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:53:24.524 +00:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5001/api/bots/Korthaienbot01 - 200 null application/json; charset=utf-8 2.5454ms
+2026-05-23 21:53:24.577 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:53:24.577 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:53:24.578 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:53:24.578 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:53:24.578 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:53:24.578 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 1.5992ms
+2026-05-23 21:54:05.380 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - null null
+2026-05-23 21:54:05.382 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:54:05.384 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:54:05.385 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:54:05.385 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:54:05.385 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 4.9567ms
+2026-05-23 21:54:12.370 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:54:12.377 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 21:54:12.378 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 47121 text/html 7.369ms
+2026-05-23 21:54:12.676 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:54:12.676 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:54:13.187 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:54:13.187 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:54:13.330 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:54:13.332 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:54:13.334 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:54:13.334 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:54:13.335 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:54:13.335 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 5.1705ms
+2026-05-23 21:54:18.535 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:54:18.535 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5859.3276ms
+2026-05-23 21:54:46.492 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:54:46.492 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 21:54:46.492 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 47126 text/html 0.8168ms
+2026-05-23 21:54:46.675 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:54:46.676 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:54:47.263 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:54:47.263 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:54:47.718 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:54:47.718 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:54:47.720 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:54:47.721 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:54:47.721 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:54:47.721 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 3.0139ms
+2026-05-23 21:54:50.832 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:54:50.833 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 21:54:50.833 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 47126 text/html 1.0754ms
+2026-05-23 21:54:50.886 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:54:50.886 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 4211.1514ms
+2026-05-23 21:54:51.021 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:54:51.021 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:54:51.585 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:54:51.585 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:54:51.587 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:54:51.587 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:54:51.588 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:54:51.588 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 3.1652ms
+2026-05-23 21:54:51.597 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:54:51.597 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:54:56.396 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:54:56.396 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5375.068ms
+2026-05-23 21:55:58.537 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - null null
+2026-05-23 21:55:58.539 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:55:58.541 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:55:58.541 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:55:58.542 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:55:58.542 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 4.7744ms
+2026-05-23 21:56:08.173 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:56:08.174 +00:00 [INF] The file /index.html was not modified
+2026-05-23 21:56:08.174 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 304 null text/html 1.1627ms
+2026-05-23 21:56:08.288 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:56:08.288 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:56:08.798 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:56:08.798 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:56:09.211 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:56:09.211 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:56:09.213 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:56:09.213 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:56:09.213 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:56:09.213 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 2.2915ms
+2026-05-23 21:56:14.009 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:56:14.009 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5721.4598ms
+2026-05-23 21:58:22.852 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/ - null null
+2026-05-23 21:58:22.853 +00:00 [INF] Sending file. Request path: '/index.html'. Physical path: '/workspaces/KorthaienBOT/MtgoBot.Dashboard/wwwroot/index.html'
+2026-05-23 21:58:22.853 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/index.html - 200 47148 text/html 0.9397ms
+2026-05-23 21:58:23.100 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:58:23.101 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:58:23.770 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:58:23.770 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:58:23.983 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:58:23.983 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:58:23.985 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:58:23.985 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:58:23.985 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:58:23.985 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 2.6714ms
+2026-05-23 21:58:28.695 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:58:28.695 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5594.7697ms
+2026-05-23 21:58:30.014 +00:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5001/api/bots/Korthaienbot01 - application/json 129
+2026-05-23 21:58:30.014 +00:00 [INF] CORS policy execution successful.
+2026-05-23 21:58:30.014 +00:00 [INF] Executing endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:58:30.016 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:58:30.016 +00:00 [INF] Writing value of type '<>f__AnonymousType0`1' as Json.
+2026-05-23 21:58:30.016 +00:00 [INF] Executed endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:58:30.016 +00:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5001/api/bots/Korthaienbot01 - 200 null application/json; charset=utf-8 2.5224ms
+2026-05-23 21:58:30.073 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:58:30.073 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:58:30.074 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:58:30.074 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:58:30.074 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:58:30.074 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 1.388ms
+2026-05-23 21:58:31.540 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/inventory? - application/json 0
+2026-05-23 21:58:31.541 +00:00 [INF] Executing endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:58:32.169 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:58:32.170 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:58:32.218 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:58:32.218 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:58:32.220 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:58:32.220 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:58:32.221 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:58:32.222 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 3.6018ms
+2026-05-23 21:58:37.101 +00:00 [INF] Executed endpoint 'HTTP: GET /api/inventory'
+2026-05-23 21:58:37.102 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/inventory? - 200 null application/json; charset=utf-8 5561.3078ms
+2026-05-23 21:59:24.811 +00:00 [INF] Request starting HTTP/1.1 PUT http://localhost:5001/api/bots/Korthaienbot01 - application/json 129
+2026-05-23 21:59:24.811 +00:00 [INF] CORS policy execution successful.
+2026-05-23 21:59:24.811 +00:00 [INF] Executing endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:59:24.813 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:59:24.813 +00:00 [INF] Writing value of type '<>f__AnonymousType0`1' as Json.
+2026-05-23 21:59:24.814 +00:00 [INF] Executed endpoint 'HTTP: PUT /api/bots/{botId}'
+2026-05-23 21:59:24.814 +00:00 [INF] Request finished HTTP/1.1 PUT http://localhost:5001/api/bots/Korthaienbot01 - 200 null application/json; charset=utf-8 3.1248ms
+2026-05-23 21:59:24.864 +00:00 [INF] Request starting HTTP/1.1 GET http://localhost:5001/api/bots - application/json 0
+2026-05-23 21:59:24.865 +00:00 [INF] Executing endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:59:24.866 +00:00 [INF] Setting HTTP status code 200.
+2026-05-23 21:59:24.866 +00:00 [INF] Writing value of type 'List`1' as Json.
+2026-05-23 21:59:24.868 +00:00 [INF] Executed endpoint 'HTTP: GET /api/bots'
+2026-05-23 21:59:24.868 +00:00 [INF] Request finished HTTP/1.1 GET http://localhost:5001/api/bots - 200 null application/json; charset=utf-8 4.1161ms

@@ -115,6 +115,7 @@
       <a href="#" onclick="showTab('sets')"><span class="icon">🃏</span> Filtre</a>
       <a href="#" onclick="showTab('credits')"><span class="icon">💰</span> Kunde-credits</a>
       <a href="#" onclick="showTab('log')"><span class="icon">📋</span> System-logg</a>
+      <a href="#" onclick="showTab('bots',this)"><span class="icon">🤖</span> Botter</a>
       <a href="#" onclick="showTab('settings')"><span class="icon">⚙️</span> Innstillinger</a>
     </nav>
     <div style="margin-top:auto; padding:20px; font-size:11px; color:var(--muted);">
@@ -208,77 +209,42 @@
           <label class="toggle-wrap"><label class="toggle"><input type="checkbox" id="showFoil" onchange="filterSetCards()"><span class="toggle-slider"></span></label><span>Foil ✨</span></label>
         </div>
         <div id="setCardCount" style="font-size:12px;color:var(--muted);margin-top:8px"></div>
-        <div id="setRulesPanel" style="display:none; margin-top:12px; border-radius:8px; border:1px solid var(--border); overflow:hidden">
-          <!-- Singles row -->
-          <div style="display:flex; align-items:flex-end; gap:16px; padding:10px 14px; background:#f8f9ff; flex-wrap:wrap">
-            <span style="font-size:11px;font-weight:700;color:var(--muted);width:70px;flex-shrink:0">Singles</span>
-            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Kjøps-mult.<input type="number" id="setRulesBuy" step="0.01" style="width:75px"></label>
-            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Salgs-mult.<input type="number" id="setRulesSell" step="0.01" style="width:75px"></label>
-            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Maks lager<input type="number" id="setRulesMax" step="1" style="width:65px"></label>
-            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Keep<input type="number" id="setRulesKeep" value="0" step="1" min="0" style="width:65px"></label>
-            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Per handel<input type="number" id="setRulesMaxPerTrade" value="4" step="1" min="1" style="width:65px"></label>
-            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Basis-sett
-              <div style="display:flex;align-items:center;gap:6px">
-                <input type="number" id="setRulesBaseSize" step="1" min="0" style="width:65px" placeholder="f.eks. 291">
-                <span id="baseSetSizeInfo" style="font-size:11px"></span>
-              </div>
-            </label>
-            <button class="btn-primary btn-small" onclick="saveCurrentSetRules()">💾 Lagre</button>
-          </div>
-          <!-- Non-foil full set row -->
-          <div id="fullsetPanel" style="display:none; align-items:flex-end; gap:16px; padding:10px 14px; background:#f0fdf4; border-top:1px solid #bbf7d0; flex-wrap:wrap">
-            <span style="font-size:11px;font-weight:700;color:#065f46;width:70px;flex-shrink:0">Komplett<br>non-foil</span>
-            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-              Kjøps-mult.<span style="color:#94a3b8;font-size:10px">market: <span id="autoBuySum">—</span></span>
-              <div style="display:flex;align-items:center;gap:4px">
-                <input type="number" id="fullsetBuyMult" step="0.01" min="0" max="2" style="width:75px" value="0.80" onchange="updateFullsetPrices()">
-                <span style="font-size:11px" class="mono text-warn">= <span id="fullsetBuyCalc">—</span></span>
-              </div>
-            </label>
-            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-              Salgs-mult.<span style="color:#94a3b8;font-size:10px">market: <span id="autoSellSum">—</span></span>
-              <div style="display:flex;align-items:center;gap:4px">
-                <input type="number" id="fullsetSellMult" step="0.01" min="0" max="2" style="width:75px" value="1.08" onchange="updateFullsetPrices()">
-                <span style="font-size:11px" class="mono text-green">= <span id="fullsetSellCalc">—</span></span>
-              </div>
-            </label>
-            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Kort<span id="fullsetCardCount" style="font-size:11px;color:#94a3b8">—</span></label>
-            <label class="toggle-wrap">
-              <label class="toggle"><input type="checkbox" id="fullsetEnabled"><span class="toggle-slider"></span></label>
-              <span style="font-size:11px">Aktiver</span>
-            </label>
-            <button class="btn-success btn-small" onclick="saveFullsetPricing()">💾 Lagre</button>
-            <input type="hidden" id="fullsetBuy">
-            <input type="hidden" id="fullsetSell">
-          </div>
-          <!-- Foil full set row -->
-          <div id="fullsetFoilPanel" style="display:none; align-items:flex-end; gap:16px; padding:10px 14px; background:#ecfdf5; border-top:1px solid #a7f3d0; flex-wrap:wrap">
-            <span style="font-size:11px;font-weight:700;color:#065f46;width:70px;flex-shrink:0">Komplett<br>foil ✨</span>
-            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-              Kjøps-mult.<span style="color:#94a3b8;font-size:10px">market: <span id="autoFoilBuySum">—</span></span>
-              <div style="display:flex;align-items:center;gap:4px">
-                <input type="number" id="fullsetFoilBuyMult" step="0.01" min="0" max="2" style="width:75px" value="0.80" onchange="updateFullsetFoilPrices()">
-                <span style="font-size:11px" class="mono text-warn">= <span id="fullsetFoilBuyCalc">—</span></span>
-              </div>
-            </label>
-            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-              Salgs-mult.<span style="color:#94a3b8;font-size:10px">market: <span id="autoFoilSellSum">—</span></span>
-              <div style="display:flex;align-items:center;gap:4px">
-                <input type="number" id="fullsetFoilSellMult" step="0.01" min="0" max="2" style="width:75px" value="1.15" onchange="updateFullsetFoilPrices()">
-                <span style="font-size:11px" class="mono text-green">= <span id="fullsetFoilSellCalc">—</span></span>
-              </div>
-            </label>
-            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Kort<span id="fullsetFoilCardCount" style="font-size:11px;color:#94a3b8">—</span></label>
-            <label class="toggle-wrap">
-              <label class="toggle"><input type="checkbox" id="fullsetFoilEnabled"><span class="toggle-slider"></span></label>
-              <span style="font-size:11px">Aktiver</span>
-            </label>
-            <button class="btn-success btn-small" onclick="saveFullsetFoilPricing()">💾 Lagre</button>
-            <input type="hidden" id="fullsetFoilBuy">
-            <input type="hidden" id="fullsetFoilSell">
+        <div id="setRulesPanel" style="display:none; margin-top:12px; padding:14px; background:#f8f9ff; border-radius:8px; border:1px solid var(--border)">
+          <div style="display:flex; gap:16px; align-items:flex-end; flex-wrap:wrap">
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Kjøps-mult.<input type="number" id="setRulesBuy" step="0.01" style="width:90px"></label>
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Salgs-mult.<input type="number" id="setRulesSell" step="0.01" style="width:90px"></label>
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Maks lager<input type="number" id="setRulesMax" step="1" style="width:80px"></label>
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Keep (behold alle kort)<input type="number" id="setRulesKeep" value="0" step="1" min="0" style="width:80px"></label>
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Maks per handel<input type="number" id="setRulesMaxPerTrade" value="4" step="1" min="1" style="width:80px" title="Maks antall av dette kortet en spiller kan kjøpe per handel"></label>
+            <button class="btn-primary" onclick="saveCurrentSetRules()">💾 Lagre sett-regler</button>
           </div>
         </div>
+      </div>
 
+      <!-- Complete Set Pricing -->
+      <div id="fullsetPanel" style="display:none; margin-bottom:20px; padding:12px 16px; background:#f0fdf4; border-radius:8px; border:1px solid #bbf7d0">
+        <div style="display:grid; grid-template-columns:auto auto auto auto auto auto auto; align-items:end; gap:16px">
+          <span style="font-size:12px; font-weight:700; color:#065f46; white-space:nowrap">🎁 Komplett sett</span>
+          <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
+            Kort i basis-sett
+            <input type="number" id="setRulesBaseSize" step="1" min="0" style="width:80px" placeholder="f.eks. 261">
+          </label>
+          <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
+            Kjøpspris <span style="color:#94a3b8;font-weight:400">(market: <span id="autoBuySum">—</span>)</span>
+            <input type="number" id="fullsetBuy" step="0.01" style="width:90px">
+          </label>
+          <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
+            Salgspris <span style="color:#94a3b8;font-weight:400">(market: <span id="autoSellSum">—</span>)</span>
+            <input type="number" id="fullsetSell" step="0.01" style="width:90px">
+          </label>
+          <label class="toggle-wrap" style="margin-top:14px">
+            <label class="toggle"><input type="checkbox" id="fullsetEnabled"><span class="toggle-slider"></span></label>
+            <span style="font-size:11px">Aktiver</span>
+          </label>
+          <div style="margin-top:14px; font-size:11px; color:#94a3b8"><span id="fullsetCardCount">—</span> kort</div>
+          <button class="btn-success btn-small" onclick="saveFullsetPricing()" style="margin-top:14px">💾</button>
+        </div>
+      </div>
       <div class="panel" style="padding:0; overflow:hidden">
         <div class="tbl-wrap">
           <table>
@@ -296,6 +262,7 @@
       </div>
     </div>
 
+    <!-- CREDITS TAB -->
     <!-- CREDITS TAB -->
     <div id="tab-credits" style="display:none">
       <div class="page-header">
@@ -322,12 +289,20 @@
     </div>
 
     <!-- LOG TAB -->
-    <div id="tab-log" style="display:none">
-      <div class="page-header"><div class="page-title">System-logg</div></div>
-      <div class="panel">
-        <div class="panel-title">API Status</div>
-        <div id="statusBox" class="mono muted" style="font-size:12px">Sjekker...</div>
+    <!-- BOTS TAB -->
+    <div id="tab-bots" style="display:none; width:100%; min-height:400px">
+      <div class="page-header">
+        <div class="page-title">Botter</div>
+        <button class="btn-primary btn-small" onclick="addBot()">+ Legg til bot</button>
       </div>
+      <div class="hint">
+        <strong>💡 Bot-roller</strong>
+        <b>TRADE:</b> Kjøper og selger singles. Holder maks lokalt antall, sender resten til K-76.<br>
+        <b>MULE:</b> Privat hvelv. Samler komplette sett, sender til Fullset-bot.<br>
+        <b>FULLSET:</b> Selger komplette sett. Kjøper ingenting.<br>
+        <b>Globale regler</b> (Filter-siden) setter nettverkstak. Bot-regler setter lokale grenser.
+      </div>
+      <div id="botsContainer"></div>
     </div>
 
     <!-- SETTINGS TAB -->
@@ -411,6 +386,7 @@ function showTab(name) {
   if (name === 'sets')      { populateSetDropdown(); }
   if (name === 'credits')   loadCredits();
   if (name === 'log')       loadStatus();
+  if (name === 'bots')      loadBots();
 }
 
 // ─── Inventory ───────────────────────────────────────────────────
@@ -459,6 +435,266 @@ async function loadInventory() {
 }
 
 
+
+
+
+
+// ─── Bots ────────────────────────────────────────────────────────
+let allBotIds = [];
+
+async function loadBots() {
+  try {
+    const bots = await fetchJson('/api/bots');
+    allBotIds = bots.map(b => b.bot_id);
+    const container = document.getElementById('botsContainer');
+
+    container.innerHTML = bots.map(b => `
+      <div class="panel" style="margin-bottom:12px; padding:0; overflow:hidden" id="botcard-${esc(b.bot_id)}">
+        <!-- Bot header -->
+        <div style="display:flex; align-items:center; gap:16px; padding:12px 16px; background:#f8f9ff; cursor:pointer"
+             onclick="toggleBotRules('${esc(b.bot_id)}')">
+          <strong style="font-size:14px; min-width:180px">${esc(b.account_name)}</strong>
+          <span class="badge ${b.bot_type==='TRADE'?'blue':b.bot_type==='MULE'?'green':'red'}">${b.bot_type}</span>
+          <span style="font-size:12px;color:#94a3b8;flex:1">${esc(b.description||'')}</span>
+          <span class="badge ${b.is_online?'green':'red'}">${b.is_online?'● Online':'○ Offline'}</span>
+          <span style="font-size:12px;color:#94a3b8">${b.total_cards} kort</span>
+          <span style="font-size:16px;color:var(--muted)">▼</span>
+        </div>
+
+        <!-- Bot rules (collapsible) -->
+        <div id="botrules-${esc(b.bot_id)}" style="display:none; padding:16px; border-top:1px solid var(--border)">
+
+          <!-- Basic settings -->
+          <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px; align-items:flex-end">
+            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
+              Type
+              <select class="bot-type-sel" style="width:100px">
+                ${['TRADE','MULE','FULLSET'].map(t => '<option value="'+t+'"'+(b.bot_type===t?' selected':'')+'>'+t+'</option>').join('')}
+              </select>
+            </label>
+            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
+              Beskrivelse (intern)
+              <input type="text" value="${esc(b.description||'')}" style="width:200px" class="bot-desc">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
+              Trade-vindu melding (vises i MTGO)
+              <input type="text" value="${esc(b.trade_message||'')}" style="width:380px" class="bot-trade-msg" placeholder="F.eks: Buying all singles! Prices updated daily.">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
+              Overfør til
+              <select class="bot-transfer-sel" style="width:160px">
+                <option value="">—</option>
+                ${allBotIds.filter(id => id !== b.bot_id).map(id => '<option value="'+esc(id)+'"'+(b.transfer_to===id?' selected':'')+'>'+esc(id)+'</option>').join('')}
+              </select>
+            </label>
+          </div>
+
+          <!-- TIX rules -->
+          <div style="background:#fff8e1; border-radius:8px; padding:12px; margin-bottom:12px; border:1px solid #fde68a">
+            <div style="font-size:11px;font-weight:700;color:#92400e;margin-bottom:8px">💵 TIX-regler</div>
+            <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-end">
+              <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
+                TIX reserve (mål)
+                <input type="number" value="${b.tix_reserve||0}" step="100" min="0" style="width:90px" class="bot-tix-reserve">
+              </label>
+              <div style="font-size:11px;color:#94a3b8">
+                Under reserve → hent fra <strong>${esc(b.transfer_to||'—')}</strong><br>
+                Over reserve → send til <strong>${esc(b.transfer_to||'—')}</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card rules -->
+          <div style="background:#f0f9ff; border-radius:8px; padding:12px; margin-bottom:12px; border:1px solid #bae6fd">
+            <div style="font-size:11px;font-weight:700;color:#0369a1;margin-bottom:8px">🃏 Kortregler (alle sett)</div>
+            <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-end">
+              <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
+                Maks lokalt lager
+                <input type="number" value="${b.max_local_stock||4}" step="1" min="0" style="width:80px" class="bot-max-local">
+              </label>
+              <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
+                Over maks → overfør til
+                <select class="bot-card-transfer-sel" style="width:160px">
+                  <option value="">—</option>
+                  ${allBotIds.filter(id => id !== b.bot_id).map(id => '<option value="'+esc(id)+'"'+(b.card_transfer_to===id?' selected':'')+'>'+esc(id)+'</option>').join('')}
+                </select>
+              </label>
+              <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
+                Komplett sett → overfør til
+                <select class="bot-fullset-transfer-sel" style="width:160px">
+                  <option value="">— (ingen overføring)</option>
+                  ${allBotIds.filter(id => id !== b.bot_id).map(id => '<option value="'+esc(id)+'"'+(b.fullset_transfer_to===id?' selected':'')+'>'+esc(id)+'</option>').join('')}
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <!-- Set-specific overrides -->
+          <div style="background:#f0fdf4; border-radius:8px; padding:12px; margin-bottom:12px; border:1px solid #bbf7d0">
+            <div style="font-size:11px;font-weight:700;color:#065f46;margin-bottom:8px">🎯 Sett-spesifikke regler</div>
+            <div style="font-size:11px;color:#94a3b8;margin-bottom:8px">Overstyrer globale regler for dette settet på denne boten.</div>
+            <!-- Column headers -->
+            <div style="display:grid;grid-template-columns:120px 80px 70px 70px 75px 75px 60px 60px;gap:8px;align-items:center;margin-bottom:4px;padding:0 4px">
+              <span style="font-size:10px;font-weight:700;color:#94a3b8">SETT</span>
+              <span style="font-size:10px;font-weight:700;color:#94a3b8">MAKS LOKALT</span>
+              <span style="font-size:10px;font-weight:700;color:#94a3b8">KEEP</span>
+              <span style="font-size:10px;font-weight:700;color:#94a3b8">PER HANDEL</span>
+              <span style="font-size:10px;font-weight:700;color:#94a3b8">KJØPS-MULT</span>
+              <span style="font-size:10px;font-weight:700;color:#94a3b8">SALGS-MULT</span>
+              <span></span><span></span>
+            </div>
+            <div id="botsetrules-${esc(b.bot_id)}">
+              <div class="muted" style="font-size:11px;padding:4px">Ingen sett-regler ennå.</div>
+            </div>
+            <!-- Add new rule row -->
+            <div style="display:grid;grid-template-columns:120px 80px 70px 70px 75px 75px 60px;gap:8px;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid #bbf7d0" id="newrule-${esc(b.bot_id)}">
+              <select id="newrule-set-${esc(b.bot_id)}" style="font-size:11px;padding:4px">
+                <option value="">Velg sett...</option>
+              </select>
+              <input type="number" id="newrule-max-${esc(b.bot_id)}" placeholder="4" step="1" min="0" style="width:70px;font-size:11px">
+              <input type="number" id="newrule-keep-${esc(b.bot_id)}" placeholder="0" step="1" min="0" style="width:60px;font-size:11px">
+              <input type="number" id="newrule-mpt-${esc(b.bot_id)}" placeholder="4" step="1" min="1" style="width:60px;font-size:11px">
+              <input type="number" id="newrule-buy-${esc(b.bot_id)}" placeholder="0.80" step="0.01" style="width:65px;font-size:11px">
+              <input type="number" id="newrule-sell-${esc(b.bot_id)}" placeholder="1.00" step="0.01" style="width:65px;font-size:11px">
+              <button class="btn-success btn-small" onclick="saveNewBotSetRule('${esc(b.bot_id)}')">+ Legg til</button>
+            </div>
+          </div>
+
+          <!-- Save/Delete -->
+          <div style="display:flex; gap:8px; margin-top:4px">
+            <button class="btn-primary" onclick="saveBot('${esc(b.bot_id)}','${esc(b.account_name)}')">💾 Lagre</button>
+            <button class="btn-danger btn-small" onclick="deleteBot('${esc(b.bot_id)}')">🗑️ Slett</button>
+          </div>
+        </div>
+      </div>`).join('');
+
+    // Load set rules and populate set dropdowns for each bot
+    const allSets = await fetchJson('/api/sets');
+    const sortedSets = Object.values(allSets).sort((a,b) =>
+      (a.setName||a.setCode).localeCompare(b.setName||b.setCode));
+    const setOptions = '<option value="">Velg sett...</option>' +
+      sortedSets.map(s => `<option value="${esc(s.setCode)}">${esc(s.setName||s.setCode)} (${esc(s.setCode)})</option>`).join('');
+    bots.forEach(b => {
+      const sel = document.getElementById(`newrule-set-${b.bot_id}`);
+      if (sel) sel.innerHTML = setOptions;
+      loadBotSetRules(b.bot_id);
+    });
+
+  } catch(e) {
+    document.getElementById('botsContainer').innerHTML =
+      `<div class="loading text-red">⚠️ Feil: ${e.message}</div>`;
+  }
+}
+
+function toggleBotRules(botId) {
+  const el = document.getElementById(`botrules-${botId}`);
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+async function loadBotSetRules(botId) {
+  try {
+    const rules = await fetchJson(`/api/bots/${botId}/set-rules`);
+    const container = document.getElementById(`botsetrules-${botId}`);
+    if (!rules.length) {
+      container.innerHTML = '<div style="font-size:11px;color:#94a3b8">Ingen sett-spesifikke regler. Globale regler gjelder.</div>';
+      return;
+    }
+    container.innerHTML = rules.map(r => `
+      <div style="display:flex; gap:12px; align-items:center; margin-bottom:6px; flex-wrap:wrap">
+        <span class="tag">${esc(r.set_code)}</span>
+        <label style="font-size:11px">Maks lokalt: <input type="number" value="${r.max_local_stock||''}" step="1" style="width:60px" class="bsr-max" data-bot="${esc(botId)}" data-set="${esc(r.set_code)}"></label>
+        <label style="font-size:11px">Keep: <input type="number" value="${r.keep_local||''}" step="1" style="width:55px" class="bsr-keep" data-bot="${esc(botId)}" data-set="${esc(r.set_code)}"></label>
+        <label style="font-size:11px">Per handel: <input type="number" value="${r.max_per_trade||''}" step="1" style="width:55px" class="bsr-mpt" data-bot="${esc(botId)}" data-set="${esc(r.set_code)}"></label>
+        <button class="btn-primary btn-small" onclick="saveBotSetRule('${esc(botId)}','${esc(r.set_code)}')">💾</button>
+        <button class="btn-danger btn-small" onclick="deleteBotSetRule('${esc(botId)}','${esc(r.set_code)}')">✕</button>
+      </div>`).join('');
+  } catch(e) {
+    document.getElementById(`botsetrules-${botId}`).innerHTML =
+      '<div style="font-size:11px;color:#94a3b8">Ingen regler ennå.</div>';
+  }
+}
+
+async function addBotSetRule(botId) {
+  const sets = await fetchJson('/api/sets');
+  const setList = Object.keys(sets).join(',');
+  const setCode = prompt(`Sett-kode (f.eks. MH3, LTR):
+Tilgjengelige: ${setList.substring(0,100)}...`);
+  if (!setCode) return;
+  await fetchJson(`/api/bots/${botId}/set-rules/${setCode}`, 'PUT', {
+    maxLocalStock: 4, keepLocal: 0, maxPerTrade: 4
+  });
+  toast(`✅ Sett-regel for ${setCode} lagt til`);
+  loadBotSetRules(botId);
+}
+
+
+async function saveNewBotSetRule(botId) {
+  const setCode = document.getElementById(`newrule-set-${botId}`)?.value;
+  if (!setCode) { toast('⚠️ Velg et sett først'); return; }
+  const max  = parseInt(document.getElementById(`newrule-max-${botId}`)?.value) || null;
+  const keep = parseInt(document.getElementById(`newrule-keep-${botId}`)?.value) || null;
+  const mpt  = parseInt(document.getElementById(`newrule-mpt-${botId}`)?.value) || null;
+  const buy  = parseFloat(document.getElementById(`newrule-buy-${botId}`)?.value) || null;
+  const sell = parseFloat(document.getElementById(`newrule-sell-${botId}`)?.value) || null;
+  await fetchJson(`/api/bots/${botId}/set-rules/${setCode}`, 'PUT', {
+    maxLocalStock: max, keepLocal: keep, maxPerTrade: mpt,
+    buyMultiplier: buy, sellMultiplier: sell
+  });
+  toast(`✅ Sett-regel for ${setCode} lagret`);
+  loadBotSetRules(botId);
+}
+
+async function saveBotSetRule(botId, setCode) {
+  const row   = document.querySelector(`.bsr-max[data-bot="${botId}"][data-set="${setCode}"]`);
+  const keep  = document.querySelector(`.bsr-keep[data-bot="${botId}"][data-set="${setCode}"]`);
+  const mpt   = document.querySelector(`.bsr-mpt[data-bot="${botId}"][data-set="${setCode}"]`);
+  await fetchJson(`/api/bots/${botId}/set-rules/${setCode}`, 'PUT', {
+    maxLocalStock: parseInt(row?.value)||null,
+    keepLocal:     parseInt(keep?.value)||null,
+    maxPerTrade:   parseInt(mpt?.value)||null
+  });
+  toast(`✅ ${setCode} regel lagret`);
+}
+
+async function deleteBotSetRule(botId, setCode) {
+  await fetchJson(`/api/bots/${botId}/set-rules/${setCode}`, 'DELETE');
+  toast(`🗑️ ${setCode} regel slettet`);
+  loadBotSetRules(botId);
+}
+
+async function saveBot(botId, accountName) {
+  const card   = document.getElementById(`botcard-${botId}`);
+  const type       = card.querySelector('.bot-type-sel').value;
+  const desc       = card.querySelector('.bot-desc').value;
+  const transfer   = card.querySelector('.bot-transfer-sel').value || null;
+  const tixReserve = parseInt(card.querySelector('.bot-tix-reserve').value) || 0;
+  const maxLocal   = parseInt(card.querySelector('.bot-max-local').value) || 4;
+  const cardXfer       = card.querySelector('.bot-card-transfer-sel').value || null;
+  const fullsetXfer    = card.querySelector('.bot-fullset-transfer-sel')?.value || null;
+  const tradeMsg       = card.querySelector('.bot-trade-msg')?.value || null;
+  await fetchJson(`/api/bots/${botId}`, 'PUT', {
+    accountName, botType: type, description: desc,
+    transferTo: transfer, tixReserve, maxLocalStock: maxLocal, cardTransferTo: cardXfer, fullsetTransferTo: fullsetXfer, tradeMessage: tradeMsg, fullsetTransferTo: fullsetXfer
+  });
+  toast(`✅ ${botId} lagret`);
+  loadBots();
+}
+
+async function deleteBot(botId) {
+  if (!confirm(`Slette bot ${botId}?`)) return;
+  await fetchJson(`/api/bots/${botId}`, 'DELETE');
+  toast(`🗑️ ${botId} slettet`);
+  loadBots();
+}
+
+function addBot() {
+  const name = prompt('MTGO-kontonavn for ny bot:');
+  if (!name) return;
+  fetchJson(`/api/bots/${name}`, 'PUT', {
+    accountName: name, botType: 'TRADE', description: '',
+    transferTo: null, tixReserve: 500, maxLocalStock: 4, cardTransferTo: 'K-76'
+  }).then(() => { toast(`✅ ${name} lagt til`); loadBots(); });
+}
 
 
 // ─── Fullset pricing ─────────────────────────────────────────────
