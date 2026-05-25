@@ -6,18 +6,28 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <!-- Windows-only: needed for Win32 memory-reading APIs -->
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MtgoBot.Core\MtgoBot.Core.csproj" />
-    <!-- Serilog for structured, per-bot log files -->
-    <PackageReference Include="Serilog" Version="3.1.1" />
-    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-    <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+
+    <!-- Logging -->
+    <PackageReference Include="Serilog"                   Version="3.1.1" />
+    <PackageReference Include="Serilog.Sinks.File"        Version="5.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console"     Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting"       Version="8.0.0" />
+    <PackageReference Include="Serilog.Extensions.Hosting"         Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      UIAutomationClient + UIAutomationTypes are part of the Windows Desktop
+      SDK and ship with net9.0-windows. No extra NuGet package needed —
+      just add these FrameworkReferences so the compiler can resolve the
+      System.Windows.Automation namespace.
+    -->
+    <FrameworkReference Include="Microsoft.WindowsDesktop.App" />
   </ItemGroup>
 
 </Project>
