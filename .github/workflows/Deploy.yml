@@ -1,0 +1,23 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 194.146.12.40
+          username: Administrator
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd C:\KorthaienBOT
+            git pull
+            cd MtgoBot.Dashboard
+            dotnet publish -c Release -o C:\KorthaienBOT\publish\dashboard
+            Restart-Service -Name "KorthaienDashboard"
