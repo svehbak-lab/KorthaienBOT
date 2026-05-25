@@ -1,30 +1,24 @@
 using MtgoBot.Core.Models;
+using MtgoBot.Client.Memory;
 using Microsoft.Extensions.Logging;
 
 namespace MtgoBot.Client.Chat;
 
 /// <summary>
 /// Formats and sends chat messages to the MTGO trade window.
-/// All messages from the spec are implemented here as typed methods
-/// so the trade loop stays clean and readable.
-/// 
-/// Actual message delivery is via MTGOSDK's Chat API or
-/// PostMessage to the chat input field — inject that dependency here.
+/// Now wired to MtgoMemoryReader.SendChatMessage() which uses
+/// UI Automation to type into MTGO's chat input field.
 /// </summary>
 public class TradeChatService
 {
+    private readonly MtgoMemoryReader _reader;
     private readonly ILogger<TradeChatService> _logger;
-    // TODO: inject MTGOSDK chat sender or low-level SendKeys wrapper
-    // private readonly IMtgoChatSender _sender;
 
-    public TradeChatService(ILogger<TradeChatService> logger)
+    public TradeChatService(MtgoMemoryReader reader, ILogger<TradeChatService> logger)
     {
+        _reader = reader;
         _logger = logger;
     }
-
-    // ─────────────────────────────────────────────────────────────────
-    // Message templates — exactly as specified
-    // ─────────────────────────────────────────────────────────────────
 
     public Task SendWelcomeAndScanningAsync(string playerName)
     {
@@ -46,33 +40,23 @@ public class TradeChatService
         return SendAsync(playerName, msg);
     }
 
-    /// <summary>
-    /// The live status block, updated every time the window changes.
-    /// </summary>
     public Task SendTradeStatusAsync(
         string playerName,
         TradeBalance balance,
         decimal oldCredit,
         decimal newCredit)
     {
-        // Whole TIX to put in window
-        decimal wholeTix = Math.Floor(Math.Max(0, balance.NetBalance + oldCredit));
-        // Remainder saved as credit
+        decimal wholeTix    = Math.Floor(Math.Max(0, balance.NetBalance + oldCredit));
         decimal creditSaved = (balance.NetBalance + oldCredit) - wholeTix;
 
-        var msg = $"""
-            --- 📊 BYTTESTATUS ---
-            Kort du gir meg: {balance.UserCards.Count} stk (Verdi: {balance.ValueUserGives:0.0000} TIX)
-            Kort du tar fra meg: {balance.BotCards.Count} stk (Verdi: {balance.ValueBotGives:0.0000} TIX)
-            --------------------------------------
-            Netto verdi i din favør: {(balance.NetBalance >= 0 ? "+" : "")}{balance.NetBalance:0.0000} TIX
+        var msg = $"--- 📊 BYTTESTATUS --- " +
+                  $"Kort du gir meg: {balance.UserCards.Count} stk ({balance.ValueUserGives:0.0000} TIX) | " +
+                  $"Kort du tar: {balance.BotCards.Count} stk ({balance.ValueBotGives:0.0000} TIX) | " +
+                  $"Netto: {balance.NetBalance:+0.0000;-0.0000} TIX | " +
+                  $"TIX i vindu: {wholeTix:0.0000} | " +
+                  $"Credit lagret: {creditSaved:0.0000} TIX. Klikk Submit! 👍";
 
-            💵 TIX lagt til i vinduet: {wholeTix:0.0000} TIX
-            💾 Ny credit lagret på din bruker: {creditSaved:0.0000} TIX (Du hadde {oldCredit:0.0000} fra før)
-
-            Klikk 'Submit' hvis du er fornøyd! 👍
-            """;
-
+        // Note: MTGO chat has a ~250 char limit per message, so status is kept on one line.
         return SendAsync(playerName, msg);
     }
 
@@ -95,14 +79,13 @@ public class TradeChatService
     }
 
     // ─────────────────────────────────────────────────────────────────
-    // Internal send — replace body with real MTGO chat injection
+    // Internal send — uses UI Automation via MtgoMemoryReader
     // ─────────────────────────────────────────────────────────────────
 
     private Task SendAsync(string playerName, string message)
     {
-        // In production: use MTGOSDK chat API or keyboard automation
-        // _sender.SendTradeMessage(message);
         _logger.LogInformation("[CHAT → {Player}] {Msg}", playerName, message);
+        _reader.SendChatMessage(message);
         return Task.CompletedTask;
     }
 }
