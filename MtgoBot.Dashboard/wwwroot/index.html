@@ -38,6 +38,7 @@
   .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; }
   .badge.green { background: rgba(16,185,129,.15); color: var(--success); }
   .badge.red   { background: rgba(239,68,68,.15);  color: var(--danger); }
+  .badge.blue  { background: rgba(79,70,229,.15);  color: var(--accent); }
 
   /* ── Cards / Panels ── */
   .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
@@ -66,42 +67,38 @@
     padding: 7px 16px; border-radius: 6px; border: none; cursor: pointer;
     font-size: 13px; font-weight: 600; transition: all .15s;
   }
-  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary   { background: var(--accent);  color: #fff; }
   .btn-primary:hover { background: #7c75ff; }
-  .btn-secondary { background: var(--border); color: var(--text); }
-  .btn-secondary:hover { background: #353848; }
-  .btn-danger { background: rgba(239,68,68,.15); color: var(--danger); border: 1px solid var(--danger); }
-  .btn-small { padding: 4px 10px; font-size: 12px; }
+  .btn-secondary { background: var(--border);  color: var(--text); }
+  .btn-secondary:hover { background: #c5cde8; }
+  .btn-success   { background: var(--accent2); color: #fff; }
+  .btn-success:hover { background: #047857; }
+  .btn-danger    { background: rgba(239,68,68,.15); color: var(--danger); border: 1px solid var(--danger); }
+  .btn-small     { padding: 4px 10px; font-size: 12px; }
 
   /* ── Table ── */
   .tbl-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   th { text-align: left; padding: 10px 12px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--border); white-space: nowrap; }
   td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-  tr:hover td { background: rgba(255,255,255,.02); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(79,70,229,.02); }
   .pill { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; }
-  .pill.r { background: rgba(239,68,68,.15); color: #fca5a5; }
-  .pill.u { background: rgba(245,158,11,.15); color: #fcd34d; }
+  .pill.r { background: rgba(239,68,68,.15);   color: #fca5a5; }
+  .pill.u { background: rgba(245,158,11,.15);  color: #fcd34d; }
   .pill.c { background: rgba(107,114,128,.15); color: #9ca3af; }
-  .pill.m { background: rgba(168,85,247,.15); color: #d8b4fe; }
-  .pill.f { background: rgba(0,212,170,.15); color: var(--accent2); }
-  .status-icon { font-size: 14px; }
-
-  /* ── Tabs ── */
-  .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
-  .tab { padding: 10px 18px; cursor: pointer; color: var(--muted); font-size: 13px; font-weight: 500; border-bottom: 2px solid transparent; transition: all .15s; }
-  .tab.active { color: var(--accent); border-color: var(--accent); }
+  .pill.m { background: rgba(168,85,247,.15);  color: #d8b4fe; }
+  .pill.f { background: rgba(0,212,170,.15);   color: var(--accent2); }
 
   /* ── Misc ── */
-  .muted { color: var(--muted); }
+  .muted      { color: var(--muted); }
   .text-green { color: var(--success); }
   .text-warn  { color: var(--warn); }
   .text-red   { color: var(--danger); }
-  .mono { font-family: 'Fira Code', monospace; }
-  .loading { color: var(--muted); padding: 40px; text-align: center; }
-  .edit-inline { display: none; }
-  .editable:hover .edit-inline { display: inline; }
-  .tag { display: inline-block; background: rgba(108,99,255,.15); color: var(--accent); border-radius: 4px; padding: 1px 6px; font-size: 11px; margin: 1px; }
+  .mono       { font-family: 'Fira Code', monospace; }
+  .loading    { color: var(--muted); padding: 40px; text-align: center; }
+  .tag        { display: inline-block; background: rgba(108,99,255,.15); color: var(--accent); border-radius: 4px; padding: 1px 6px; font-size: 11px; margin: 1px; }
+  .hint       { background: #f8f9ff; border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; font-size: 12px; color: #64748b; margin-bottom: 16px; line-height: 1.8; }
 </style>
 </head>
 <body>
@@ -114,7 +111,7 @@
       <a href="#" class="active" onclick="showTab('inventory')"><span class="icon">📦</span> Inventory</a>
       <a href="#" onclick="showTab('sets')"><span class="icon">🃏</span> Filtre</a>
       <a href="#" onclick="showTab('credits')"><span class="icon">💰</span> Kunde-credits</a>
-      <a href="#" onclick="showTab('bots',this)"><span class="icon">🤖</span> Botter</a>
+      <a href="#" onclick="showTab('bots')"><span class="icon">🤖</span> Botter</a>
     </nav>
     <div style="margin-top:auto; padding:20px; font-size:11px; color:var(--muted);">
       Priser: <a href="https://www.goatbots.com" target="_blank" style="color:var(--accent2)">GoatBots</a><br>
@@ -125,33 +122,29 @@
   <!-- ── Main ── -->
   <main class="main">
 
-    <!-- BOT STATUS BAR (shown on all pages) -->
-    <div id="botStatusBar" style="display:flex; gap:12px; padding:8px 32px; background:#1e1b4b; border-bottom:1px solid #312e81; flex-wrap:wrap">
+    <!-- BOT STATUS BAR -->
+    <div id="botStatusBar" style="display:flex; gap:12px; padding:8px 32px; background:#1e1b4b; border-bottom:1px solid #312e81; flex-wrap:wrap; margin:-28px -28px 28px -28px;">
       <span style="font-size:11px;color:#94a3b8;align-self:center">BOTTER:</span>
       <div id="botStatusItems" style="display:flex;gap:12px;flex-wrap:wrap"></div>
     </div>
 
-    <!-- INVENTORY TAB -->
+    <!-- ══════════════════════════════════════════════════════════
+         INVENTORY TAB
+    ══════════════════════════════════════════════════════════════ -->
     <div id="tab-inventory">
       <div class="page-header">
         <div class="page-title">Samlet Inventory</div>
-        <span class="badge green" id="botStatus">● Bot_1 Online</span>
+        <span class="badge green" id="botStatus">● Online</span>
       </div>
-
-      <!-- Stats -->
       <div class="stats">
         <div class="stat"><div class="label">Totalt unike kort</div><div class="value accent" id="statCards">—</div></div>
         <div class="stat"><div class="label">Total verdi (TIX)</div><div class="value accent2" id="statValue">—</div></div>
         <div class="stat"><div class="label">Reservert Redeem</div><div class="value" id="statRedeem">—</div></div>
-        <div class="stat"><div class="label">Aktive botter</div><div class="value" id="statBots">1</div></div>
+        <div class="stat"><div class="label">Aktive botter</div><div class="value" id="statBots">—</div></div>
       </div>
-
-      <!-- Search toolbar -->
       <div class="toolbar">
         <input type="text" id="searchInput" placeholder="🔍  Søk kortnavn..." oninput="loadInventory()">
-        <select id="setFilter" onchange="loadInventory()">
-          <option value="">Alle sett</option>
-        </select>
+        <select id="setFilter" onchange="loadInventory()"><option value="">Alle sett</option></select>
         <select id="rarityFilter" onchange="loadInventory()">
           <option value="">Alle sjeldenhet</option>
           <option value="M">Mythic</option>
@@ -161,25 +154,13 @@
         </select>
         <button class="btn-secondary btn-small" onclick="triggerPriceFeed()">🔄 Oppdater priser</button>
       </div>
-
-      <!-- Table -->
       <div class="panel" style="padding:0">
         <div class="tbl-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>Kortnavn</th>
-                <th>Sett</th>
-                <th>Sjeldenhet</th>
-                <th>Totalt lager</th>
-                <th>Fordeling</th>
-                <th>Kjøpspris</th>
-                <th>Salgspris</th>
-                <th>Redeem</th>
-                <th>Status</th>
-                <th></th>
-              </tr>
-            </thead>
+            <thead><tr>
+              <th>Kortnavn</th><th>Sett</th><th>Sjeldenhet</th><th>Totalt lager</th>
+              <th>Fordeling</th><th>Kjøpspris</th><th>Salgspris</th><th>Redeem</th><th>Status</th><th></th>
+            </tr></thead>
             <tbody id="inventoryBody">
               <tr><td colspan="10" class="loading">Laster inventory...</td></tr>
             </tbody>
@@ -188,86 +169,110 @@
       </div>
     </div>
 
-    <!-- SETS TAB -->
+    <!-- ══════════════════════════════════════════════════════════
+         FILTER TAB  (replaces old sets tab)
+    ══════════════════════════════════════════════════════════════ -->
     <div id="tab-sets" style="display:none">
       <div class="page-header">
-        <div class="page-title">Sett-filtre & Regler</div>
+        <div class="page-title">Filtre</div>
       </div>
-      <div class="panel">
-        <div class="panel-title">Globale standardverdier</div>
-        <div class="toolbar" style="gap:20px; flex-wrap:wrap">
-          <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Kjøps-multiplier<input type="number" id="globalBuy" value="0.80" step="0.01" style="width:90px"></label>
-          <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Salgs-multiplier<input type="number" id="globalSell" value="1.00" step="0.01" style="width:90px"></label>
-          <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Maks lager<input type="number" id="globalMax" value="8" step="1" style="width:80px"></label>
-          <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Slett credit etter (dager)<input type="number" id="purgeDays" value="90" step="1" style="width:80px"></label>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-title">Velg sett</div>
-        <div class="toolbar">
-          <select id="setSelector" onchange="loadSetCards()" style="flex:1; min-width:300px; font-size:14px; padding:9px 12px">
-            <option value="">-- Velg et sett --</option>
+
+      <!-- Step 1: Bot picker -->
+      <div class="panel" style="margin-bottom:16px">
+        <div class="panel-title">Velg bot</div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center">
+          <select id="filterBotSelect" onchange="onFilterBotChange()"
+                  style="font-size:14px; padding:9px 14px; min-width:220px">
+            <option value="">— Velg bot —</option>
           </select>
-          <input type="text" id="setCardSearch" placeholder="🔍  Søk kortnavn..." oninput="filterSetCards()" style="flex:1">
-          <label class="toggle-wrap"><label class="toggle"><input type="checkbox" id="showNormal" onchange="filterSetCards()"><span class="toggle-slider"></span></label><span>Non-foil</span></label>
-          <label class="toggle-wrap"><label class="toggle"><input type="checkbox" id="showFoil" onchange="filterSetCards()"><span class="toggle-slider"></span></label><span>Foil ✨</span></label>
-        </div>
-        <div id="setCardCount" style="font-size:12px;color:var(--muted);margin-top:8px"></div>
-        <div id="setRulesPanel" style="display:none; margin-top:12px; padding:14px; background:#f8f9ff; border-radius:8px; border:1px solid var(--border)">
-          <div style="display:flex; gap:16px; align-items:flex-end; flex-wrap:wrap">
-            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Kjøps-mult.<input type="number" id="setRulesBuy" step="0.01" style="width:90px"></label>
-            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Salgs-mult.<input type="number" id="setRulesSell" step="0.01" style="width:90px"></label>
-            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Maks lager<input type="number" id="setRulesMax" step="1" style="width:80px"></label>
-            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Keep (behold alle kort)<input type="number" id="setRulesKeep" value="0" step="1" min="0" style="width:80px"></label>
-            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">Maks per handel<input type="number" id="setRulesMaxPerTrade" value="4" step="1" min="1" style="width:80px" title="Maks antall av dette kortet en spiller kan kjøpe per handel"></label>
-            <button class="btn-primary" onclick="saveCurrentSetRules()">💾 Lagre sett-regler</button>
-          </div>
+          <span id="filterBotStatus" style="font-size:12px; color:var(--muted)"></span>
         </div>
       </div>
 
-      <!-- Complete Set Pricing -->
-      <div id="fullsetPanel" style="display:none; margin-bottom:20px; padding:12px 16px; background:#f0fdf4; border-radius:8px; border:1px solid #bbf7d0">
-        <div style="display:grid; grid-template-columns:auto auto auto auto auto auto auto; align-items:end; gap:16px">
-          <span style="font-size:12px; font-weight:700; color:#065f46; white-space:nowrap">🎁 Komplett sett</span>
-          <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-            Kort i basis-sett
-            <input type="number" id="setRulesBaseSize" step="1" min="0" style="width:80px" placeholder="f.eks. 261">
-          </label>
-          <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-            Kjøpspris <span style="color:#94a3b8;font-weight:400">(market: <span id="autoBuySum">—</span>)</span>
-            <input type="number" id="fullsetBuy" step="0.01" style="width:90px">
-          </label>
-          <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-            Salgspris <span style="color:#94a3b8;font-weight:400">(market: <span id="autoSellSum">—</span>)</span>
-            <input type="number" id="fullsetSell" step="0.01" style="width:90px">
-          </label>
-          <label class="toggle-wrap" style="margin-top:14px">
-            <label class="toggle"><input type="checkbox" id="fullsetEnabled"><span class="toggle-slider"></span></label>
-            <span style="font-size:11px">Aktiver</span>
-          </label>
-          <div style="margin-top:14px; font-size:11px; color:#94a3b8"><span id="fullsetCardCount">—</span> kort</div>
-          <button class="btn-success btn-small" onclick="saveFullsetPricing()" style="margin-top:14px">💾</button>
+      <!-- Step 2: Set checklist -->
+      <div id="filterSetChecklist" style="display:none">
+        <div class="panel" style="margin-bottom:16px">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px">
+            <div class="panel-title" style="margin-bottom:0">Velg sett å handle</div>
+            <div style="display:flex; gap:8px">
+              <button class="btn-secondary btn-small" onclick="filterCheckAll(true)">Velg alle</button>
+              <button class="btn-secondary btn-small" onclick="filterCheckAll(false)">Fjern alle</button>
+              <button class="btn-primary" onclick="saveEnabledSets()">💾 Lagre valg</button>
+            </div>
+          </div>
+          <input type="text" id="filterSetSearch" placeholder="🔍 Filtrer sett..."
+                 oninput="renderSetChecklist()"
+                 style="width:100%; max-width:340px; margin-bottom:12px">
+          <div id="filterSetChecklistGrid"
+               style="display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:6px; max-height:340px; overflow-y:auto; padding:4px">
+          </div>
         </div>
-      </div>
-      <div class="panel" style="padding:0; overflow:hidden">
-        <div class="tbl-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th onclick="sortSetCards('cardName')" style="cursor:pointer">Kortnavn ↕</th><th onclick="sortSetCards('rarity')" style="cursor:pointer">Rarity ↕</th><th onclick="sortSetCards('marketPriceTix')" style="cursor:pointer">Markedspris ↕</th>
-                <th onclick="sortSetCards('effectiveBuyPrice')" style="cursor:pointer">Kjøpspris ↕</th><th onclick="sortSetCards('effectiveSellPrice')" style="cursor:pointer">Salgspris ↕</th><th onclick="sortSetCards('redeemReserved')" style="cursor:pointer">Keep ↕</th><th onclick="sortSetCards('maxStock')" style="cursor:pointer">Maks lager ↕</th><th onclick="sortSetCards('maxPerTrade')" style="cursor:pointer">Per handel ↕</th><th></th>
-              </tr>
-            </thead>
-            <tbody id="setCardsBody">
-              <tr><td colspan="8" class="loading muted">Velg et sett i menyen over</td></tr>
-            </tbody>
-          </table>
+
+        <!-- Step 3: Enabled sets table -->
+        <div id="filterEnabledSetsPanel" style="display:none">
+          <div class="panel" style="padding:0; overflow:hidden; margin-bottom:16px">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:12px">
+              <div class="panel-title" style="margin-bottom:0">Aktive sett — regler</div>
+              <!-- Bulk row -->
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+                <span style="font-size:11px; color:var(--muted); font-weight:600">Sett alle:</span>
+                <input type="number" id="bulkBuy"  placeholder="Kjøp mult" step="0.01" style="width:80px; font-size:12px">
+                <input type="number" id="bulkSell" placeholder="Salg mult" step="0.01" style="width:80px; font-size:12px">
+                <input type="number" id="bulkMax"  placeholder="Maks lager" step="1"  style="width:80px; font-size:12px">
+                <input type="number" id="bulkKeep" placeholder="Keep"       step="1"  style="width:70px; font-size:12px">
+                <input type="number" id="bulkMpt"  placeholder="Per handel" step="1"  style="width:80px; font-size:12px">
+                <button class="btn-secondary btn-small" onclick="applyBulkRules()">Bruk på alle</button>
+              </div>
+            </div>
+            <div class="tbl-wrap">
+              <table>
+                <thead><tr>
+                  <th style="width:180px">Sett</th>
+                  <th>Kjøps-mult</th>
+                  <th>Salgs-mult</th>
+                  <th>Maks lager</th>
+                  <th>Keep</th>
+                  <th>Per handel</th>
+                  <th style="width:110px"></th>
+                </tr></thead>
+                <tbody id="filterSetRulesBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Step 4: Card list for selected set -->
+          <div id="filterCardPanel" style="display:none">
+            <div class="panel" style="padding:0; overflow:hidden">
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:8px">
+                <div class="panel-title" style="margin-bottom:0">
+                  Kort i <span id="filterCardPanelSetName" style="color:var(--accent)">—</span>
+                  <span id="filterCardPanelCount" style="font-size:11px; color:var(--muted); font-weight:400; margin-left:8px"></span>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center">
+                  <input type="text" id="filterCardSearch" placeholder="🔍 Søk kort..."
+                         oninput="renderFilterCards()" style="width:200px; font-size:12px">
+                  <button class="btn-secondary btn-small" onclick="closeFilterCardPanel()">✕ Lukk</button>
+                </div>
+              </div>
+              <div class="tbl-wrap">
+                <table>
+                  <thead><tr>
+                    <th>Kortnavn</th><th>Rarity</th><th>Markedspris</th>
+                    <th>Kjøpspris</th><th>Salgspris</th><th>Keep</th>
+                    <th>Maks lager</th><th>Per handel</th><th style="width:90px"></th>
+                  </tr></thead>
+                  <tbody id="filterCardBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- CREDITS TAB -->
-    <!-- CREDITS TAB -->
+    <!-- ══════════════════════════════════════════════════════════
+         CREDITS TAB
+    ══════════════════════════════════════════════════════════════ -->
     <div id="tab-credits" style="display:none">
       <div class="page-header">
         <div class="page-title">Kunde-Credits</div>
@@ -276,14 +281,9 @@
       <div class="panel" style="padding:0">
         <div class="tbl-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>Spiller</th>
-                <th>Saldo (TIX)</th>
-                <th>Siste handel</th>
-                <th></th>
-              </tr>
-            </thead>
+            <thead><tr>
+              <th>Spiller</th><th>Saldo (TIX)</th><th>Siste handel</th><th></th>
+            </tr></thead>
             <tbody id="creditsBody">
               <tr><td colspan="4" class="loading">Laster credits...</td></tr>
             </tbody>
@@ -292,37 +292,28 @@
       </div>
     </div>
 
-    <!-- LOG TAB -->
-    <!-- BOTS TAB -->
+    <!-- ══════════════════════════════════════════════════════════
+         BOTS TAB
+    ══════════════════════════════════════════════════════════════ -->
     <div id="tab-bots" style="display:none; width:100%; min-height:400px">
       <div class="page-header">
         <div class="page-title">Botter</div>
         <button class="btn-primary btn-small" onclick="addBot()">+ Legg til bot</button>
       </div>
       <div class="hint">
-        <strong>💡 Bot-roller</strong>
+        <strong>💡 Bot-roller</strong><br>
         <b>TRADE:</b> Kjøper og selger singles. Holder maks lokalt antall, sender resten til K-76.<br>
         <b>MULE:</b> Privat hvelv. Samler komplette sett, sender til Fullset-bot.<br>
-        <b>FULLSET:</b> Selger komplette sett. Kjøper ingenting.<br>
-        <b>Globale regler</b> (Filter-siden) setter nettverkstak. Bot-regler setter lokale grenser.
+        <b>FULLSET:</b> Selger komplette sett. Kjøper ingenting.
       </div>
       <div id="botsContainer"></div>
     </div>
 
-    <!-- SETTINGS TAB -->
+    <!-- ══════════════════════════════════════════════════════════
+         SETTINGS TAB
+    ══════════════════════════════════════════════════════════════ -->
     <div id="tab-settings" style="display:none">
       <div class="page-header"><div class="page-title">Innstillinger</div></div>
-      <div class="panel">
-        <div class="panel-title">Prisingsregler (Tiers)</div>
-        <table>
-          <thead><tr><th>Tier</th><th>Min TIX</th><th>Max TIX</th><th>Kjøps-%</th><th>Salgs-%</th></tr></thead>
-          <tbody>
-            <tr><td>Dyrt</td><td>10</td><td>∞</td><td>90%</td><td>100%</td></tr>
-            <tr><td>Mellom</td><td>1</td><td>10</td><td>80%</td><td>100%</td></tr>
-            <tr><td>Bulk</td><td>0</td><td>1</td><td>fast 0.005</td><td>fast 0.010</td></tr>
-          </tbody>
-        </table>
-      </div>
       <div class="panel">
         <div class="panel-title">Foil-premium</div>
         <label>Foil multiplier: <input type="number" id="foilMult" value="1.00" step="0.05" style="width:80px"> × normal pris</label>
@@ -335,98 +326,60 @@
 <script>
 const API = '/api';
 
-
-const SET_NAMES = {
-  "MH3":"Modern Horizons 3","MH2":"Modern Horizons 2","MH1":"Modern Horizons",
-  "OTJ":"Outlaws of Thunder Junction","MKM":"Murders at Karlov Manor",
-  "LCI":"Lost Caverns of Ixalan","WOE":"Wilds of Eldraine","MOM":"March of the Machine",
-  "ONE":"Phyrexia All Will Be One","BRO":"The Brothers War","DMU":"Dominaria United",
-  "SNC":"Streets of New Capenna","NEO":"Kamigawa Neon Dynasty","VOW":"Innistrad Crimson Vow",
-  "MID":"Innistrad Midnight Hunt","AFR":"Adventures in the Forgotten Realms",
-  "STX":"Strixhaven","KHM":"Kaldheim","ZNR":"Zendikar Rising","M21":"Core Set 2021",
-  "IKO":"Ikoria","THB":"Theros Beyond Death","ELD":"Throne of Eldraine",
-  "M20":"Core Set 2020","WAR":"War of the Spark","RNA":"Ravnica Allegiance",
-  "GRN":"Guilds of Ravnica","M19":"Core Set 2019","DOM":"Dominaria",
-  "RIX":"Rivals of Ixalan","XLN":"Ixalan","HOU":"Hour of Devastation",
-  "AKH":"Amonkhet","AER":"Aether Revolt","KLD":"Kaladesh",
-  "EMN":"Eldritch Moon","SOI":"Shadows Over Innistrad","OGW":"Oath of the Gatewatch",
-  "BFZ":"Battle for Zendikar","DTK":"Dragons of Tarkir","FRF":"Fate Reforged",
-  "KTK":"Khans of Tarkir","M15":"Core Set 2015","JOU":"Journey into Nyx",
-  "BNG":"Born of the Gods","THS":"Theros","M14":"Core Set 2014","DGM":"Dragon Maze",
-  "GTC":"Gatecrash","RTR":"Return to Ravnica","M13":"Core Set 2013",
-  "AVR":"Avacyn Restored","DKA":"Dark Ascension","ISD":"Innistrad",
-  "M12":"Core Set 2012","NPH":"New Phyrexia","MBS":"Mirrodin Besieged",
-  "SOM":"Scars of Mirrodin","M11":"Core Set 2011","ROE":"Rise of the Eldrazi",
-  "WWK":"Worldwake","ZEN":"Zendikar","M10":"Core Set 2010","ARB":"Alara Reborn",
-  "CFX":"Conflux","ALA":"Shards of Alara","LRW":"Lorwyn","MOR":"Morningtide",
-  "SHM":"Shadowmoor","EVE":"Eventide","10E":"Tenth Edition","FUT":"Future Sight",
-  "PLC":"Planar Chaos","TSP":"Time Spiral","RAV":"Ravnica","GPT":"Guildpact",
-  "DIS":"Dissension","SOK":"Saviors of Kamigawa","BOK":"Betrayers of Kamigawa",
-  "CHK":"Champions of Kamigawa","5DN":"Fifth Dawn","DST":"Darksteel",
-  "MRD":"Mirrodin","8ED":"Eighth Edition","SCG":"Scourge","LGN":"Legions",
-  "ONS":"Onslaught","JUD":"Judgment","TOR":"Torment","ODY":"Odyssey",
-  "APC":"Apocalypse","PLS":"Planeshift","INV":"Invasion","PCY":"Prophecy",
-  "NEM":"Nemesis","MMQ":"Mercadian Masques","UDS":"Urza Destiny",
-  "ULG":"Urza Legacy","USG":"Urza Saga","EXO":"Exodus","STH":"Stronghold",
-  "TMP":"Tempest","WTH":"Weatherlight","VIS":"Visions","MIR":"Mirage",
-  "ALL":"Alliances","ICE":"Ice Age","HML":"Homelands","FEM":"Fallen Empires",
-  "DRK":"The Dark","LEG":"Legends","ATQ":"Antiquities","ARN":"Arabian Nights",
-  "2ED":"Unlimited Edition","1E":"Limited Edition Alpha","2XM":"Double Masters 2022",
-  "2X2":"Double Masters","CMR":"Commander Legends","MH2":"Modern Horizons 2",
-  "LTR":"Lord of the Rings","STA":"Strixhaven Mystical Archive","SLD":"Secret Lair",
-  "MOC":"March of the Machine Commander","WHO":"Doctor Who","SPG":"Special Guests",
-  "DSK":"Duskmourn","FDN":"Foundations","BLB":"Bloomburrow","MH3":"Modern Horizons 3"
-};
-function setName(code) { return SET_NAMES[code] || code; }
-
-// ─── Tab switching ───────────────────────────────────────────────
-let allBotIds = [];
+// ── Tab switching ─────────────────────────────────────────────────
+let allBotIds  = [];
 let allSetCards = [];
 let currentSetCode = '';
 let sortCol = 'marketPriceTix';
 let sortDir = -1;
+
 loadBotStatusBar();
-setInterval(loadBotStatusBar, 30000); // refresh every 30s
+setInterval(loadBotStatusBar, 30000);
 
 function showTab(name) {
   document.querySelectorAll('[id^=tab-]').forEach(el => el.style.display = 'none');
   document.getElementById('tab-' + name).style.display = 'block';
-  document.querySelectorAll('nav a').forEach((a, i) => {
-    a.classList.toggle('active', a.getAttribute('onclick')?.includes(name));
-  });
-  if (name === 'inventory') { loadInventory(); loadPnl('today'); }
-  if (name === 'sets')      { populateSetDropdown(); }
+  document.querySelectorAll('nav a').forEach(a =>
+    a.classList.toggle('active', a.getAttribute('onclick')?.includes(name)));
+  if (name === 'inventory') loadInventory();
+  if (name === 'sets')      initFilterTab();
   if (name === 'credits')   loadCredits();
-  if (name === 'log')       loadStatus();
   if (name === 'bots')      loadBots();
 }
 
-// ─── Inventory ───────────────────────────────────────────────────
+// ── Bot status bar ────────────────────────────────────────────────
+async function loadBotStatusBar() {
+  try {
+    const bots = await fetchJson('/api/bots');
+    allBotIds = bots.map(b => b.bot_id);
+    document.getElementById('statBots').textContent = bots.filter(b => b.is_online).length;
+    document.getElementById('botStatusItems').innerHTML = bots.map(b => `
+      <span class="badge ${b.is_online ? 'green' : 'red'}" style="font-size:11px">
+        ${b.is_online ? '●' : '○'} ${esc(b.account_name)}
+      </span>`).join('');
+  } catch(e) {}
+}
+
+// ── Inventory ─────────────────────────────────────────────────────
 async function loadInventory() {
   const search = document.getElementById('searchInput').value;
   const set    = document.getElementById('setFilter').value;
   let url = `${API}/inventory?`;
   if (search) url += `search=${encodeURIComponent(search)}&`;
   if (set)    url += `set=${encodeURIComponent(set)}&`;
-
   try {
-    const rows = await fetchJson(url);
-    const tbody = document.getElementById('inventoryBody');
-
-    // Filter out cards with no name
+    let rows = await fetchJson(url);
     rows = rows.filter(r => r.cardName && r.cardName.length > 0);
-    if (!rows || rows.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="10" class="loading muted">Ingen kort funnet.</td></tr>`;
+    const tbody = document.getElementById('inventoryBody');
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="10" class="loading muted">Ingen kort funnet.</td></tr>';
       return;
     }
-
-    // Update stats
     document.getElementById('statCards').textContent = rows.length.toLocaleString();
-    const totalVal = rows.reduce((s, r) => s + (r.totalQuantity * r.marketPriceTix), 0);
-    document.getElementById('statValue').textContent = totalVal.toFixed(2);
-    const totalRedeem = rows.reduce((s, r) => s + r.redeemReserved, 0);
-    document.getElementById('statRedeem').textContent = totalRedeem;
-
+    document.getElementById('statValue').textContent =
+      rows.reduce((s, r) => s + (r.totalQuantity * r.marketPriceTix), 0).toFixed(2);
+    document.getElementById('statRedeem').textContent =
+      rows.reduce((s, r) => s + r.redeemReserved, 0);
     tbody.innerHTML = rows.map(r => `
       <tr>
         <td><strong>${esc(r.cardName)}</strong>${r.isFoil ? ' <span class="pill f">Foil</span>' : ''}</td>
@@ -437,8 +390,9 @@ async function loadInventory() {
         <td class="mono text-warn">${r.effectiveBuyPrice.toFixed(4)}</td>
         <td class="mono text-green">${r.effectiveSellPrice.toFixed(4)}</td>
         <td class="mono ${r.redeemReserved > 0 ? 'text-warn' : 'muted'}">${r.redeemReserved}</td>
-        <td>${r.status}</td>
-        <td><button class="btn-secondary btn-small" onclick="editCard('${esc(r.cardId)}','${esc(r.cardName)}',${r.effectiveBuyPrice},${r.effectiveSellPrice},${r.maxStock},${r.redeemReserved})">✏️</button></td>
+        <td>${r.status || '—'}</td>
+        <td><button class="btn-secondary btn-small"
+              onclick="editCard('${esc(r.cardId)}','${esc(r.cardName)}',${r.effectiveBuyPrice},${r.effectiveSellPrice},${r.maxStock},${r.redeemReserved})">✏️</button></td>
       </tr>`).join('');
   } catch(e) {
     document.getElementById('inventoryBody').innerHTML =
@@ -446,22 +400,330 @@ async function loadInventory() {
   }
 }
 
+// ── Card edit (inventory tab) ─────────────────────────────────────
+function editCard(id, name, buy, sell, max, redeem) {
+  const newBuy  = parseFloat(prompt(`Kjøpspris for ${name}:`, buy));
+  if (isNaN(newBuy)) return;
+  const newSell = parseFloat(prompt(`Salgspris for ${name}:`, sell));
+  const newMax  = parseInt(prompt(`Maks lager:`, max));
+  const newRed  = parseInt(prompt(`Redeem-reservert:`, redeem));
+  fetchJson(`${API}/cards/${id}/overrides`, 'PUT', {
+    customBuyPrice: newBuy || null, customSellPrice: newSell || null,
+    customMaxStock: newMax || null, redeemReserved:  newRed  || 0
+  }).then(() => { toast(`✅ ${name} oppdatert`); loadInventory(); });
+}
 
+// ══════════════════════════════════════════════════════════════════
+// FILTER TAB
+// ══════════════════════════════════════════════════════════════════
 
+let filterBotId       = '';
+let filterAllSets     = [];
+let filterCardData    = [];
+let filterCardSetCode = '';
 
+async function initFilterTab() {
+  try {
+    const bots = await fetchJson('/api/bots');
+    const sel  = document.getElementById('filterBotSelect');
+    const prev = sel.value;
+    sel.innerHTML = '<option value="">— Velg bot —</option>' +
+      bots.map(b =>
+        `<option value="${esc(b.bot_id)}">${esc(b.account_name)} (${esc(b.bot_type)})</option>`
+      ).join('');
+    if (prev) { sel.value = prev; }
+    if (sel.value) onFilterBotChange();
+  } catch(e) { console.error('initFilterTab:', e); }
+}
 
+async function onFilterBotChange() {
+  filterBotId = document.getElementById('filterBotSelect').value;
+  const checklist = document.getElementById('filterSetChecklist');
+  const status    = document.getElementById('filterBotStatus');
 
-// ─── Bots ────────────────────────────────────────────────────────
+  if (!filterBotId) {
+    checklist.style.display = 'none';
+    status.textContent = '';
+    return;
+  }
+  checklist.style.display = 'block';
+  document.getElementById('filterEnabledSetsPanel').style.display = 'none';
+  document.getElementById('filterCardPanel').style.display = 'none';
+  status.textContent = 'Laster...';
+
+  try {
+    filterAllSets = await fetchJson(`/api/bots/${filterBotId}/set-rules`);
+    renderSetChecklist();
+    const enabledCount = filterAllSets.filter(s => s.enabled).length;
+    status.textContent = `${enabledCount} aktive sett`;
+    if (enabledCount > 0) renderEnabledSetsTable();
+  } catch(e) {
+    status.textContent = '⚠️ ' + e.message;
+  }
+}
+
+// ── Checklist ─────────────────────────────────────────────────────
+function renderSetChecklist() {
+  const q    = (document.getElementById('filterSetSearch').value || '').toLowerCase();
+  const grid = document.getElementById('filterSetChecklistGrid');
+  const list = q
+    ? filterAllSets.filter(s => (s.set_name||s.set_code||'').toLowerCase().includes(q))
+    : filterAllSets;
+
+  grid.innerHTML = list.map(s => {
+    const code = s.set_code;
+    const name = s.set_name || code;
+    return `
+      <label id="chk-label-${esc(code)}"
+             style="display:flex; align-items:center; gap:8px; padding:6px 10px;
+                    border-radius:6px; cursor:pointer; font-size:13px; user-select:none;
+                    background:${s.enabled ? 'rgba(79,70,229,.07)' : 'transparent'};
+                    border:1px solid ${s.enabled ? 'var(--accent)' : 'var(--border)'}">
+        <input type="checkbox" ${s.enabled ? 'checked' : ''}
+               onchange="toggleSetEnabled('${esc(code)}', this.checked)"
+               style="accent-color:var(--accent); width:15px; height:15px; flex-shrink:0">
+        <span class="tag" style="font-size:10px; flex-shrink:0">${esc(code)}</span>
+        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap"
+              title="${esc(name)}">${esc(name)}</span>
+      </label>`;
+  }).join('');
+}
+
+function toggleSetEnabled(setCode, checked) {
+  const s = filterAllSets.find(x => x.set_code === setCode);
+  if (s) s.enabled = checked;
+  const lbl = document.getElementById(`chk-label-${setCode}`);
+  if (lbl) {
+    lbl.style.background = checked ? 'rgba(79,70,229,.07)' : 'transparent';
+    lbl.style.border     = `1px solid ${checked ? 'var(--accent)' : 'var(--border)'}`;
+  }
+}
+
+function filterCheckAll(state) {
+  filterAllSets.forEach(s => s.enabled = state);
+  renderSetChecklist();
+}
+
+async function saveEnabledSets() {
+  const enabledSets = filterAllSets.filter(s => s.enabled).map(s => s.set_code);
+  try {
+    await fetchJson(`/api/bots/${filterBotId}/enabled-sets`, 'PUT', { enabledSets });
+    toast(`✅ ${enabledSets.length} sett aktivert for ${filterBotId}`);
+    filterAllSets = await fetchJson(`/api/bots/${filterBotId}/set-rules`);
+    renderSetChecklist();
+    renderEnabledSetsTable();
+    document.getElementById('filterBotStatus').textContent = `${enabledSets.length} aktive sett`;
+  } catch(e) { toast('⚠️ ' + e.message); }
+}
+
+// ── Enabled sets table ────────────────────────────────────────────
+function renderEnabledSetsTable() {
+  const enabled = filterAllSets.filter(s => s.enabled);
+  const panel   = document.getElementById('filterEnabledSetsPanel');
+  const tbody   = document.getElementById('filterSetRulesBody');
+
+  if (!enabled.length) { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+
+  tbody.innerHTML = enabled.map(s => {
+    const code    = s.set_code;
+    const name    = s.set_name || code;
+    const defBuy  = s.default_buy_multiplier  || 0.80;
+    const defSell = s.default_sell_multiplier || 1.00;
+    const defMax  = s.default_max_stock       || 8;
+    return `
+      <tr>
+        <td style="cursor:pointer" onclick="openFilterCardPanel('${esc(code)}','${esc(name)}')">
+          <span class="tag">${esc(code)}</span>
+          <span style="margin-left:6px; font-size:12px">${esc(name)}</span>
+        </td>
+        <td><input type="number" step="0.01" id="sr-buy-${esc(code)}"
+                   value="${s.buy_multiplier ?? defBuy}"
+                   style="width:72px; font-size:12px" class="mono"></td>
+        <td><input type="number" step="0.01" id="sr-sell-${esc(code)}"
+                   value="${s.sell_multiplier ?? defSell}"
+                   style="width:72px; font-size:12px" class="mono"></td>
+        <td><input type="number" step="1"    id="sr-max-${esc(code)}"
+                   value="${s.max_local_stock ?? defMax}"
+                   style="width:64px; font-size:12px" class="mono"></td>
+        <td><input type="number" step="1" min="0" id="sr-keep-${esc(code)}"
+                   value="${s.keep_local ?? 0}"
+                   style="width:56px; font-size:12px" class="mono"></td>
+        <td><input type="number" step="1" min="1" id="sr-mpt-${esc(code)}"
+                   value="${s.max_per_trade ?? 4}"
+                   style="width:64px; font-size:12px" class="mono"></td>
+        <td style="white-space:nowrap">
+          <button class="btn-primary btn-small" onclick="saveSetRule('${esc(code)}')">💾</button>
+          <button class="btn-secondary btn-small" style="margin-left:4px"
+                  onclick="openFilterCardPanel('${esc(code)}','${esc(name)}')">🃏</button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+async function saveSetRule(setCode) {
+  const buy  = parseFloat(document.getElementById(`sr-buy-${setCode}`)?.value)  || null;
+  const sell = parseFloat(document.getElementById(`sr-sell-${setCode}`)?.value) || null;
+  const max  = parseInt(document.getElementById(`sr-max-${setCode}`)?.value)    || null;
+  const keep = parseInt(document.getElementById(`sr-keep-${setCode}`)?.value)   || null;
+  const mpt  = parseInt(document.getElementById(`sr-mpt-${setCode}`)?.value)    || null;
+  try {
+    await fetchJson(`/api/bots/${filterBotId}/set-rules/${setCode}`, 'PUT', {
+      enabled: true, maxLocalStock: max, keepLocal: keep,
+      maxPerTrade: mpt, buyMultiplier: buy, sellMultiplier: sell
+    });
+    toast(`✅ ${setCode} regler lagret`);
+    const s = filterAllSets.find(x => x.set_code === setCode);
+    if (s) { s.buy_multiplier = buy; s.sell_multiplier = sell;
+             s.max_local_stock = max; s.keep_local = keep; s.max_per_trade = mpt; }
+  } catch(e) { toast('⚠️ ' + e.message); }
+}
+
+async function applyBulkRules() {
+  const buy  = parseFloat(document.getElementById('bulkBuy').value)  || null;
+  const sell = parseFloat(document.getElementById('bulkSell').value) || null;
+  const max  = parseInt(document.getElementById('bulkMax').value)    || null;
+  const keep = parseInt(document.getElementById('bulkKeep').value)   || null;
+  const mpt  = parseInt(document.getElementById('bulkMpt').value)    || null;
+  if (!buy && !sell && !max && !keep && !mpt) { toast('⚠️ Fyll inn minst én verdi'); return; }
+
+  const enabled = filterAllSets.filter(s => s.enabled);
+  let saved = 0;
+  for (const s of enabled) {
+    const code = s.set_code;
+    try {
+      await fetchJson(`/api/bots/${filterBotId}/set-rules/${code}`, 'PUT', {
+        enabled:        true,
+        buyMultiplier:  buy  ?? s.buy_multiplier,
+        sellMultiplier: sell ?? s.sell_multiplier,
+        maxLocalStock:  max  ?? s.max_local_stock,
+        keepLocal:      keep ?? s.keep_local,
+        maxPerTrade:    mpt  ?? s.max_per_trade
+      });
+      saved++;
+    } catch(e) { console.error(`Failed ${code}:`, e); }
+  }
+  toast(`✅ Bulk-regler lagret for ${saved} sett`);
+  filterAllSets = await fetchJson(`/api/bots/${filterBotId}/set-rules`);
+  renderSetChecklist();
+  renderEnabledSetsTable();
+}
+
+// ── Card panel ────────────────────────────────────────────────────
+async function openFilterCardPanel(setCode, setName) {
+  filterCardSetCode = setCode;
+  const panel = document.getElementById('filterCardPanel');
+  document.getElementById('filterCardPanelSetName').textContent = `${setName} (${setCode})`;
+  document.getElementById('filterCardPanelCount').textContent   = '';
+  document.getElementById('filterCardSearch').value = '';
+  panel.style.display = 'block';
+  document.getElementById('filterCardBody').innerHTML =
+    '<tr><td colspan="9" class="loading muted">Laster kort...</td></tr>';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  try {
+    filterCardData = await fetchJson(
+      `/api/bots/${filterBotId}/card-rules?setCode=${encodeURIComponent(setCode)}`);
+    document.getElementById('filterCardPanelCount').textContent = `${filterCardData.length} kort`;
+    renderFilterCards();
+  } catch(e) {
+    document.getElementById('filterCardBody').innerHTML =
+      `<tr><td colspan="9" class="loading text-red">Feil: ${e.message}</td></tr>`;
+  }
+}
+
+function closeFilterCardPanel() {
+  document.getElementById('filterCardPanel').style.display = 'none';
+  filterCardData = []; filterCardSetCode = '';
+}
+
+function renderFilterCards() {
+  const q     = (document.getElementById('filterCardSearch').value || '').toLowerCase();
+  const tbody = document.getElementById('filterCardBody');
+  const cards = q
+    ? filterCardData.filter(c => (c.card_name||'').toLowerCase().includes(q))
+    : filterCardData;
+
+  if (!cards.length) {
+    tbody.innerHTML = '<tr><td colspan="9" class="loading muted">Ingen kort funnet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = cards.map(c => {
+    const id     = c.card_id;
+    const name   = c.card_name;
+    const market = (c.market_price_tix || 0).toFixed(4);
+    const buy    = (c.effective_buy_price  || 0).toFixed(4);
+    const sell   = (c.effective_sell_price || 0).toFixed(4);
+    const keep   = c.redeem_reserved  ?? 0;
+    const max    = c.max_stock        ?? 8;
+    const mpt    = c.max_per_trade    ?? 4;
+    const isOvr  = c.has_bot_override;
+    return `
+      <tr style="${isOvr ? 'background:rgba(79,70,229,.04)' : ''}">
+        <td>
+          <strong>${esc(name)}</strong>
+          ${c.collector_number ? `<span style="font-size:10px;color:#94a3b8"> #${c.collector_number}</span>` : ''}
+          ${c.is_foil ? ' <span class="pill f">✨</span>' : ''}
+          ${isOvr ? ' <span style="font-size:10px;color:var(--accent)" title="Bot-override aktiv">★</span>' : ''}
+        </td>
+        <td>${rarityPill(c.rarity)}</td>
+        <td class="mono">${market}</td>
+        <td><input type="number" value="${buy}"  step="0.0001" style="width:80px" id="fcbuy-${esc(id)}"  class="mono"></td>
+        <td><input type="number" value="${sell}" step="0.0001" style="width:80px" id="fcsell-${esc(id)}" class="mono"></td>
+        <td><input type="number" value="${keep}" step="1" min="0" style="width:56px" id="fckeep-${esc(id)}" class="mono"></td>
+        <td><input type="number" value="${max}"  step="1" min="0" style="width:60px" id="fcmax-${esc(id)}"  class="mono"></td>
+        <td><input type="number" value="${mpt}"  step="1" min="1" style="width:60px" id="fcmpt-${esc(id)}"  class="mono"></td>
+        <td style="white-space:nowrap">
+          <button class="btn-primary btn-small" onclick="saveFilterCard('${esc(id)}')">💾</button>
+          ${isOvr ? `<button class="btn-danger btn-small" style="margin-left:4px"
+                             onclick="resetFilterCard('${esc(id)}')" title="Fjern bot-override">✕</button>` : ''}
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+async function saveFilterCard(cardId) {
+  const buy  = parseFloat(document.getElementById(`fcbuy-${cardId}`)?.value)  || null;
+  const sell = parseFloat(document.getElementById(`fcsell-${cardId}`)?.value) || null;
+  const keep = parseInt(document.getElementById(`fckeep-${cardId}`)?.value)   || 0;
+  const max  = parseInt(document.getElementById(`fcmax-${cardId}`)?.value)    || null;
+  const mpt  = parseInt(document.getElementById(`fcmpt-${cardId}`)?.value)    || 4;
+  try {
+    await fetchJson(`/api/bots/${filterBotId}/card-rules/${cardId}`, 'PUT', {
+      customBuyPrice: buy, customSellPrice: sell,
+      customMaxStock: max, redeemReserved: keep, maxPerTrade: mpt
+    });
+    toast('✅ Lagret');
+    const c = filterCardData.find(x => x.card_id === cardId);
+    if (c) c.has_bot_override = true;
+    renderFilterCards();
+  } catch(e) { toast('⚠️ ' + e.message); }
+}
+
+async function resetFilterCard(cardId) {
+  if (!confirm('Fjerne bot-spesifikk override? Globale regler vil gjelde igjen.')) return;
+  try {
+    await fetchJson(`/api/bots/${filterBotId}/card-rules/${cardId}`, 'DELETE');
+    toast('✅ Override fjernet');
+    await openFilterCardPanel(
+      filterCardSetCode,
+      document.getElementById('filterCardPanelSetName').textContent.replace(/ \(.*\)$/, '')
+    );
+  } catch(e) { toast('⚠️ ' + e.message); }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// BOTS TAB
+// ══════════════════════════════════════════════════════════════════
 
 async function loadBots() {
   try {
     const bots = await fetchJson('/api/bots');
-    allBotIds = bots.map(b => b.bot_id); // update global
+    allBotIds = bots.map(b => b.bot_id);
     const container = document.getElementById('botsContainer');
 
     container.innerHTML = bots.map(b => `
       <div class="panel" style="margin-bottom:12px; padding:0; overflow:hidden" id="botcard-${esc(b.bot_id)}">
-        <!-- Bot header -->
         <div style="display:flex; align-items:center; gap:16px; padding:12px 16px; background:#f8f9ff; cursor:pointer"
              onclick="toggleBotRules('${esc(b.bot_id)}')">
           <strong style="font-size:14px; min-width:180px">${esc(b.account_name)}</strong>
@@ -471,51 +733,40 @@ async function loadBots() {
           <span style="font-size:12px;color:#94a3b8">${b.total_cards} kort</span>
           <span style="font-size:16px;color:var(--muted)">▼</span>
         </div>
-
-        <!-- Bot rules (collapsible) -->
         <div id="botrules-${esc(b.bot_id)}" style="display:none; padding:16px; border-top:1px solid var(--border)">
-
-          <!-- Basic settings -->
           <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px; align-items:flex-end">
             <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
               Type
               <select class="bot-type-sel" style="width:100px">
-                ${['TRADE','MULE','FULLSET'].map(t => '<option value="'+t+'"'+(b.bot_type===t?' selected':'')+'>'+t+'</option>').join('')}
+                ${['TRADE','MULE','FULLSET'].map(t => `<option value="${t}"${b.bot_type===t?' selected':''}>${t}</option>`).join('')}
               </select>
             </label>
             <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-              Beskrivelse (intern)
+              Beskrivelse
               <input type="text" value="${esc(b.description||'')}" style="width:200px" class="bot-desc">
             </label>
             <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-              Trade-vindu melding (vises i MTGO)
-              <input type="text" value="${esc(b.trade_message||'')}" style="width:380px" class="bot-trade-msg" placeholder="F.eks: Buying all singles! Prices updated daily.">
+              Trade-melding (vises i MTGO)
+              <input type="text" value="${esc(b.trade_message||'')}" style="width:360px" class="bot-trade-msg">
             </label>
             <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
               Overfør til
               <select class="bot-transfer-sel" style="width:160px">
                 <option value="">—</option>
-                ${allBotIds.filter(id => id !== b.bot_id).map(id => '<option value="'+esc(id)+'"'+(b.transfer_to===id?' selected':'')+'>'+esc(id)+'</option>').join('')}
+                ${allBotIds.filter(id => id !== b.bot_id).map(id =>
+                  `<option value="${esc(id)}"${b.transfer_to===id?' selected':''}>${esc(id)}</option>`).join('')}
               </select>
             </label>
           </div>
-
-          <!-- TIX rules -->
           <div style="background:#fff8e1; border-radius:8px; padding:12px; margin-bottom:12px; border:1px solid #fde68a">
             <div style="font-size:11px;font-weight:700;color:#92400e;margin-bottom:8px">💵 TIX-regler</div>
             <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-end">
               <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-                TIX reserve (mål)
+                TIX reserve
                 <input type="number" value="${b.tix_reserve||0}" step="100" min="0" style="width:90px" class="bot-tix-reserve">
               </label>
-              <div style="font-size:11px;color:#94a3b8">
-                Under reserve → hent fra <strong>${esc(b.transfer_to||'—')}</strong><br>
-                Over reserve → send til <strong>${esc(b.transfer_to||'—')}</strong>
-              </div>
             </div>
           </div>
-
-          <!-- Card rules -->
           <div style="background:#f0f9ff; border-radius:8px; padding:12px; margin-bottom:12px; border:1px solid #bae6fd">
             <div style="font-size:11px;font-weight:700;color:#0369a1;margin-bottom:8px">🃏 Kortregler (alle sett)</div>
             <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-end">
@@ -527,93 +778,44 @@ async function loadBots() {
                 Over maks → overfør til
                 <select class="bot-card-transfer-sel" style="width:160px">
                   <option value="">—</option>
-                  ${allBotIds.filter(id => id !== b.bot_id).map(id => '<option value="'+esc(id)+'"'+(b.card_transfer_to===id?' selected':'')+'>'+esc(id)+'</option>').join('')}
+                  ${allBotIds.filter(id => id !== b.bot_id).map(id =>
+                    `<option value="${esc(id)}"${b.card_transfer_to===id?' selected':''}>${esc(id)}</option>`).join('')}
                 </select>
               </label>
               <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
                 Komplett sett → overfør til
                 <select class="bot-fullset-transfer-sel" style="width:160px">
                   <option value="">— (ingen overføring)</option>
-                  ${allBotIds.filter(id => id !== b.bot_id).map(id => '<option value="'+esc(id)+'"'+(b.fullset_transfer_to===id?' selected':'')+'>'+esc(id)+'</option>').join('')}
+                  ${allBotIds.filter(id => id !== b.bot_id).map(id =>
+                    `<option value="${esc(id)}"${b.fullset_transfer_to===id?' selected':''}>${esc(id)}</option>`).join('')}
                 </select>
               </label>
             </div>
           </div>
-
-          <!-- Fullset bot rules (only for FULLSET bots) -->
           ${b.bot_type === 'FULLSET' ? `
           <div style="background:#fdf4ff; border-radius:8px; padding:12px; margin-bottom:12px; border:1px solid #e9d5ff">
             <div style="font-size:11px;font-weight:700;color:#7e22ce;margin-bottom:8px">🎁 Fullset-bot regler</div>
             <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center">
               <label style="display:flex;align-items:center;gap:6px;font-size:12px">
                 <input type="checkbox" class="bot-fs-buy" ${b.fullset_buy_enabled ? 'checked' : ''}>
-                Kjøp komplette sett fra kunder
+                Kjøp komplette sett
               </label>
               <label style="display:flex;align-items:center;gap:6px;font-size:12px">
                 <input type="checkbox" class="bot-fs-sell" ${b.fullset_sell_enabled ? 'checked' : ''}>
-                Selg komplette sett til kunder
+                Selg komplette sett
               </label>
               <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
                 Maks sett per handel
                 <input type="number" value="${b.max_sets_per_trade||1}" step="1" min="1" style="width:70px" class="bot-max-sets">
               </label>
-              <div style="font-size:11px;color:#94a3b8">
-                Priser settes i <strong>Filtre → Komplett sett-prising</strong> per sett.<br>
-                Restbeløp lagres som kunde-credit automatisk.
-              </div>
             </div>
           </div>` : ''}
-          <!-- Set-specific overrides -->
-          <div style="background:#f0fdf4; border-radius:8px; padding:12px; margin-bottom:12px; border:1px solid #bbf7d0">
-            <div style="font-size:11px;font-weight:700;color:#065f46;margin-bottom:8px">🎯 Sett-spesifikke regler</div>
-            <div style="font-size:11px;color:#94a3b8;margin-bottom:8px">Overstyrer globale regler for dette settet på denne boten.</div>
-            <!-- Column headers -->
-            <div style="display:grid;grid-template-columns:120px 80px 70px 70px 75px 75px 60px 60px;gap:8px;align-items:center;margin-bottom:4px;padding:0 4px">
-              <span style="font-size:10px;font-weight:700;color:#94a3b8">SETT</span>
-              <span style="font-size:10px;font-weight:700;color:#94a3b8">MAKS LOKALT</span>
-              <span style="font-size:10px;font-weight:700;color:#94a3b8">KEEP</span>
-              <span style="font-size:10px;font-weight:700;color:#94a3b8">PER HANDEL</span>
-              <span style="font-size:10px;font-weight:700;color:#94a3b8">KJØPS-MULT</span>
-              <span style="font-size:10px;font-weight:700;color:#94a3b8">SALGS-MULT</span>
-              <span></span><span></span>
-            </div>
-            <div id="botsetrules-${esc(b.bot_id)}">
-              <div class="muted" style="font-size:11px;padding:4px">Ingen sett-regler ennå.</div>
-            </div>
-            <!-- Add new rule row -->
-            <div style="display:grid;grid-template-columns:120px 80px 70px 70px 75px 75px 60px;gap:8px;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid #bbf7d0" id="newrule-${esc(b.bot_id)}">
-              <select id="newrule-set-${esc(b.bot_id)}" style="font-size:11px;padding:4px">
-                <option value="">Velg sett...</option>
-              </select>
-              <input type="number" id="newrule-max-${esc(b.bot_id)}" placeholder="4" step="1" min="0" style="width:70px;font-size:11px">
-              <input type="number" id="newrule-keep-${esc(b.bot_id)}" placeholder="0" step="1" min="0" style="width:60px;font-size:11px">
-              <input type="number" id="newrule-mpt-${esc(b.bot_id)}" placeholder="4" step="1" min="1" style="width:60px;font-size:11px">
-              <input type="number" id="newrule-buy-${esc(b.bot_id)}" placeholder="0.80" step="0.01" style="width:65px;font-size:11px">
-              <input type="number" id="newrule-sell-${esc(b.bot_id)}" placeholder="1.00" step="0.01" style="width:65px;font-size:11px">
-              <button class="btn-success btn-small" onclick="saveNewBotSetRule('${esc(b.bot_id)}')">+ Legg til</button>
-            </div>
-          </div>
-
-          <!-- Save/Delete -->
           <div style="display:flex; gap:8px; margin-top:4px">
             <button class="btn-primary" onclick="saveBot('${esc(b.bot_id)}','${esc(b.account_name)}')">💾 Lagre</button>
             <button class="btn-danger btn-small" onclick="deleteBot('${esc(b.bot_id)}')">🗑️ Slett</button>
           </div>
         </div>
       </div>`).join('');
-
-    // Load set rules and populate set dropdowns for each bot
-    const allSets = await fetchJson('/api/sets');
-    const sortedSets = Object.values(allSets).sort((a,b) =>
-      (a.setName||a.setCode).localeCompare(b.setName||b.setCode));
-    const setOptions = '<option value="">Velg sett...</option>' +
-      sortedSets.map(s => `<option value="${esc(s.setCode)}">${esc(s.setName||s.setCode)} (${esc(s.setCode)})</option>`).join('');
-    bots.forEach(b => {
-      const sel = document.getElementById(`newrule-set-${b.bot_id}`);
-      if (sel) sel.innerHTML = setOptions;
-      loadBotSetRules(b.bot_id);
-    });
-
   } catch(e) {
     document.getElementById('botsContainer').innerHTML =
       `<div class="loading text-red">⚠️ Feil: ${e.message}</div>`;
@@ -625,93 +827,24 @@ function toggleBotRules(botId) {
   el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
-async function loadBotSetRules(botId) {
-  try {
-    const rules = await fetchJson(`/api/bots/${botId}/set-rules`);
-    const container = document.getElementById(`botsetrules-${botId}`);
-    if (!rules.length) {
-      container.innerHTML = '<div style="font-size:11px;color:#94a3b8">Ingen sett-spesifikke regler. Globale regler gjelder.</div>';
-      return;
-    }
-    container.innerHTML = rules.map(r => `
-      <div style="display:flex; gap:12px; align-items:center; margin-bottom:6px; flex-wrap:wrap">
-        <span class="tag">${esc(r.set_code)}</span>
-        <label style="font-size:11px">Maks lokalt: <input type="number" value="${r.max_local_stock||''}" step="1" style="width:60px" class="bsr-max" data-bot="${esc(botId)}" data-set="${esc(r.set_code)}"></label>
-        <label style="font-size:11px">Keep: <input type="number" value="${r.keep_local||''}" step="1" style="width:55px" class="bsr-keep" data-bot="${esc(botId)}" data-set="${esc(r.set_code)}"></label>
-        <label style="font-size:11px">Per handel: <input type="number" value="${r.max_per_trade||''}" step="1" style="width:55px" class="bsr-mpt" data-bot="${esc(botId)}" data-set="${esc(r.set_code)}"></label>
-        <button class="btn-primary btn-small" onclick="saveBotSetRule('${esc(botId)}','${esc(r.set_code)}')">💾</button>
-        <button class="btn-danger btn-small" onclick="deleteBotSetRule('${esc(botId)}','${esc(r.set_code)}')">✕</button>
-      </div>`).join('');
-  } catch(e) {
-    document.getElementById(`botsetrules-${botId}`).innerHTML =
-      '<div style="font-size:11px;color:#94a3b8">Ingen regler ennå.</div>';
-  }
-}
-
-async function addBotSetRule(botId) {
-  const sets = await fetchJson('/api/sets');
-  const setList = Object.keys(sets).join(',');
-  const setCode = prompt(`Sett-kode (f.eks. MH3, LTR):
-Tilgjengelige: ${setList.substring(0,100)}...`);
-  if (!setCode) return;
-  await fetchJson(`/api/bots/${botId}/set-rules/${setCode}`, 'PUT', {
-    maxLocalStock: 4, keepLocal: 0, maxPerTrade: 4
-  });
-  toast(`✅ Sett-regel for ${setCode} lagt til`);
-  loadBotSetRules(botId);
-}
-
-
-async function saveNewBotSetRule(botId) {
-  const setCode = document.getElementById(`newrule-set-${botId}`)?.value;
-  if (!setCode) { toast('⚠️ Velg et sett først'); return; }
-  const max  = parseInt(document.getElementById(`newrule-max-${botId}`)?.value) || null;
-  const keep = parseInt(document.getElementById(`newrule-keep-${botId}`)?.value) || null;
-  const mpt  = parseInt(document.getElementById(`newrule-mpt-${botId}`)?.value) || null;
-  const buy  = parseFloat(document.getElementById(`newrule-buy-${botId}`)?.value) || null;
-  const sell = parseFloat(document.getElementById(`newrule-sell-${botId}`)?.value) || null;
-  await fetchJson(`/api/bots/${botId}/set-rules/${setCode}`, 'PUT', {
-    maxLocalStock: max, keepLocal: keep, maxPerTrade: mpt,
-    buyMultiplier: buy, sellMultiplier: sell
-  });
-  toast(`✅ Sett-regel for ${setCode} lagret`);
-  loadBotSetRules(botId);
-}
-
-async function saveBotSetRule(botId, setCode) {
-  const row   = document.querySelector(`.bsr-max[data-bot="${botId}"][data-set="${setCode}"]`);
-  const keep  = document.querySelector(`.bsr-keep[data-bot="${botId}"][data-set="${setCode}"]`);
-  const mpt   = document.querySelector(`.bsr-mpt[data-bot="${botId}"][data-set="${setCode}"]`);
-  await fetchJson(`/api/bots/${botId}/set-rules/${setCode}`, 'PUT', {
-    maxLocalStock: parseInt(row?.value)||null,
-    keepLocal:     parseInt(keep?.value)||null,
-    maxPerTrade:   parseInt(mpt?.value)||null
-  });
-  toast(`✅ ${setCode} regel lagret`);
-}
-
-async function deleteBotSetRule(botId, setCode) {
-  await fetchJson(`/api/bots/${botId}/set-rules/${setCode}`, 'DELETE');
-  toast(`🗑️ ${setCode} regel slettet`);
-  loadBotSetRules(botId);
-}
-
 async function saveBot(botId, accountName) {
-  const card   = document.getElementById(`botcard-${botId}`);
-  const type       = card.querySelector('.bot-type-sel').value;
-  const desc       = card.querySelector('.bot-desc').value;
-  const transfer   = card.querySelector('.bot-transfer-sel').value || null;
-  const tixReserve = parseInt(card.querySelector('.bot-tix-reserve').value) || 0;
-  const maxLocal   = parseInt(card.querySelector('.bot-max-local').value) || 4;
-  const cardXfer       = card.querySelector('.bot-card-transfer-sel').value || null;
-  const fullsetXfer    = card.querySelector('.bot-fullset-transfer-sel')?.value || null;
-  const tradeMsg       = card.querySelector('.bot-trade-msg')?.value || null;
-  const fsBuy      = card.querySelector('.bot-fs-buy')?.checked ?? false;
-  const fsSell     = card.querySelector('.bot-fs-sell')?.checked ?? true;
-  const maxSets    = parseInt(card.querySelector('.bot-max-sets')?.value) || 1;
+  const card      = document.getElementById(`botcard-${botId}`);
+  const type      = card.querySelector('.bot-type-sel').value;
+  const desc      = card.querySelector('.bot-desc').value;
+  const transfer  = card.querySelector('.bot-transfer-sel').value || null;
+  const tixRes    = parseInt(card.querySelector('.bot-tix-reserve').value) || 0;
+  const maxLocal  = parseInt(card.querySelector('.bot-max-local').value) || 4;
+  const cardXfer  = card.querySelector('.bot-card-transfer-sel').value || null;
+  const fsXfer    = card.querySelector('.bot-fullset-transfer-sel')?.value || null;
+  const tradeMsg  = card.querySelector('.bot-trade-msg')?.value || null;
+  const fsBuy     = card.querySelector('.bot-fs-buy')?.checked  ?? false;
+  const fsSell    = card.querySelector('.bot-fs-sell')?.checked ?? true;
+  const maxSets   = parseInt(card.querySelector('.bot-max-sets')?.value) || 1;
   await fetchJson(`/api/bots/${botId}`, 'PUT', {
-    accountName, botType: type, description: desc,
-    transferTo: transfer, tixReserve, maxLocalStock: maxLocal, cardTransferTo: cardXfer, fullsetTransferTo: fullsetXfer, tradeMessage: tradeMsg, fullsetBuyEnabled: fsBuy, fullsetSellEnabled: fsSell, maxSetsPerTrade: maxSets, fullsetTransferTo: fullsetXfer
+    accountName, botType: type, description: desc, transferTo: transfer,
+    tixReserve: tixRes, maxLocalStock: maxLocal, cardTransferTo: cardXfer,
+    fullsetTransferTo: fsXfer, tradeMessage: tradeMsg,
+    fullsetBuyEnabled: fsBuy, fullsetSellEnabled: fsSell, maxSetsPerTrade: maxSets
   });
   toast(`✅ ${botId} lagret`);
   loadBots();
@@ -733,227 +866,19 @@ function addBot() {
   }).then(() => { toast(`✅ ${name} lagt til`); loadBots(); });
 }
 
-
-// ─── Fullset pricing ─────────────────────────────────────────────
-
-async function loadFullsetFoilPricing(setCode) {
-  try {
-    const data = await fetchJson(`/api/sets/${setCode}/fullset-foil-pricing`);
-    document.getElementById('fullsetFoilPanel').style.display = 'flex';
-    document.getElementById('autoFoilBuySum').textContent  = data.autoBuySum.toFixed(2);
-    document.getElementById('autoFoilSellSum').textContent = data.autoSellSum.toFixed(2);
-    document.getElementById('fullsetFoilCardCount').textContent = data.cardCount;
-    document.getElementById('fullsetFoilEnabled').checked  = data.fullsetEnabled;
-    if (data.fullsetBuy && data.autoBuySum > 0)
-      document.getElementById('fullsetFoilBuyMult').value = (data.fullsetBuy / data.autoBuySum).toFixed(2);
-    if (data.fullsetSell && data.autoSellSum > 0)
-      document.getElementById('fullsetFoilSellMult').value = (data.fullsetSell / data.autoSellSum).toFixed(2);
-    updateFullsetFoilPrices();
-  } catch(e) { console.error('Foil fullset pricing error:', e); }
-}
-
-async function loadFullsetPricing(setCode) {
-  try {
-    const data = await fetchJson(`/api/sets/${setCode}/fullset-pricing`);
-    document.getElementById('fullsetPanel').style.display = 'flex';
-    document.getElementById('autoBuySum').textContent  = data.autoBuySum.toFixed(2);
-    document.getElementById('autoSellSum').textContent = data.autoSellSum.toFixed(2);
-    document.getElementById('fullsetCardCount').textContent = data.cardCount;
-    document.getElementById('fullsetEnabled').checked  = data.fullsetEnabled;
-    document.getElementById('fullsetBuy').value  = data.fullsetBuy  || (data.autoBuySum  * 0.80).toFixed(2);
-    document.getElementById('fullsetSell').value = data.fullsetSell || (data.autoSellSum * 1.08).toFixed(2);
-  } catch(e) { console.error('Fullset pricing error:', e); }
-}
-
-function toggleFullset() {
-  // Just visual — saved on button click
-}
-
-async function saveFullsetPricing() {
-  const buy      = parseFloat(document.getElementById('fullsetBuy').value);
-  const sell     = parseFloat(document.getElementById('fullsetSell').value);
-  const enabled  = document.getElementById('fullsetEnabled').checked;
-  const baseSize = parseInt(document.getElementById('setRulesBaseSize')?.value) || null;
-  if (baseSize) {
-    const sets = await fetchJson('/api/sets');
-    const s = sets[currentSetCode];
-    await fetchJson(`/api/sets/${currentSetCode}/rules`, 'PUT', {
-      buyMultiplier: s.defaultBuyMultiplier,
-      sellMultiplier: s.defaultSellMultiplier,
-      maxStock: s.defaultMaxStock,
-      baseSetSize: baseSize
-    });
-  }
-  await fetchJson(`/api/sets/${currentSetCode}/fullset-pricing`, 'PUT', {
-    fullsetBuy: buy, fullsetSell: sell, fullsetEnabled: enabled
-  });
-  toast(`✅ Komplett sett-priser lagret for ${currentSetCode}`);
-  loadFullsetPricing(currentSetCode);
-}
-
-// ─── Set card view ───────────────────────────────────────────────
-
-async function populateSetDropdown() {
-  try {
-    const sets = await fetchJson('/api/sets');
-    const sorted = Object.values(sets).sort((a,b) =>
-      (a.setName||a.setCode).localeCompare(b.setName||b.setCode));
-    const sel = document.getElementById('setSelector');
-    sel.innerHTML = '<option value="">-- Velg et sett --</option>' +
-      sorted.map(s => `<option value="${esc(s.setCode)}">${esc(s.setName || s.setCode)} (${esc(s.setCode)})</option>`).join('');
-  } catch(e) { console.error('Failed to load sets:', e); }
-}
-
-async function loadSetCards() {
-  const setCode = document.getElementById('setSelector').value;
-  const foil = false; // foil filtering done client-side
-  if (!setCode) {
-    document.getElementById('setRulesPanel').style.display = 'none';
-    document.getElementById('setCardsBody').innerHTML = '<tr><td colspan="8" class="loading muted">Velg et sett i menyen over</td></tr>';
-    return;
-  }
-  currentSetCode = setCode;
-
-  // Show set rules
-  try {
-    const sets = await fetchJson('/api/sets');
-    const s = sets[setCode];
-    if (s) {
-      document.getElementById('setRulesBuy').value  = s.defaultBuyMultiplier;
-      document.getElementById('setRulesSell').value = s.defaultSellMultiplier;
-      document.getElementById('setRulesMax').value  = s.defaultMaxStock;
-      document.getElementById('setRulesBaseSize').value = s.baseSetSize || '';
-      const bsInfo = document.getElementById('baseSetSizeInfo');
-      if (bsInfo) {
-        bsInfo.textContent = s.baseSetSize 
-          ? `✅ Satt til ${s.baseSetSize} kort (oppdatert ${new Date(s.updatedAt).toLocaleDateString('no-NO')})`
-          : '⚠️ Ikke satt ennå';
-        bsInfo.style.color = s.baseSetSize ? '#059669' : '#d97706';
-      }
-      document.getElementById('setRulesPanel').style.display = 'block';
-    loadFullsetPricing(setCode);
-    loadFullsetFoilPricing(setCode);
-    }
-  } catch(e) {}
-
-  // Load cards
-  document.getElementById('setCardsBody').innerHTML = '<tr><td colspan="8" class="loading muted">Laster kort...</td></tr>';
-  try {
-    let url = `/api/inventory?set=${encodeURIComponent(setCode)}`;
-    if (foil) url += '&foil=true';
-    allSetCards = await fetchJson(url);
-    const nonFoil = allSetCards.filter(c => !c.isFoil).length;
-    const foilCount = allSetCards.filter(c => c.isFoil).length;
-    document.getElementById('setCardCount').textContent = 
-      `${allSetCards.length} kort totalt (${nonFoil} normal · ${foilCount} foil)`;
-    renderSetCards(allSetCards);
-  } catch(e) {
-    document.getElementById('setCardsBody').innerHTML = `<tr><td colspan="8" class="loading text-red">Feil: ${e.message}</td></tr>`;
-  }
-}
-
-function filterSetCards() {
-  const q = document.getElementById('setCardSearch').value.toLowerCase();
-  const filtered = q ? allSetCards.filter(c => c.cardName.toLowerCase().includes(q)) : allSetCards;
-  renderSetCards(filtered);
-}
-
-
-
-function sortSetCards(col) {
-  if (sortCol === col) sortDir *= -1;
-  else { sortCol = col; sortDir = col === 'cardName' || col === 'rarity' ? 1 : -1; }
-  renderSetCards(allSetCards);
-  // Update arrows
-  document.querySelectorAll('#setCardsPanel th').forEach(th => {
-    const txt = th.textContent.replace(' ↑','').replace(' ↓','').replace(' ↕','');
-    th.textContent = txt + ' ↕';
-  });
-  const headers = document.querySelectorAll('#setCardsPanel th');
-  const cols = ['cardName','rarity','marketPriceTix','effectiveBuyPrice','effectiveSellPrice','redeemReserved','maxStock'];
-  const idx = cols.indexOf(sortCol);
-  if (idx >= 0 && headers[idx]) {
-    const txt = headers[idx].textContent.replace(' ↑','').replace(' ↓','').replace(' ↕','');
-    headers[idx].textContent = txt + (sortDir === 1 ? ' ↑' : ' ↓');
-  }
-}
-
-function renderSetCards(cards) {
-  const tbody = document.getElementById('setCardsBody');
-  const showNormal = document.getElementById('showNormal')?.checked;
-  const showFoil   = document.getElementById('showFoil')?.checked;
-
-  // Foil filter
-  let filtered = (!showNormal && !showFoil) ? cards
-    : cards.filter(c => (showFoil && c.isFoil) || (showNormal && !c.isFoil));
-
-  // Sort
-  filtered = [...filtered].sort((a, b) => {
-    const av = a[sortCol], bv = b[sortCol];
-    if (typeof av === 'string') return av.localeCompare(bv) * sortDir;
-    return ((av || 0) - (bv || 0)) * sortDir;
-  });
-
-  const countEl = document.getElementById('setCardCount');
-  if (countEl) countEl.textContent = `${allSetCards.length} kort`;
-
-  if (!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="8" class="loading muted">Ingen kort funnet.</td></tr>';
-    return;
-  }
-  if (countEl) countEl.textContent = `${allSetCards.length} kort`;
-  tbody.innerHTML = filtered.map(c => `
-    <tr>
-      <td><strong>${esc(c.cardName)}</strong>${c.collectorNumber ? ' <span style="font-size:10px;color:#94a3b8">#'+c.collectorNumber+'</span>' : ''}${c.isFoil ? ' <span class="pill f">✨</span>' : ''}</td>
-      <td>${rarityPill(c.rarity)}</td>
-      <td class="mono">${c.marketPriceTix.toFixed(4)}</td>
-      <td><input type="number" value="${c.effectiveBuyPrice.toFixed(4)}" step="0.0001" style="width:80px" id="buy_${c.cardId}" class="mono"></td>
-      <td><input type="number" value="${c.effectiveSellPrice.toFixed(4)}" step="0.0001" style="width:80px" id="sell_${c.cardId}" class="mono"></td>
-      <td><input type="number" value="${c.redeemReserved}" step="1" min="0" style="width:60px" id="keep_${c.cardId}" class="mono"></td>
-      <td><input type="number" value="${c.maxStock}" step="1" min="0" style="width:60px" id="max_${c.cardId}" class="mono"></td>
-      <td><button class="btn-primary btn-small" onclick="saveCardRow('${esc(c.cardId)}')">💾</button></td>
-    </tr>`).join('');
-}
-
-
-async function saveCardRow(cardId) {
-  const buy  = parseFloat(document.getElementById('buy_'  + cardId)?.value) || null;
-  const sell = parseFloat(document.getElementById('sell_' + cardId)?.value) || null;
-  const keep = parseInt(document.getElementById('keep_'  + cardId)?.value) || 0;
-  const max  = parseInt(document.getElementById('max_'   + cardId)?.value) || null;
-  const mpt  = parseInt(document.getElementById('mpt_'   + cardId)?.value) || 4;
-  await fetchJson(`/api/cards/${cardId}/overrides`, 'PUT', {
-    customBuyPrice:  buy,
-    customSellPrice: sell,
-    customMaxStock:  max,
-    redeemReserved:  keep,
-    maxPerTrade:     mpt
-  });
-  toast('✅ Lagret');
-}
-
-async function saveCurrentSetRules() {
-  if (!currentSetCode) return;
-  const buy  = parseFloat(document.getElementById('setRulesBuy').value);
-  const sell = parseFloat(document.getElementById('setRulesSell').value);
-  const max  = parseInt(document.getElementById('setRulesMax').value);
-  const baseSize = parseInt(document.getElementById('setRulesBaseSize')?.value) || null;
-  await fetchJson(`/api/sets/${currentSetCode}/rules`, 'PUT', { buyMultiplier: buy, sellMultiplier: sell, maxStock: max, baseSetSize: baseSize });
-  toast(`✅ Regler lagret for ${currentSetCode}`); const keepVal = parseInt(document.getElementById('setRulesKeep').value); if (keepVal > 0) fetchJson(`/api/sets/${currentSetCode}/apply-keep`, 'POST', {keepValue: keepVal}); loadSetCards();
-}
-
-
-// ─── Credits ─────────────────────────────────────────────────────
+// ── Credits ───────────────────────────────────────────────────────
 async function loadCredits() {
   try {
     const credits = await fetchJson(`${API}/credits`);
-    document.getElementById('creditsBody').innerHTML = credits.map(c => `
-      <tr>
-        <td><strong>${esc(c.playerName)}</strong></td>
-        <td class="mono text-green">${c.creditTix.toFixed(4)} TIX</td>
-        <td class="muted">${new Date(c.lastTradeAt).toLocaleDateString('no-NO')}</td>
-        <td><button class="btn-secondary btn-small" onclick="adjustCredit('${esc(c.playerName)}')">Juster</button></td>
-      </tr>`).join('') || `<tr><td colspan="4" class="loading muted">Ingen credits.</td></tr>`;
+    document.getElementById('creditsBody').innerHTML = credits.length
+      ? credits.map(c => `
+          <tr>
+            <td><strong>${esc(c.playerName)}</strong></td>
+            <td class="mono text-green">${c.creditTix.toFixed(4)} TIX</td>
+            <td class="muted">${new Date(c.lastTradeAt).toLocaleDateString('no-NO')}</td>
+            <td><button class="btn-secondary btn-small" onclick="adjustCredit('${esc(c.playerName)}')">Juster</button></td>
+          </tr>`).join('')
+      : '<tr><td colspan="4" class="loading muted">Ingen credits.</td></tr>';
   } catch(e) {
     document.getElementById('creditsBody').innerHTML =
       `<tr><td colspan="4" class="loading text-red">Feil: ${e.message}</td></tr>`;
@@ -968,7 +893,7 @@ async function purgeCredits() {
 }
 
 async function adjustCredit(player) {
-  const delta  = parseFloat(prompt(`Juster credit for ${player} (positiv = legg til, negativ = trekk fra):`));
+  const delta  = parseFloat(prompt(`Juster credit for ${player}:`));
   if (isNaN(delta)) return;
   const reason = prompt('Årsak:') || 'Manuell justering';
   await fetchJson(`${API}/credits/${player}/adjust`, 'POST', { delta, reason });
@@ -976,38 +901,13 @@ async function adjustCredit(player) {
   loadCredits();
 }
 
-// ─── Card edit modal ─────────────────────────────────────────────
-function editCard(id, name, buy, sell, max, redeem) {
-  const newBuy  = parseFloat(prompt(`Kjøpspris for ${name} (0=bruk filter, blank=behold):`, buy));
-  if (isNaN(newBuy)) return;
-  const newSell = parseFloat(prompt(`Salgspris for ${name}:`, sell));
-  const newMax  = parseInt(prompt(`Maks lager:`, max));
-  const newRed  = parseInt(prompt(`Redeem-reservert (låst til deg):`, redeem));
-
-  fetchJson(`${API}/cards/${id}/overrides`, 'PUT', {
-    customBuyPrice:  newBuy  || null,
-    customSellPrice: newSell || null,
-    customMaxStock:  newMax  || null,
-    redeemReserved:  newRed  || 0
-  }).then(() => { toast(`✅ ${name} oppdatert`); loadInventory(); });
-}
-
-// ─── Status ──────────────────────────────────────────────────────
-async function loadStatus() {
-  try {
-    const s = await fetchJson(`${API}/status`);
-    document.getElementById('statusBox').textContent = JSON.stringify(s, null, 2);
-  } catch(e) {
-    document.getElementById('statusBox').textContent = `API utilgjengelig: ${e.message}`;
-  }
-}
-
+// ── Misc ──────────────────────────────────────────────────────────
 async function triggerPriceFeed() {
   await fetchJson(`${API}/pricefeed/refresh`, 'POST');
-  toast('🔄 Prisoppdatering startet i bakgrunnen...');
+  toast('🔄 Prisoppdatering startet...');
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────
 async function fetchJson(url, method = 'GET', body = null) {
   const opts = { method, headers: { 'Content-Type': 'application/json' } };
   if (body) opts.body = JSON.stringify(body);
@@ -1018,10 +918,13 @@ async function fetchJson(url, method = 'GET', body = null) {
 
 function rarityPill(r) {
   const cls = { M: 'm', R: 'r', U: 'u', C: 'c' }[r] ?? 'c';
-  return `<span class="pill ${cls}">${r}</span>`;
+  return `<span class="pill ${cls}">${r || '?'}</span>`;
 }
 
-function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g,
+    c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
 
 function toast(msg) {
   const el = document.createElement('div');
@@ -1035,7 +938,7 @@ function toast(msg) {
   setTimeout(() => el.remove(), 3000);
 }
 
-// ─── Init ────────────────────────────────────────────────────────
+// ── Init ──────────────────────────────────────────────────────────
 loadInventory();
 document.getElementById('lastFeed').textContent = new Date().toLocaleTimeString('no-NO');
 </script>
