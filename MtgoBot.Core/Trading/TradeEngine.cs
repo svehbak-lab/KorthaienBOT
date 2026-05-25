@@ -49,10 +49,9 @@ public class TradeEngine
         IReadOnlyList<(string CardId, int Quantity)> userOffers,
         Dictionary<string, MagicSet> sets)
     {
-        // Bulk-load card metadata for everything offered
-        var cardIds   = userOffers.Select(o => o.CardId).Distinct();
-        var cardMeta  = await _cards.GetCardsByIdsAsync(cardIds);
-        var botStock  = await _inventory.GetBotInventoryAsync(botId);
+        var cardIds  = userOffers.Select(o => o.CardId).Distinct();
+        var cardMeta = await _cards.GetCardsByIdsAsync(cardIds);
+        var botStock = await _inventory.GetBotInventoryAsync(botId);
 
         var wanted = new List<FilteredCard>();
 
@@ -68,43 +67,38 @@ public class TradeEngine
             if (!cardMeta.TryGetValue(cardId, out var card)) continue;
             if (!sets.TryGetValue(card.SetCode, out var set)) continue;
 
-            int currentStock  = botStock.GetValueOrDefault(card.CardId, 0);
-            int maxStock      = card.EffectiveMaxStock(set.DefaultMaxStock);
+            int currentStock   = botStock.GetValueOrDefault(card.CardId, 0);
+            int maxStock       = card.EffectiveMaxStock(set.DefaultMaxStock);
             int redeemReserved = card.RedeemReserved;
 
-            // Don't buy more than we want, accounting for redeem-reserved units
-            int canBuy = Math.Max(0, maxStock - currentStock + redeemReserved - currentStock);
+            // FIX: original code subtracted currentStock twice.
+            // maxStock  = units needed for normal trading
+            // redeemReserved = extra units needed for set redemption
+            // canBuy = how many more we need total
+            int canBuy = Math.Max(0, (maxStock + redeemReserved) - currentStock);
             if (canBuy <= 0) continue;
 
             int toBuy        = Math.Min(offeredQty, canBuy);
             decimal buyPrice = card.EffectiveBuyPrice(set.DefaultBuyMultiplier);
 
-            if (buyPrice <= 0) continue;  // Don't accept worthless cards
+            if (buyPrice <= 0) continue;
 
             wanted.Add(new FilteredCard(card.CardId, card.CardName, toBuy, buyPrice));
         }
 
-        // Sort by value descending so we prioritise high-value cards
         return [.. wanted.OrderByDescending(c => c.TotalValue)];
     }
 
     // ─────────────────────────────────────────────────────────────────
     // STEP 2: Build the initial window (max 100 slots)
-    // and set up the replenish queue for the overflow
     // ─────────────────────────────────────────────────────────────────
 
-    /// <summary>
-    /// Splits a filtered list into:
-    ///   - windowBatch: the first ≤100 cards that go into the trade window now
-    ///   - replenishQueue: everything else, ready to fill gaps as they appear
-    /// </summary>
     public static (List<FilteredCard> WindowBatch, ReplenishQueue Queue)
         BuildWindowAndQueue(List<FilteredCard> filtered, List<Card> rawCards)
     {
-        var window   = new List<FilteredCard>();
-        var queue    = new ReplenishQueue();
-        int slots    = 0;
-
+        var window     = new List<FilteredCard>();
+        var queue      = new ReplenishQueue();
+        int slots      = 0;
         var cardLookup = rawCards.ToDictionary(c => c.CardId);
 
         foreach (var item in filtered)
@@ -125,13 +119,9 @@ public class TradeEngine
     }
 
     // ─────────────────────────────────────────────────────────────────
-    // STEP 3: Recalculate net balance whenever the window changes
+    // STEP 3: Recalculate net balance
     // ─────────────────────────────────────────────────────────────────
 
-    /// <summary>
-    /// Pure calculation — no DB access.
-    /// Call this every time the memory-reader detects a window change.
-    /// </summary>
     public static TradeBalance RecalculateBalance(
         string playerName,
         string botId,
@@ -146,25 +136,18 @@ public class TradeEngine
 
         var balance = new TradeBalance
         {
-            PlayerName  = playerName,
-            BotId       = botId,
-            UserCards   = userSideCards,
-            BotCards    = botSideCards,
+            PlayerName = playerName,
+            BotId      = botId,
+            UserCards  = userSideCards,
+            BotCards   = botSideCards,
         };
 
-        // Net = what user gives - what bot gives
-        // Positive net means bot owes the user money
         decimal net = balance.NetBalance + existingCredit;
-
-        // Whole TIX go in the window; fractional part becomes credit
         balance.TixInWindow = Math.Max(0, Math.Floor(net));
 
         return balance;
     }
 
-    /// <summary>
-    /// Final credit remainder after TIX are placed in the window.
-    /// </summary>
     public static decimal CalculateCreditRemainder(TradeBalance balance, decimal existingCredit)
     {
         decimal net = balance.NetBalance + existingCredit;
@@ -172,22 +155,15 @@ public class TradeEngine
     }
 
     // ─────────────────────────────────────────────────────────────────
-    // STEP 4: Commit a completed trade to the database
+    // STEP 4: Commit trade to DB
     // ─────────────────────────────────────────────────────────────────
 
-    /// <summary>
-    /// Called when both sides click Accept.
-    /// Atomically: updates inventory, credit balance, audit log.
-    /// </summary>
     public async Task CommitTradeAsync(TradeBalance balance, decimal creditRemainder)
     {
         _logger.LogInformation(
             "Committing trade for [{Player}]: in={In:0.0000} out={Out:0.0000} credit={C:0.0000}",
             balance.PlayerName, balance.ValueUserGives, balance.ValueBotGives, creditRemainder);
 
-        // Build inventory deltas:
-        // Cards user gave → bot gains (+)
-        // Cards bot gave  → bot loses (-)
         var deltas = new Dictionary<string, int>();
 
         foreach (var card in balance.UserCards)
@@ -198,7 +174,6 @@ public class TradeEngine
 
         await _inventory.ApplyInventoryDeltasAsync(balance.BotId, deltas);
 
-        // Apply credit remainder if non-zero
         if (creditRemainder != 0)
         {
             await _credits.ApplyCreditDeltaAsync(
@@ -209,10 +184,6 @@ public class TradeEngine
         }
     }
 }
-
-// ─────────────────────────────────────────────────────────────────
-// Supporting value types
-// ─────────────────────────────────────────────────────────────────
 
 /// <summary>A card that passed the buy filter, ready to enter the window.</summary>
 public record FilteredCard(
