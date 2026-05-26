@@ -1,8 +1,19 @@
+# Build output
 bin/
 obj/
-*.user
-.vs/
-*.suo
-.env
+publish/
+
+# Logs
+logs/
+*.log
+
+# SQL exports
+*.sql
+
+# User secrets
 appsettings.*.json
 !appsettings.json
+
+# OS
+.DS_Store
+Thumbs.db
