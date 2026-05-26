@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>enable</Nullable>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- MTGOSDK — built locally from C:\MTGOSDK -->
+    <Reference Include="MTGOSDK">
+      <HintPath>C:\MTGOSDK\MTGOSDK\bin\Release\net48\MTGOSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="MTGOSDK.Win32">
+      <HintPath>C:\MTGOSDK\MTGOSDK.Win32\bin\Release\netstandard2.0\MTGOSDK.Win32.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
