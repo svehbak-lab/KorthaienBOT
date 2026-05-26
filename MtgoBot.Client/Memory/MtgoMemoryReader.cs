@@ -25,14 +25,6 @@ internal static class NativeMethods
     public const uint PROCESS_QUERY_INFO   = 0x0400;
 }
 
-/// <summary>
-/// Reads MTGO trade window state by communicating with MtgoBot.Bridge,
-/// a companion net48 process that wraps MTGOSDK.
-///
-/// The bridge runs as a separate process and exposes a named pipe
-/// "KorthaienBotBridge". This class connects to that pipe and sends
-/// simple JSON commands to read trade state and control the UI.
-/// </summary>
 public class MtgoMemoryReader : IDisposable
 {
     private readonly ILogger<MtgoMemoryReader> _logger;
@@ -44,20 +36,13 @@ public class MtgoMemoryReader : IDisposable
     private StreamWriter? _pipeWriter;
     private bool _disposed;
 
-    private const string BridgePipeName    = "KorthaienBotBridge";
-    private const string BridgeExePath     = @"C:\KorthaienBOT\publish\bridge\MtgoBot.Bridge.exe";
-    private const int    PipeConnectTimeout = 10000; // 10 seconds
+    private const string BridgePipeName     = "KorthaienBotBridge";
+    private const string BridgeExePath      = @"C:\KorthaienBOT\publish\bridge\MtgoBot.Bridge.exe";
+    private const int    PipeConnectTimeout = 10000;
 
     public bool IsAttached => _processHandle != IntPtr.Zero;
 
-    public MtgoMemoryReader(ILogger<MtgoMemoryReader> logger)
-    {
-        _logger = logger;
-    }
-
-    // ─────────────────────────────────────────────────────────────────
-    // Attach — find MTGO and start/connect to the bridge
-    // ─────────────────────────────────────────────────────────────────
+    public MtgoMemoryReader(ILogger<MtgoMemoryReader> logger) => _logger = logger;
 
     public void Attach()
     {
@@ -65,13 +50,10 @@ public class MtgoMemoryReader : IDisposable
         if (processes.Length == 0)
             throw new InvalidOperationException("MTGO.exe is not running. Start the client first.");
 
-        _mtgoProcess = processes[0];
-
+        _mtgoProcess   = processes[0];
         _processHandle = NativeMethods.OpenProcess(
-            NativeMethods.PROCESS_VM_READ    |
-            NativeMethods.PROCESS_VM_WRITE   |
-            NativeMethods.PROCESS_VM_OPERATION |
-            NativeMethods.PROCESS_QUERY_INFO,
+            NativeMethods.PROCESS_VM_READ | NativeMethods.PROCESS_VM_WRITE |
+            NativeMethods.PROCESS_VM_OPERATION | NativeMethods.PROCESS_QUERY_INFO,
             false, _mtgoProcess.Id);
 
         if (_processHandle == IntPtr.Zero)
@@ -82,8 +64,6 @@ public class MtgoMemoryReader : IDisposable
         }
 
         _logger.LogInformation("✅ Attached to MTGO.exe (PID {Pid})", _mtgoProcess.Id);
-
-        // Start the bridge process and connect to its pipe
         StartBridge();
     }
 
@@ -91,25 +71,20 @@ public class MtgoMemoryReader : IDisposable
     {
         try
         {
-            // Check if bridge is already running
             var existing = Process.GetProcessesByName("MtgoBot.Bridge");
             if (existing.Length == 0)
             {
                 _logger.LogInformation("Starting MtgoBot.Bridge...");
                 _bridgeProcess = Process.Start(new ProcessStartInfo
                 {
-                    FileName        = BridgeExePath,
-                    UseShellExecute = false,
-                    CreateNoWindow  = true
+                    FileName = BridgeExePath, UseShellExecute = false, CreateNoWindow = true
                 });
-                // Give bridge time to start up and connect to MTGO
                 System.Threading.Thread.Sleep(3000);
             }
             else
             {
                 _logger.LogInformation("MtgoBot.Bridge already running (PID {Pid})", existing[0].Id);
             }
-
             ConnectToPipe();
         }
         catch (Exception ex)
@@ -142,18 +117,12 @@ public class MtgoMemoryReader : IDisposable
             NativeMethods.CloseHandle(_processHandle);
             _processHandle = IntPtr.Zero;
         }
-
         _pipeReader?.Dispose();
         _pipeWriter?.Dispose();
         _pipe?.Dispose();
         _pipe = null;
-
         _logger.LogInformation("Detached from MTGO.exe.");
     }
-
-    // ─────────────────────────────────────────────────────────────────
-    // Trade window reading
-    // ─────────────────────────────────────────────────────────────────
 
     public TradeWindowSnapshot? ReadTradeWindow()
     {
@@ -175,17 +144,15 @@ public class MtgoMemoryReader : IDisposable
             var result = JsonConvert.DeserializeObject<dynamic>(response);
             if (result?.snapshot == null) return null;
 
-            var snapshot = result.snapshot;
+            var snapshot     = result.snapshot;
             var playerOffers = new List<OfferedCard>();
             var botOffers    = new List<OfferedCard>();
 
             foreach (var c in snapshot.playerOffers ?? new Newtonsoft.Json.Linq.JArray())
-                playerOffers.Add(new OfferedCard(
-                    (string)c.cardId, (string)c.cardName, (int)c.quantity));
+                playerOffers.Add(new OfferedCard((string)c.cardId, (string)c.cardName, (int)c.quantity));
 
             foreach (var c in snapshot.botOffers ?? new Newtonsoft.Json.Linq.JArray())
-                botOffers.Add(new OfferedCard(
-                    (string)c.cardId, (string)c.cardName, (int)c.quantity));
+                botOffers.Add(new OfferedCard((string)c.cardId, (string)c.cardName, (int)c.quantity));
 
             return new TradeWindowSnapshot(
                 IsOpen:        (bool)snapshot.isOpen,
@@ -202,17 +169,34 @@ public class MtgoMemoryReader : IDisposable
         }
     }
 
-    public void SendChatMessage(string message)
+    /// <summary>
+    /// Attempts to click the Accept button on an incoming trade request dialog.
+    /// Called every tick when no trade session is active.
+    /// </summary>
+    public void AcceptTradeRequest()
     {
         if (_pipe == null || !_pipe.IsConnected) return;
         try
         {
-            SendCommand(new { cmd = "CHAT", message });
+            var response = SendCommand(new { cmd = "ACCEPT_REQUEST" });
+            if (response != null)
+            {
+                var result = JsonConvert.DeserializeObject<dynamic>(response);
+                if (result?.ok == true)
+                    _logger.LogInformation("✅ Trade request accepted.");
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Failed to send chat message.");
+            _logger.LogWarning(ex, "Failed to accept trade request.");
         }
+    }
+
+    public void SendChatMessage(string message)
+    {
+        if (_pipe == null || !_pipe.IsConnected) return;
+        try { SendCommand(new { cmd = "CHAT", message }); }
+        catch (Exception ex) { _logger.LogWarning(ex, "Failed to send chat message."); }
     }
 
     public void ClickSubmit()
@@ -231,32 +215,17 @@ public class MtgoMemoryReader : IDisposable
         catch (Exception ex) { _logger.LogWarning(ex, "Failed to click Accept."); }
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // Pipe communication
-    // ─────────────────────────────────────────────────────────────────
-
     private string? SendCommand(object command)
     {
         if (_pipeWriter == null || _pipeReader == null) return null;
-        var json = JsonConvert.SerializeObject(command);
-        _pipeWriter.WriteLine(json);
+        _pipeWriter.WriteLine(JsonConvert.SerializeObject(command));
         return _pipeReader.ReadLine();
     }
 
     private void TryReconnectPipe()
     {
-        try
-        {
-            _pipe?.Dispose();
-            _pipe = null;
-            ConnectToPipe();
-        }
-        catch { }
+        try { _pipe?.Dispose(); _pipe = null; ConnectToPipe(); } catch { }
     }
-
-    // ─────────────────────────────────────────────────────────────────
-    // Raw memory helpers
-    // ─────────────────────────────────────────────────────────────────
 
     public byte[] ReadBytes(IntPtr address, int count)
     {
@@ -281,24 +250,14 @@ public class MtgoMemoryReader : IDisposable
 
     public void Dispose()
     {
-        if (!_disposed)
-        {
-            Detach();
-            _mtgoProcess?.Dispose();
-            _disposed = true;
-        }
+        if (!_disposed) { Detach(); _mtgoProcess?.Dispose(); _disposed = true; }
         GC.SuppressFinalize(this);
     }
 }
 
 public record TradeWindowSnapshot(
-    bool IsOpen,
-    string PlayerName,
-    List<OfferedCard> PlayerOffers,
-    List<OfferedCard> BotOffers,
+    bool IsOpen, string PlayerName,
+    List<OfferedCard> PlayerOffers, List<OfferedCard> BotOffers,
     bool BothSubmitted);
 
-public record OfferedCard(
-    string CardId,
-    string CardName,
-    int Quantity);
+public record OfferedCard(string CardId, string CardName, int Quantity);
