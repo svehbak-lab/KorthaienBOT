@@ -13,14 +13,6 @@ using MTGOSDK.API.Trade.Enums;
 
 class Program
 {
-    [DllImport("user32.dll")] static extern bool EnumChildWindows(IntPtr parent, EnumWindowsProc proc, IntPtr lParam);
-    [DllImport("user32.dll")] static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
-    [DllImport("user32.dll")] static extern bool IsWindowVisible(IntPtr hWnd);
-    [DllImport("user32.dll")] static extern bool PostMessage(IntPtr hWnd, uint msg, IntPtr w, IntPtr l);
-
-    delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
-    const uint BM_CLICK = 0x00F5;
-
     static void Main(string[] args)
     {
         Console.WriteLine("[Bridge] MtgoBot.Bridge starting...");
@@ -84,46 +76,12 @@ class Program
         return (req.Cmd?.ToUpperInvariant()) switch
         {
             "READ"           => HandleRead(),
-            "ACCEPT_REQUEST" => HandleAcceptTradeRequest(),
+            "ACCEPT_REQUEST" => JsonConvert.SerializeObject(new { ok = false, note = "manual accept required" }),
             "CHAT"           => HandleChat(req.Message ?? ""),
             "SUBMIT"         => HandleSubmit(),
             "ACCEPT"         => HandleAccept(),
             _ => JsonConvert.SerializeObject(new { error = $"Unknown: {req.Cmd}" })
         };
-    }
-
-    static string HandleAcceptTradeRequest()
-    {
-        try
-        {
-            var mtgoProcs = System.Diagnostics.Process.GetProcessesByName("MTGO");
-            if (mtgoProcs.Length == 0)
-                return JsonConvert.SerializeObject(new { ok = false, error = "MTGO not running" });
-
-            bool clicked = false;
-            EnumChildWindows(mtgoProcs[0].MainWindowHandle, (hWnd, lParam) =>
-            {
-                if (!IsWindowVisible(hWnd)) return true;
-                var sb = new StringBuilder(256);
-                GetWindowText(hWnd, sb, 256);
-                var text = sb.ToString();
-                if (text.Equals("Accept", StringComparison.OrdinalIgnoreCase))
-                {
-                    PostMessage(hWnd, BM_CLICK, IntPtr.Zero, IntPtr.Zero);
-                    Console.WriteLine("[Bridge] Clicked Accept button.");
-                    clicked = true;
-                    return false;
-                }
-                return true;
-            }, IntPtr.Zero);
-
-            return JsonConvert.SerializeObject(new { ok = clicked });
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[Bridge] ACCEPT_REQUEST error: {ex.Message}");
-            return JsonConvert.SerializeObject(new { ok = false, error = ex.Message });
-        }
     }
 
     static string HandleRead()
