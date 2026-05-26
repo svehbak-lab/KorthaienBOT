@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MtgoBot.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ef04d49c672c8321dbc222cfae687edea35e63b1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8519f44d7441c9e1576fd5e4242a2ae2efb8e252")]
 [assembly: System.Reflection.AssemblyProductAttribute("MtgoBot.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MtgoBot.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
