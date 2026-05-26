@@ -11,6 +11,8 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.IO.Pipes.AccessControl" Version="5.0.0" />
+    <PackageReference Include="ImpromptuInterface" Version="8.0.6" />
+    <PackageReference Include="Dynamitey" Version="3.0.2" />
   </ItemGroup>
 
   <ItemGroup>
