@@ -12,13 +12,10 @@ internal static class NativeMethods
 {
     [DllImport("kernel32.dll", SetLastError = true)]
     public static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, int dwProcessId);
-
     [DllImport("kernel32.dll", SetLastError = true)]
     public static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, int dwSize, out int lpNumberOfBytesRead);
-
     [DllImport("kernel32.dll")]
     public static extern bool CloseHandle(IntPtr hObject);
-
     public const uint PROCESS_VM_READ      = 0x0010;
     public const uint PROCESS_VM_WRITE     = 0x0020;
     public const uint PROCESS_VM_OPERATION = 0x0008;
@@ -30,7 +27,6 @@ public class MtgoMemoryReader : IDisposable
     private readonly ILogger<MtgoMemoryReader> _logger;
     private IntPtr _processHandle = IntPtr.Zero;
     private Process? _mtgoProcess;
-    private Process? _bridgeProcess;
     private NamedPipeClientStream? _pipe;
     private StreamReader? _pipeReader;
     private StreamWriter? _pipeWriter;
@@ -48,7 +44,7 @@ public class MtgoMemoryReader : IDisposable
     {
         var processes = Process.GetProcessesByName("MTGO");
         if (processes.Length == 0)
-            throw new InvalidOperationException("MTGO.exe is not running. Start the client first.");
+            throw new InvalidOperationException("MTGO.exe is not running.");
 
         _mtgoProcess   = processes[0];
         _processHandle = NativeMethods.OpenProcess(
@@ -57,11 +53,7 @@ public class MtgoMemoryReader : IDisposable
             false, _mtgoProcess.Id);
 
         if (_processHandle == IntPtr.Zero)
-        {
-            int err = Marshal.GetLastWin32Error();
-            throw new InvalidOperationException(
-                $"Failed to open MTGO process handle. Win32 error: {err}. Try running as Administrator.");
-        }
+            throw new InvalidOperationException($"Failed to open MTGO handle. Win32: {Marshal.GetLastWin32Error()}");
 
         _logger.LogInformation("✅ Attached to MTGO.exe (PID {Pid})", _mtgoProcess.Id);
         StartBridge();
@@ -75,7 +67,7 @@ public class MtgoMemoryReader : IDisposable
             if (existing.Length == 0)
             {
                 _logger.LogInformation("Starting MtgoBot.Bridge...");
-                _bridgeProcess = Process.Start(new ProcessStartInfo
+                Process.Start(new ProcessStartInfo
                 {
                     FileName = BridgeExePath, UseShellExecute = false, CreateNoWindow = true
                 });
@@ -89,7 +81,7 @@ public class MtgoMemoryReader : IDisposable
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Failed to start bridge — running in stub mode.");
+            _logger.LogWarning(ex, "Failed to start bridge.");
         }
     }
 
@@ -97,6 +89,7 @@ public class MtgoMemoryReader : IDisposable
     {
         try
         {
+            _pipe?.Dispose();
             _pipe = new NamedPipeClientStream(".", BridgePipeName, PipeDirection.InOut);
             _pipe.Connect(PipeConnectTimeout);
             _pipeReader = new StreamReader(_pipe, Encoding.UTF8);
@@ -107,6 +100,8 @@ public class MtgoMemoryReader : IDisposable
         {
             _logger.LogWarning(ex, "Failed to connect to bridge pipe — running in stub mode.");
             _pipe = null;
+            _pipeReader = null;
+            _pipeWriter = null;
         }
     }
 
@@ -129,18 +124,11 @@ public class MtgoMemoryReader : IDisposable
         if (!IsAttached)
             throw new InvalidOperationException("Not attached to MTGO.");
 
-        if (_pipe == null || !_pipe.IsConnected)
-        {
-            _logger.LogDebug("Bridge not connected — returning null.");
-            TryReconnectPipe();
-            return null;
-        }
+        var response = SendCommand(new { cmd = "READ" });
+        if (response == null) return null;
 
         try
         {
-            var response = SendCommand(new { cmd = "READ" });
-            if (response == null) return null;
-
             var result = JsonConvert.DeserializeObject<dynamic>(response);
             if (result?.snapshot == null) return null;
 
@@ -163,68 +151,67 @@ public class MtgoMemoryReader : IDisposable
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Failed to read trade window from bridge.");
-            _pipe = null;
+            _logger.LogWarning(ex, "Failed to parse trade window snapshot.");
             return null;
         }
     }
 
-    /// <summary>
-    /// Attempts to click the Accept button on an incoming trade request dialog.
-    /// Called every tick when no trade session is active.
-    /// </summary>
     public void AcceptTradeRequest()
     {
-        if (_pipe == null || !_pipe.IsConnected) return;
-        try
+        var response = SendCommand(new { cmd = "ACCEPT_REQUEST" });
+        if (response != null)
         {
-            var response = SendCommand(new { cmd = "ACCEPT_REQUEST" });
-            if (response != null)
+            try
             {
                 var result = JsonConvert.DeserializeObject<dynamic>(response);
                 if (result?.ok == true)
                     _logger.LogInformation("✅ Trade request accepted.");
             }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to accept trade request.");
+            catch { }
         }
     }
 
-    public void SendChatMessage(string message)
-    {
-        if (_pipe == null || !_pipe.IsConnected) return;
-        try { SendCommand(new { cmd = "CHAT", message }); }
-        catch (Exception ex) { _logger.LogWarning(ex, "Failed to send chat message."); }
-    }
+    public void SendChatMessage(string message) =>
+        SendCommand(new { cmd = "CHAT", message });
 
-    public void ClickSubmit()
-    {
-        _logger.LogInformation("→ [UI] Clicking Submit");
-        if (_pipe == null || !_pipe.IsConnected) return;
-        try { SendCommand(new { cmd = "SUBMIT" }); }
-        catch (Exception ex) { _logger.LogWarning(ex, "Failed to click Submit."); }
-    }
+    public void ClickSubmit() =>
+        SendCommand(new { cmd = "SUBMIT" });
 
-    public void ClickAccept()
-    {
-        _logger.LogInformation("→ [UI] Clicking Accept");
-        if (_pipe == null || !_pipe.IsConnected) return;
-        try { SendCommand(new { cmd = "ACCEPT" }); }
-        catch (Exception ex) { _logger.LogWarning(ex, "Failed to click Accept."); }
-    }
+    public void ClickAccept() =>
+        SendCommand(new { cmd = "ACCEPT" });
 
+    /// <summary>
+    /// Sends a command to the bridge and returns the response.
+    /// Automatically reconnects if the pipe is broken.
+    /// </summary>
     private string? SendCommand(object command)
     {
-        if (_pipeWriter == null || _pipeReader == null) return null;
-        _pipeWriter.WriteLine(JsonConvert.SerializeObject(command));
-        return _pipeReader.ReadLine();
-    }
+        // Try to send; if it fails, reconnect and try once more
+        for (int attempt = 0; attempt < 2; attempt++)
+        {
+            try
+            {
+                if (_pipeWriter == null || _pipeReader == null)
+                {
+                    ConnectToPipe();
+                    if (_pipeWriter == null) return null;
+                }
 
-    private void TryReconnectPipe()
-    {
-        try { _pipe?.Dispose(); _pipe = null; ConnectToPipe(); } catch { }
+                var json = JsonConvert.SerializeObject(command);
+                _pipeWriter.WriteLine(json);
+                return _pipeReader.ReadLine();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDebug("Pipe send failed (attempt {A}): {E}", attempt + 1, ex.Message);
+                // Reset pipe and retry
+                _pipeReader = null;
+                _pipeWriter = null;
+                _pipe?.Dispose();
+                _pipe = null;
+            }
+        }
+        return null;
     }
 
     public byte[] ReadBytes(IntPtr address, int count)
@@ -232,20 +219,6 @@ public class MtgoMemoryReader : IDisposable
         var buffer = new byte[count];
         NativeMethods.ReadProcessMemory(_processHandle, address, buffer, count, out _);
         return buffer;
-    }
-
-    public int    ReadInt32(IntPtr address)  => BitConverter.ToInt32(ReadBytes(address, 4), 0);
-    public long   ReadInt64(IntPtr address)  => BitConverter.ToInt64(ReadBytes(address, 8), 0);
-    public float  ReadFloat(IntPtr address)  => BitConverter.ToSingle(ReadBytes(address, 4), 0);
-    public double ReadDouble(IntPtr address) => BitConverter.ToDouble(ReadBytes(address, 8), 0);
-
-    public string ReadUnicodeString(IntPtr address, int maxLength = 256)
-    {
-        var bytes = ReadBytes(address, maxLength * 2);
-        int nullIdx = 0;
-        while (nullIdx + 1 < bytes.Length && !(bytes[nullIdx] == 0 && bytes[nullIdx + 1] == 0))
-            nullIdx += 2;
-        return Encoding.Unicode.GetString(bytes, 0, nullIdx);
     }
 
     public void Dispose()
