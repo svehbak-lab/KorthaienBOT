@@ -25,21 +25,10 @@ class Program
     {
         Console.WriteLine("[Bridge] MtgoBot.Bridge starting...");
 
-        try
-        {
-            TradeManager.TradeStarted += (sender, e) =>
-                Console.WriteLine("[Bridge] TradeStarted event fired!");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[Bridge] TradeStarted hook failed: {ex.Message}");
-        }
-
         while (true)
         {
             try
             {
-                // Create pipe with open security so any user/process can connect
                 var security = new PipeSecurity();
                 security.AddAccessRule(new PipeAccessRule(
                     new SecurityIdentifier(WellKnownSidType.WorldSid, null),
@@ -121,7 +110,7 @@ class Program
                 if (text.Equals("Accept", StringComparison.OrdinalIgnoreCase))
                 {
                     PostMessage(hWnd, BM_CLICK, IntPtr.Zero, IntPtr.Zero);
-                    Console.WriteLine($"[Bridge] Clicked Accept button.");
+                    Console.WriteLine("[Bridge] Clicked Accept button.");
                     clicked = true;
                     return false;
                 }
