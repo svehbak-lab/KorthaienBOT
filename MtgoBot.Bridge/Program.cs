@@ -1,29 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
 using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using MTGOSDK.API.Trade;
+using MTGOSDK.API.Trade.Enums;
 
 /// <summary>
-/// MtgoBot.Bridge — net48 process that wraps MTGOSDK.
-///
-/// Runs as a separate process alongside MtgoBot.Client.
-/// Communicates via a named pipe "KorthaienBotBridge".
-///
-/// Protocol (newline-delimited JSON):
-///   Bot client sends:  { "cmd": "READ" }
-///   Bridge responds:   { "snapshot": { ... } }  or  { "snapshot": null }
-///
-///   Bot client sends:  { "cmd": "CHAT", "message": "Hei!" }
-///   Bridge responds:   { "ok": true }
-///
-///   Bot client sends:  { "cmd": "SUBMIT" }
-///   Bridge responds:   { "ok": true }
-///
-///   Bot client sends:  { "cmd": "ACCEPT" }
-///   Bridge responds:   { "ok": true }
+/// MtgoBot.Bridge — net10.0-windows process that wraps MTGOSDK.
+/// Communicates with MtgoBot.Client via named pipe "KorthaienBotBridge".
 /// </summary>
 class Program
 {
@@ -64,12 +51,10 @@ class Program
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"[Bridge] Error handling command: {ex.Message}");
-                        try { writer.WriteLine(JsonConvert.SerializeObject(new { error = ex.Message })); }
-                        catch { }
+                        Console.WriteLine($"[Bridge] Error: {ex.Message}");
+                        try { writer.WriteLine(JsonConvert.SerializeObject(new { error = ex.Message })); } catch { }
                     }
                 }
-
                 Console.WriteLine("[Bridge] Client disconnected.");
             }
             catch (Exception ex)
@@ -82,23 +67,14 @@ class Program
 
     static string HandleCommand(BridgeRequest req)
     {
-        switch (req.Cmd?.ToUpperInvariant())
+        return (req.Cmd?.ToUpperInvariant()) switch
         {
-            case "READ":
-                return HandleRead();
-
-            case "CHAT":
-                return HandleChat(req.Message ?? "");
-
-            case "SUBMIT":
-                return HandleSubmit();
-
-            case "ACCEPT":
-                return HandleAccept();
-
-            default:
-                return JsonConvert.SerializeObject(new { error = $"Unknown command: {req.Cmd}" });
-        }
+            "READ"   => HandleRead(),
+            "CHAT"   => HandleChat(req.Message ?? ""),
+            "SUBMIT" => HandleSubmit(),
+            "ACCEPT" => HandleAccept(),
+            _ => JsonConvert.SerializeObject(new { error = $"Unknown command: {req.Cmd}" })
+        };
     }
 
     static string HandleRead()
@@ -109,16 +85,15 @@ class Program
             if (trade == null)
                 return JsonConvert.SerializeObject(new { snapshot = (object?)null });
 
+            // Opponent name
             string playerName = "unknown";
-            try { playerName = trade.TradePartner?.Poster?.Name ?? "unknown"; }
-            catch { }
+            try { playerName = trade.TradePartner?.Name ?? "unknown"; } catch { }
 
-            var playerOffers = new System.Collections.Generic.List<CardDto>();
-            var botOffers    = new System.Collections.Generic.List<CardDto>();
-
+            // Cards player offered
+            var playerOffers = new List<CardDto>();
             try
             {
-                foreach (var item in trade.PartnerTradedItems)
+                foreach (var item in trade.PartnerTradedItems.CollectionItems)
                 {
                     try
                     {
@@ -134,9 +109,11 @@ class Program
             }
             catch { }
 
+            // Cards bot offered
+            var botOffers = new List<CardDto>();
             try
             {
-                foreach (var item in trade.TradedItems)
+                foreach (var item in trade.TradedItems.CollectionItems)
                 {
                     try
                     {
@@ -152,10 +129,14 @@ class Program
             }
             catch { }
 
+            // Both sides submitted = ApprovalReceivedBoth or beyond
             bool bothSubmitted = false;
             try
             {
-                bothSubmitted = trade.State == MTGOSDK.API.Trade.Enums.TradeState.BothConfirmed
+                var state = trade.State;
+                bothSubmitted = state == TradeState.ApprovalReceivedBoth
+                             || state == TradeState.ApprovalSubmittedLocal
+                             || state == TradeState.ApprovalSubmittedOther
                              || trade.IsAccepted;
             }
             catch { }
@@ -180,30 +161,22 @@ class Program
 
     static string HandleChat(string message)
     {
-        try
-        {
-            // TODO: wire to MTGOSDK Chat API once we identify the correct channel
-            // For now log it — chat will be handled via SendKeys as fallback
-            Console.WriteLine($"[Bridge] CHAT: {message}");
-            return JsonConvert.SerializeObject(new { ok = true });
-        }
-        catch (Exception ex)
-        {
-            return JsonConvert.SerializeObject(new { ok = false, error = ex.Message });
-        }
+        Console.WriteLine($"[Bridge] CHAT: {message}");
+        // TODO: wire to MTGOSDK Chat API
+        return JsonConvert.SerializeObject(new { ok = true });
     }
 
     static string HandleSubmit()
     {
-        Console.WriteLine("[Bridge] SUBMIT requested");
-        // TODO: implement via MTGOSDK or Win32 PostMessage
+        Console.WriteLine("[Bridge] SUBMIT");
+        // TODO: implement via MTGOSDK or Win32
         return JsonConvert.SerializeObject(new { ok = true });
     }
 
     static string HandleAccept()
     {
-        Console.WriteLine("[Bridge] ACCEPT requested");
-        // TODO: implement via MTGOSDK or Win32 PostMessage
+        Console.WriteLine("[Bridge] ACCEPT");
+        // TODO: implement via MTGOSDK or Win32
         return JsonConvert.SerializeObject(new { ok = true });
     }
 }
@@ -223,9 +196,9 @@ class CardDto
 
 class SnapshotDto
 {
-    [JsonProperty("isOpen")]        public bool   IsOpen        { get; set; }
-    [JsonProperty("playerName")]    public string PlayerName    { get; set; } = "";
-    [JsonProperty("playerOffers")]  public System.Collections.Generic.List<CardDto> PlayerOffers { get; set; } = new();
-    [JsonProperty("botOffers")]     public System.Collections.Generic.List<CardDto> BotOffers    { get; set; } = new();
-    [JsonProperty("bothSubmitted")] public bool   BothSubmitted { get; set; }
+    [JsonProperty("isOpen")]        public bool             IsOpen        { get; set; }
+    [JsonProperty("playerName")]    public string           PlayerName    { get; set; } = "";
+    [JsonProperty("playerOffers")]  public List<CardDto>    PlayerOffers  { get; set; } = new();
+    [JsonProperty("botOffers")]     public List<CardDto>    BotOffers     { get; set; } = new();
+    [JsonProperty("bothSubmitted")] public bool             BothSubmitted { get; set; }
 }
