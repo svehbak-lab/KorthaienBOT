@@ -133,7 +133,11 @@ class Program
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[Bridge] READ error: {ex.Message}");
+            Console.WriteLine($"[Bridge] READ error: {ex.GetType().Name}: {ex.Message}");
+            if (ex.InnerException != null)
+                Console.WriteLine($"[Bridge] Inner: {ex.InnerException.GetType().Name}: {ex.InnerException.Message}");
+            if (ex.InnerException?.InnerException != null)
+                Console.WriteLine($"[Bridge] Inner2: {ex.InnerException.InnerException.Message}");
             return JsonConvert.SerializeObject(new { snapshot = (object?)null });
         }
     }
