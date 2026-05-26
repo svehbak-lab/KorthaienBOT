@@ -1,12 +1,10 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.IO;
+using System.IO.Pipes;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Extensions.Logging;
-using MTGOSDK.API.Trade;
-using MTGOSDK.API.Collection;
+using Newtonsoft.Json;
 
 namespace MtgoBot.Client.Memory;
 
@@ -21,33 +19,34 @@ internal static class NativeMethods
     [DllImport("kernel32.dll")]
     public static extern bool CloseHandle(IntPtr hObject);
 
-    [DllImport("user32.dll", SetLastError = true)]
-    public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-
     public const uint PROCESS_VM_READ      = 0x0010;
     public const uint PROCESS_VM_WRITE     = 0x0020;
     public const uint PROCESS_VM_OPERATION = 0x0008;
     public const uint PROCESS_QUERY_INFO   = 0x0400;
-    public const uint WM_LBUTTONDOWN       = 0x0201;
-    public const uint WM_LBUTTONUP         = 0x0202;
 }
 
 /// <summary>
-/// Reads and interacts with the MTGO trade window via MTGOSDK.
+/// Reads MTGO trade window state by communicating with MtgoBot.Bridge,
+/// a companion net48 process that wraps MTGOSDK.
 ///
-/// MTGOSDK uses ClrMD to inspect the MTGO .NET runtime directly,
-/// giving us typed C# objects for TradeWindow, cards, and chat.
-///
-/// The SDK must be initialized before MTGO starts a trade.
-/// Call Attach() once at startup; it connects to the running MTGO process.
+/// The bridge runs as a separate process and exposes a named pipe
+/// "KorthaienBotBridge". This class connects to that pipe and sends
+/// simple JSON commands to read trade state and control the UI.
 /// </summary>
 public class MtgoMemoryReader : IDisposable
 {
     private readonly ILogger<MtgoMemoryReader> _logger;
     private IntPtr _processHandle = IntPtr.Zero;
     private Process? _mtgoProcess;
+    private Process? _bridgeProcess;
+    private NamedPipeClientStream? _pipe;
+    private StreamReader? _pipeReader;
+    private StreamWriter? _pipeWriter;
     private bool _disposed;
-    private bool _sdkAttached;
+
+    private const string BridgePipeName    = "KorthaienBotBridge";
+    private const string BridgeExePath     = @"C:\KorthaienBOT\publish\bridge\MtgoBot.Bridge.exe";
+    private const int    PipeConnectTimeout = 10000; // 10 seconds
 
     public bool IsAttached => _processHandle != IntPtr.Zero;
 
@@ -57,7 +56,7 @@ public class MtgoMemoryReader : IDisposable
     }
 
     // ─────────────────────────────────────────────────────────────────
-    // Process attachment
+    // Attach — find MTGO and start/connect to the bridge
     // ─────────────────────────────────────────────────────────────────
 
     public void Attach()
@@ -68,7 +67,6 @@ public class MtgoMemoryReader : IDisposable
 
         _mtgoProcess = processes[0];
 
-        // Win32 handle — still needed for IsAttached / Watchdog checks
         _processHandle = NativeMethods.OpenProcess(
             NativeMethods.PROCESS_VM_READ    |
             NativeMethods.PROCESS_VM_WRITE   |
@@ -83,19 +81,57 @@ public class MtgoMemoryReader : IDisposable
                 $"Failed to open MTGO process handle. Win32 error: {err}. Try running as Administrator.");
         }
 
-        // Initialize MTGOSDK — connects to the MTGO .NET runtime via ClrMD
+        _logger.LogInformation("✅ Attached to MTGO.exe (PID {Pid})", _mtgoProcess.Id);
+
+        // Start the bridge process and connect to its pipe
+        StartBridge();
+    }
+
+    private void StartBridge()
+    {
         try
         {
-            // MTGOSDK auto-discovers the MTGO process via ClrMD
-            // No explicit initialization needed — TradeManager is static
-            // and connects lazily on first access.
-            _sdkAttached = true;
-            _logger.LogInformation("✅ Attached to MTGO.exe (PID {Pid}) — MTGOSDK ready.", _mtgoProcess.Id);
+            // Check if bridge is already running
+            var existing = Process.GetProcessesByName("MtgoBot.Bridge");
+            if (existing.Length == 0)
+            {
+                _logger.LogInformation("Starting MtgoBot.Bridge...");
+                _bridgeProcess = Process.Start(new ProcessStartInfo
+                {
+                    FileName        = BridgeExePath,
+                    UseShellExecute = false,
+                    CreateNoWindow  = true
+                });
+                // Give bridge time to start up and connect to MTGO
+                System.Threading.Thread.Sleep(3000);
+            }
+            else
+            {
+                _logger.LogInformation("MtgoBot.Bridge already running (PID {Pid})", existing[0].Id);
+            }
+
+            ConnectToPipe();
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "MTGOSDK initialization failed — falling back to stub mode.");
-            _sdkAttached = false;
+            _logger.LogWarning(ex, "Failed to start bridge — running in stub mode.");
+        }
+    }
+
+    private void ConnectToPipe()
+    {
+        try
+        {
+            _pipe = new NamedPipeClientStream(".", BridgePipeName, PipeDirection.InOut);
+            _pipe.Connect(PipeConnectTimeout);
+            _pipeReader = new StreamReader(_pipe, Encoding.UTF8);
+            _pipeWriter = new StreamWriter(_pipe, Encoding.UTF8) { AutoFlush = true };
+            _logger.LogInformation("✅ Connected to MtgoBot.Bridge pipe.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to connect to bridge pipe — running in stub mode.");
+            _pipe = null;
         }
     }
 
@@ -106,152 +142,120 @@ public class MtgoMemoryReader : IDisposable
             NativeMethods.CloseHandle(_processHandle);
             _processHandle = IntPtr.Zero;
         }
-        _sdkAttached = false;
+
+        _pipeReader?.Dispose();
+        _pipeWriter?.Dispose();
+        _pipe?.Dispose();
+        _pipe = null;
+
         _logger.LogInformation("Detached from MTGO.exe.");
     }
 
     // ─────────────────────────────────────────────────────────────────
-    // Trade window reading via MTGOSDK
+    // Trade window reading
     // ─────────────────────────────────────────────────────────────────
 
-    /// <summary>
-    /// Reads the complete state of the current trade window.
-    /// Returns null if no trade window is open.
-    /// Uses MTGOSDK.API.Trade.TradeManager.CurrentTrade.
-    /// </summary>
     public TradeWindowSnapshot? ReadTradeWindow()
     {
         if (!IsAttached)
             throw new InvalidOperationException("Not attached to MTGO.");
 
-        if (!_sdkAttached)
+        if (_pipe == null || !_pipe.IsConnected)
         {
-            _logger.LogDebug("SDK not attached — returning null.");
+            _logger.LogDebug("Bridge not connected — returning null.");
+            TryReconnectPipe();
             return null;
         }
 
         try
         {
-            // Get the current active trade via MTGOSDK
-            var trade = TradeManager.CurrentTrade;
-            if (trade == null)
-                return null;
+            var response = SendCommand(new { cmd = "READ" });
+            if (response == null) return null;
 
-            // Read opponent name
-            string playerName = trade.TradePartner?.Poster?.Name ?? "unknown";
+            var result = JsonConvert.DeserializeObject<dynamic>(response);
+            if (result?.snapshot == null) return null;
 
-            // Read cards the player is offering (their side of the window)
-            var playerOffers = ReadItemCollection(trade.PartnerTradedItems);
+            var snapshot = result.snapshot;
+            var playerOffers = new List<OfferedCard>();
+            var botOffers    = new List<OfferedCard>();
 
-            // Read cards the bot is offering (bot's side of the window)
-            var botOffers = ReadItemCollection(trade.TradedItems);
+            foreach (var c in snapshot.playerOffers ?? new Newtonsoft.Json.Linq.JArray())
+                playerOffers.Add(new OfferedCard(
+                    (string)c.cardId, (string)c.cardName, (int)c.quantity));
 
-            // Check if both sides have submitted
-            bool bothSubmitted = trade.State == MTGOSDK.API.Trade.Enums.TradeState.BothConfirmed
-                              || trade.IsAccepted;
-
-            _logger.LogDebug(
-                "Trade window: [{Player}] offering {PCount} cards, bot offering {BCount} cards, state={State}",
-                playerName, playerOffers.Count, botOffers.Count, trade.State);
+            foreach (var c in snapshot.botOffers ?? new Newtonsoft.Json.Linq.JArray())
+                botOffers.Add(new OfferedCard(
+                    (string)c.cardId, (string)c.cardName, (int)c.quantity));
 
             return new TradeWindowSnapshot(
-                IsOpen:        true,
-                PlayerName:    playerName,
+                IsOpen:        (bool)snapshot.isOpen,
+                PlayerName:    (string)snapshot.playerName,
                 PlayerOffers:  playerOffers,
                 BotOffers:     botOffers,
-                BothSubmitted: bothSubmitted);
+                BothSubmitted: (bool)snapshot.bothSubmitted);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "MTGOSDK trade read failed — returning null.");
+            _logger.LogWarning(ex, "Failed to read trade window from bridge.");
+            _pipe = null;
             return null;
         }
     }
 
-    private List<OfferedCard> ReadItemCollection(MTGOSDK.API.Collection.ItemCollection? collection)
-    {
-        var result = new List<OfferedCard>();
-        if (collection == null) return result;
-
-        try
-        {
-            foreach (var item in collection)
-            {
-                try
-                {
-                    // CollectionItem exposes Id, Name, IsCard, IsTicket
-                    string cardId   = item.Id.ToString();
-                    string cardName = item.Name ?? "Unknown";
-
-                    // For quantity we need CardQuantityPair — check if collection
-                    // exposes quantity directly or if we need a different approach
-                    int quantity = 1;
-
-                    // TIX (Event Tickets) have a special ID in MTGO
-                    if (item.IsTicket)
-                        cardId = "EVENT_TICKET";
-
-                    result.Add(new OfferedCard(cardId, cardName, quantity));
-                }
-                catch { /* Skip malformed items */ }
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to read item collection.");
-        }
-
-        return result;
-    }
-
-    // ─────────────────────────────────────────────────────────────────
-    // Chat message sending via MTGOSDK
-    // ─────────────────────────────────────────────────────────────────
-
-    /// <summary>
-    /// Sends a message in the trade window chat.
-    /// Uses MTGOSDK.API.Chat if available.
-    /// </summary>
     public void SendChatMessage(string message)
     {
-        if (!_sdkAttached) return;
-
+        if (_pipe == null || !_pipe.IsConnected) return;
         try
         {
-            // MTGOSDK Chat API — channel name for trade chat is typically
-            // the opponent's username or a trade-specific channel
-            // TODO: verify correct channel name with MTGOSDK Chat API
-            _logger.LogInformation("[CHAT] {Msg}", message);
-
-            // Placeholder — wire to MTGOSDK.API.Chat.ChatManager once
-            // we confirm the correct channel reference from the trade object
+            SendCommand(new { cmd = "CHAT", message });
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Failed to send chat message via MTGOSDK.");
+            _logger.LogWarning(ex, "Failed to send chat message.");
         }
     }
-
-    // ─────────────────────────────────────────────────────────────────
-    // UI interactions — Submit and Accept buttons
-    // These use PostMessage since MTGOSDK doesn't expose UI actions
-    // ─────────────────────────────────────────────────────────────────
 
     public void ClickSubmit()
     {
         _logger.LogInformation("→ [UI] Clicking Submit");
-        // TODO: find Submit button handle via EnumChildWindows and PostMessage
-        // This will be calibrated once we have a live trade window to inspect
+        if (_pipe == null || !_pipe.IsConnected) return;
+        try { SendCommand(new { cmd = "SUBMIT" }); }
+        catch (Exception ex) { _logger.LogWarning(ex, "Failed to click Submit."); }
     }
 
     public void ClickAccept()
     {
         _logger.LogInformation("→ [UI] Clicking Accept");
-        // TODO: same as ClickSubmit
+        if (_pipe == null || !_pipe.IsConnected) return;
+        try { SendCommand(new { cmd = "ACCEPT" }); }
+        catch (Exception ex) { _logger.LogWarning(ex, "Failed to click Accept."); }
     }
 
     // ─────────────────────────────────────────────────────────────────
-    // Raw memory helpers (kept for diagnostics)
+    // Pipe communication
+    // ─────────────────────────────────────────────────────────────────
+
+    private string? SendCommand(object command)
+    {
+        if (_pipeWriter == null || _pipeReader == null) return null;
+        var json = JsonConvert.SerializeObject(command);
+        _pipeWriter.WriteLine(json);
+        return _pipeReader.ReadLine();
+    }
+
+    private void TryReconnectPipe()
+    {
+        try
+        {
+            _pipe?.Dispose();
+            _pipe = null;
+            ConnectToPipe();
+        }
+        catch { }
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Raw memory helpers
     // ─────────────────────────────────────────────────────────────────
 
     public byte[] ReadBytes(IntPtr address, int count)
@@ -286,10 +290,6 @@ public class MtgoMemoryReader : IDisposable
         GC.SuppressFinalize(this);
     }
 }
-
-// ─────────────────────────────────────────────────────────────────
-// Data structures returned by the memory reader
-// ─────────────────────────────────────────────────────────────────
 
 public record TradeWindowSnapshot(
     bool IsOpen,
