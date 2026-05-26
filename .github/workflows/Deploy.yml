@@ -18,6 +18,5 @@ jobs:
           script: |
             cd C:\KorthaienBOT
             git pull
-            cd MtgoBot.Dashboard
-            dotnet publish -c Release -o C:\KorthaienBOT\publish\dashboard
+            dotnet publish MtgoBot.Dashboard\MtgoBot.Dashboard.csproj -c Release -o C:\KorthaienBOT\publish\dashboard
             Restart-Service -Name "KorthaienDashboard"
