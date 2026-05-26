@@ -15,7 +15,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("[Bridge] MtgoBot.Bridge starting...");
+        Console.WriteLine("[Bridge] MtgoBot.Bridge starting (net48)...");
 
         while (true)
         {
@@ -27,7 +27,7 @@ class Program
                     PipeAccessRights.FullControl,
                     AccessControlType.Allow));
 
-                using var pipe = NamedPipeServerStreamAcl.Create(
+                var pipe = new NamedPipeServerStream(
                     "KorthaienBotBridge",
                     PipeDirection.InOut,
                     1,
@@ -36,36 +36,42 @@ class Program
                     4096, 4096,
                     security);
 
-                Console.WriteLine("[Bridge] Waiting for bot client to connect...");
+                Console.WriteLine("[Bridge] Waiting for bot client...");
                 pipe.WaitForConnection();
                 Console.WriteLine("[Bridge] Bot client connected.");
 
-                using var reader = new StreamReader(pipe, Encoding.UTF8, false, 4096, true);
-                using var writer = new StreamWriter(pipe, Encoding.UTF8, 4096, true) { AutoFlush = true };
+                var reader = new StreamReader(pipe, Encoding.UTF8, false, 4096, true);
+                var writer = new StreamWriter(pipe, Encoding.UTF8, 4096, true);
+                writer.AutoFlush = true;
 
                 while (pipe.IsConnected)
                 {
                     try
                     {
-                        var line = reader.ReadLine();
+                        string line = reader.ReadLine();
                         if (line == null) break;
-                        Console.WriteLine($"[Bridge] CMD: {line}");
+                        Console.WriteLine("[Bridge] CMD: " + line);
                         var request = JsonConvert.DeserializeObject<BridgeRequest>(line);
                         if (request == null) continue;
-                        var response = HandleCommand(request);
+                        string response = HandleCommand(request);
                         writer.WriteLine(response);
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"[Bridge] Error: {ex.Message}");
-                        try { writer.WriteLine(JsonConvert.SerializeObject(new { error = ex.Message })); } catch { }
+                        Console.WriteLine("[Bridge] Error: " + ex.Message);
+                        try { writer.WriteLine(JsonConvert.SerializeObject(new { error = ex.Message })); }
+                        catch { }
                     }
                 }
+
                 Console.WriteLine("[Bridge] Client disconnected.");
+                reader.Dispose();
+                writer.Dispose();
+                pipe.Dispose();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[Bridge] Pipe error: {ex.Message}");
+                Console.WriteLine("[Bridge] Pipe error: " + ex.Message);
                 Thread.Sleep(1000);
             }
         }
@@ -73,15 +79,16 @@ class Program
 
     static string HandleCommand(BridgeRequest req)
     {
-        return (req.Cmd?.ToUpperInvariant()) switch
+        if (req.Cmd == null) return JsonConvert.SerializeObject(new { error = "no cmd" });
+        switch (req.Cmd.ToUpperInvariant())
         {
-            "READ"           => HandleRead(),
-            "ACCEPT_REQUEST" => JsonConvert.SerializeObject(new { ok = false, note = "manual accept required" }),
-            "CHAT"           => HandleChat(req.Message ?? ""),
-            "SUBMIT"         => HandleSubmit(),
-            "ACCEPT"         => HandleAccept(),
-            _ => JsonConvert.SerializeObject(new { error = $"Unknown: {req.Cmd}" })
-        };
+            case "READ":           return HandleRead();
+            case "ACCEPT_REQUEST": return JsonConvert.SerializeObject(new { ok = false, note = "manual accept required" });
+            case "CHAT":           return HandleChat(req.Message ?? "");
+            case "SUBMIT":         return HandleSubmit();
+            case "ACCEPT":         return HandleAccept();
+            default:               return JsonConvert.SerializeObject(new { error = "Unknown: " + req.Cmd });
+        }
     }
 
     static string HandleRead()
@@ -90,26 +97,55 @@ class Program
         {
             var trade = TradeManager.CurrentTrade;
             if (trade == null)
-                return JsonConvert.SerializeObject(new { snapshot = (object?)null });
+                return JsonConvert.SerializeObject(new { snapshot = (object)null });
 
             string playerName = "unknown";
-            try { playerName = trade.TradePartner?.Name ?? "unknown"; } catch { }
+            try { playerName = trade.TradePartner != null ? trade.TradePartner.Name ?? "unknown" : "unknown"; }
+            catch { }
 
             var playerOffers = new List<CardDto>();
             try
             {
-                foreach (var item in trade.PartnerTradedItems.CollectionItems)
-                    try { playerOffers.Add(new CardDto { CardId = item.IsTicket ? "EVENT_TICKET" : item.Id.ToString(), CardName = item.Name ?? "Unknown", Quantity = 1 }); }
-                    catch { }
+                var items = trade.PartnerTradedItems;
+                if (items != null)
+                {
+                    foreach (var item in items.CollectionItems)
+                    {
+                        try
+                        {
+                            playerOffers.Add(new CardDto
+                            {
+                                CardId   = item.IsTicket ? "EVENT_TICKET" : item.Id.ToString(),
+                                CardName = item.Name ?? "Unknown",
+                                Quantity = 1
+                            });
+                        }
+                        catch { }
+                    }
+                }
             }
             catch { }
 
             var botOffers = new List<CardDto>();
             try
             {
-                foreach (var item in trade.TradedItems.CollectionItems)
-                    try { botOffers.Add(new CardDto { CardId = item.IsTicket ? "EVENT_TICKET" : item.Id.ToString(), CardName = item.Name ?? "Unknown", Quantity = 1 }); }
-                    catch { }
+                var items = trade.TradedItems;
+                if (items != null)
+                {
+                    foreach (var item in items.CollectionItems)
+                    {
+                        try
+                        {
+                            botOffers.Add(new CardDto
+                            {
+                                CardId   = item.IsTicket ? "EVENT_TICKET" : item.Id.ToString(),
+                                CardName = item.Name ?? "Unknown",
+                                Quantity = 1
+                            });
+                        }
+                        catch { }
+                    }
+                }
             }
             catch { }
 
@@ -124,27 +160,34 @@ class Program
             }
             catch { }
 
-            return JsonConvert.SerializeObject(new { snapshot = new SnapshotDto
+            Console.WriteLine("[Bridge] Trade open: player=" + playerName +
+                " playerOffers=" + playerOffers.Count +
+                " botOffers=" + botOffers.Count +
+                " submitted=" + bothSubmitted);
+
+            var snapshot = new SnapshotDto
             {
-                IsOpen = true, PlayerName = playerName,
-                PlayerOffers = playerOffers, BotOffers = botOffers,
+                IsOpen        = true,
+                PlayerName    = playerName,
+                PlayerOffers  = playerOffers,
+                BotOffers     = botOffers,
                 BothSubmitted = bothSubmitted
-            }});
+            };
+
+            return JsonConvert.SerializeObject(new { snapshot = snapshot });
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[Bridge] READ error: {ex.GetType().Name}: {ex.Message}");
+            Console.WriteLine("[Bridge] READ error: " + ex.GetType().Name + ": " + ex.Message);
             if (ex.InnerException != null)
-                Console.WriteLine($"[Bridge] Inner: {ex.InnerException.GetType().Name}: {ex.InnerException.Message}");
-            if (ex.InnerException?.InnerException != null)
-                Console.WriteLine($"[Bridge] Inner2: {ex.InnerException.InnerException.Message}");
-            return JsonConvert.SerializeObject(new { snapshot = (object?)null });
+                Console.WriteLine("[Bridge] Inner: " + ex.InnerException.GetType().Name + ": " + ex.InnerException.Message);
+            return JsonConvert.SerializeObject(new { snapshot = (object)null });
         }
     }
 
     static string HandleChat(string message)
     {
-        Console.WriteLine($"[Bridge] CHAT: {message}");
+        Console.WriteLine("[Bridge] CHAT: " + message);
         return JsonConvert.SerializeObject(new { ok = true });
     }
 
@@ -163,22 +206,22 @@ class Program
 
 class BridgeRequest
 {
-    [JsonProperty("cmd")]     public string? Cmd     { get; set; }
-    [JsonProperty("message")] public string? Message { get; set; }
+    [JsonProperty("cmd")]     public string Cmd     { get; set; }
+    [JsonProperty("message")] public string Message { get; set; }
 }
 
 class CardDto
 {
-    [JsonProperty("cardId")]   public string CardId   { get; set; } = "";
-    [JsonProperty("cardName")] public string CardName { get; set; } = "";
-    [JsonProperty("quantity")] public int    Quantity { get; set; } = 1;
+    [JsonProperty("cardId")]   public string CardId   { get; set; }
+    [JsonProperty("cardName")] public string CardName { get; set; }
+    [JsonProperty("quantity")] public int    Quantity { get; set; }
 }
 
 class SnapshotDto
 {
     [JsonProperty("isOpen")]        public bool          IsOpen        { get; set; }
-    [JsonProperty("playerName")]    public string        PlayerName    { get; set; } = "";
-    [JsonProperty("playerOffers")]  public List<CardDto> PlayerOffers  { get; set; } = new();
-    [JsonProperty("botOffers")]     public List<CardDto> BotOffers     { get; set; } = new();
+    [JsonProperty("playerName")]    public string        PlayerName    { get; set; }
+    [JsonProperty("playerOffers")]  public List<CardDto> PlayerOffers  { get; set; }
+    [JsonProperty("botOffers")]     public List<CardDto> BotOffers     { get; set; }
     [JsonProperty("bothSubmitted")] public bool          BothSubmitted { get; set; }
 }
