@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
@@ -11,25 +13,18 @@ using MTGOSDK.API.Trade.Enums;
 
 class Program
 {
-    // Win32 for clicking the Accept button on trade request dialog
-    [DllImport("user32.dll")] static extern IntPtr FindWindow(string? cls, string title);
-    [DllImport("user32.dll")] static extern IntPtr FindWindowEx(IntPtr parent, IntPtr after, string? cls, string? title);
-    [DllImport("user32.dll")] static extern bool PostMessage(IntPtr hWnd, uint msg, IntPtr w, IntPtr l);
     [DllImport("user32.dll")] static extern bool EnumChildWindows(IntPtr parent, EnumWindowsProc proc, IntPtr lParam);
     [DllImport("user32.dll")] static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
     [DllImport("user32.dll")] static extern bool IsWindowVisible(IntPtr hWnd);
+    [DllImport("user32.dll")] static extern bool PostMessage(IntPtr hWnd, uint msg, IntPtr w, IntPtr l);
 
     delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
-
-    const uint WM_LBUTTONDOWN = 0x0201;
-    const uint WM_LBUTTONUP   = 0x0202;
-    const uint BM_CLICK       = 0x00F5;
+    const uint BM_CLICK = 0x00F5;
 
     static void Main(string[] args)
     {
         Console.WriteLine("[Bridge] MtgoBot.Bridge starting...");
 
-        // Subscribe to TradeStarted event so we know when a trade is accepted
         try
         {
             TradeManager.TradeStarted += (sender, e) =>
@@ -37,19 +32,28 @@ class Program
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[Bridge] Could not subscribe to TradeStarted: {ex.Message}");
+            Console.WriteLine($"[Bridge] TradeStarted hook failed: {ex.Message}");
         }
 
         while (true)
         {
             try
             {
-                using var pipe = new NamedPipeServerStream(
+                // Create pipe with open security so any user/process can connect
+                var security = new PipeSecurity();
+                security.AddAccessRule(new PipeAccessRule(
+                    new SecurityIdentifier(WellKnownSidType.WorldSid, null),
+                    PipeAccessRights.FullControl,
+                    AccessControlType.Allow));
+
+                using var pipe = NamedPipeServerStreamAcl.Create(
                     "KorthaienBotBridge",
                     PipeDirection.InOut,
                     1,
                     PipeTransmissionMode.Byte,
-                    PipeOptions.None);
+                    PipeOptions.None,
+                    4096, 4096,
+                    security);
 
                 Console.WriteLine("[Bridge] Waiting for bot client to connect...");
                 pipe.WaitForConnection();
@@ -64,9 +68,11 @@ class Program
                     {
                         var line = reader.ReadLine();
                         if (line == null) break;
+                        Console.WriteLine($"[Bridge] CMD: {line}");
                         var request = JsonConvert.DeserializeObject<BridgeRequest>(line);
                         if (request == null) continue;
-                        writer.WriteLine(HandleCommand(request));
+                        var response = HandleCommand(request);
+                        writer.WriteLine(response);
                     }
                     catch (Exception ex)
                     {
@@ -93,24 +99,18 @@ class Program
             "CHAT"           => HandleChat(req.Message ?? ""),
             "SUBMIT"         => HandleSubmit(),
             "ACCEPT"         => HandleAccept(),
-            _ => JsonConvert.SerializeObject(new { error = $"Unknown command: {req.Cmd}" })
+            _ => JsonConvert.SerializeObject(new { error = $"Unknown: {req.Cmd}" })
         };
     }
 
-    /// <summary>
-    /// Clicks the Accept button on the MTGO trade request dialog.
-    /// The dialog has title containing "Trade Request" and an "Accept" button.
-    /// </summary>
     static string HandleAcceptTradeRequest()
     {
         try
         {
-            // Find MTGO main window
             var mtgoProcs = System.Diagnostics.Process.GetProcessesByName("MTGO");
             if (mtgoProcs.Length == 0)
                 return JsonConvert.SerializeObject(new { ok = false, error = "MTGO not running" });
 
-            // Search for the Accept button in child windows
             bool clicked = false;
             EnumChildWindows(mtgoProcs[0].MainWindowHandle, (hWnd, lParam) =>
             {
@@ -118,22 +118,17 @@ class Program
                 var sb = new StringBuilder(256);
                 GetWindowText(hWnd, sb, 256);
                 var text = sb.ToString();
-                if (text.Equals("Accept", StringComparison.OrdinalIgnoreCase) ||
-                    text.Equals("OK", StringComparison.OrdinalIgnoreCase))
+                if (text.Equals("Accept", StringComparison.OrdinalIgnoreCase))
                 {
                     PostMessage(hWnd, BM_CLICK, IntPtr.Zero, IntPtr.Zero);
-                    Console.WriteLine($"[Bridge] Clicked button: '{text}'");
+                    Console.WriteLine($"[Bridge] Clicked Accept button.");
                     clicked = true;
-                    return false; // Stop enumeration
+                    return false;
                 }
                 return true;
             }, IntPtr.Zero);
 
-            if (clicked)
-                return JsonConvert.SerializeObject(new { ok = true });
-
-            Console.WriteLine("[Bridge] Accept button not found in UI tree.");
-            return JsonConvert.SerializeObject(new { ok = false, error = "Accept button not found" });
+            return JsonConvert.SerializeObject(new { ok = clicked });
         }
         catch (Exception ex)
         {
@@ -157,10 +152,8 @@ class Program
             try
             {
                 foreach (var item in trade.PartnerTradedItems.CollectionItems)
-                {
                     try { playerOffers.Add(new CardDto { CardId = item.IsTicket ? "EVENT_TICKET" : item.Id.ToString(), CardName = item.Name ?? "Unknown", Quantity = 1 }); }
                     catch { }
-                }
             }
             catch { }
 
@@ -168,10 +161,8 @@ class Program
             try
             {
                 foreach (var item in trade.TradedItems.CollectionItems)
-                {
                     try { botOffers.Add(new CardDto { CardId = item.IsTicket ? "EVENT_TICKET" : item.Id.ToString(), CardName = item.Name ?? "Unknown", Quantity = 1 }); }
                     catch { }
-                }
             }
             catch { }
 
@@ -240,6 +231,3 @@ class SnapshotDto
     [JsonProperty("botOffers")]     public List<CardDto> BotOffers     { get; set; } = new();
     [JsonProperty("bothSubmitted")] public bool          BothSubmitted { get; set; }
 }
-// Note: MtgoMemoryReader needs a new public method:
-//   public void AcceptTradeRequest() => SendCommand(new { cmd = "ACCEPT_REQUEST" });
-// And TradeBotLoop.TickAsync should call _memory.AcceptTradeRequest() when _session == null
