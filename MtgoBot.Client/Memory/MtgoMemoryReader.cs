@@ -153,12 +153,11 @@ public class MtgoMemoryReader : IDisposable
 
     private AutomationElement? FindTradeWindow()
     {
-        if (_mtgoRoot == null) return null;
         try
         {
-            // Only match "Trade: playername" — requires colon+space to exclude
-            // "TRADE" nav elements and "Trade Request" dialogs
-            var allElements = _mtgoRoot.FindAll(
+            // Search the entire desktop — trade window may be a separate top-level window
+            var searchRoot = AutomationElement.RootElement;
+            var allElements = searchRoot.FindAll(
                 TreeScope.Descendants,
                 new PropertyCondition(AutomationElement.IsEnabledProperty, true));
 
