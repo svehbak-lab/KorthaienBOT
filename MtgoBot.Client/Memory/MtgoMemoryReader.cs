@@ -156,17 +156,8 @@ public class MtgoMemoryReader : IDisposable
         if (_mtgoRoot == null) return null;
         try
         {
-            var condition = new PropertyCondition(
-                AutomationElement.NameProperty,
-                "Trade",
-                PropertyConditionFlags.IgnoreCase);
-
-            // Try exact "Trade" first, then search for anything starting with "Trade:"
-            var elements = _mtgoRoot.FindAll(TreeScope.Descendants, condition);
-            if (elements != null && elements.Count > 0)
-                return elements[0];
-
-            // Broader search — find any element whose name starts with "Trade:"
+            // Only match "Trade: playername" — requires colon+space to exclude
+            // "TRADE" nav elements and "Trade Request" dialogs
             var allElements = _mtgoRoot.FindAll(
                 TreeScope.Descendants,
                 new PropertyCondition(AutomationElement.IsEnabledProperty, true));
@@ -178,7 +169,7 @@ public class MtgoMemoryReader : IDisposable
                     try
                     {
                         string name = el.Current.Name ?? "";
-                        if (name.StartsWith("Trade:", StringComparison.OrdinalIgnoreCase))
+                        if (name.StartsWith("Trade: ", StringComparison.OrdinalIgnoreCase))
                             return el;
                     }
                     catch { }
