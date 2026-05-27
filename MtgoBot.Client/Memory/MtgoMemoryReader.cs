@@ -213,12 +213,23 @@ public class MtgoMemoryReader : IDisposable
 
     public void AcceptTradeRequest()
     {
-        if (_mtgoRoot == null) return;
         try
         {
-            var btn = _mtgoRoot.FindFirst(
+            // Search the entire desktop — the trade request dialog is a popup window
+            var desktop = AutomationElement.RootElement;
+
+            // First look for a window containing "Trade Request" 
+            var tradeRequestWindow = desktop.FindFirst(
                 TreeScope.Descendants,
-                new PropertyCondition(AutomationElement.NameProperty, "Accept"));
+                new PropertyCondition(AutomationElement.NameProperty, "Trade Request"));
+
+            var searchRoot = tradeRequestWindow ?? desktop;
+
+            var btn = searchRoot.FindFirst(
+                TreeScope.Descendants,
+                new AndCondition(
+                    new PropertyCondition(AutomationElement.NameProperty, "Accept"),
+                    new PropertyCondition(AutomationElement.IsEnabledProperty, true)));
 
             if (btn != null)
             {
