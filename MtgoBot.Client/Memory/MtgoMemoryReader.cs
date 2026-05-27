@@ -87,42 +87,89 @@ public class MtgoMemoryReader : IDisposable
 
             _logger.LogDebug("Trade window found: [{Name}]", windowName);
 
-            // Find all Custom(50025) elements inside the trade window
+            // Find all Custom elements inside the trade window
             var allItems = tradeWindow.FindAll(
                 TreeScope.Descendants,
                 new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Custom));
 
-            // Split items into player side and bot side
-            // MTGO trade window has two panels — we detect which side by position
+            // Parse card rows from column elements.
+            // Each card row has elements with Name like:
+            //   "Cardslot: Flamebraider, Column Display Index: 6"  (card name)
+            //   "Cardslot: Flamebraider, Column Display Index: 12" (set code)
+            // We group by card slot name and extract name (col 6) and set (col 12).
+
             var playerOffers = new List<OfferedCard>();
             var botOffers    = new List<OfferedCard>();
 
             if (allItems != null)
             {
-                // Get window bounds to determine left/right split
                 var windowRect = tradeWindow.Current.BoundingRectangle;
                 double midX = windowRect.Left + windowRect.Width / 2;
+
+                // Group elements by their slot key (everything before ", Column Display Index:")
+                var slotGroups = new Dictionary<string, Dictionary<int, (string text, double x)>>();
 
                 foreach (AutomationElement item in allItems)
                 {
                     try
                     {
                         var rect = item.Current.BoundingRectangle;
-                        if (rect.IsEmpty || rect.Width < 10 || rect.Height < 10) continue;
+                        if (rect.IsEmpty || rect.Width < 5 || rect.Height < 5) continue;
 
                         string name = item.Current.Name ?? "";
-                        if (string.IsNullOrWhiteSpace(name)) continue;
+                        if (!name.Contains("Column Display Index:")) continue;
 
-                        // Skip if it looks like a container, not a card
-                        if (name.Length < 2) continue;
+                        // Parse: "Cardslot: <cardname>, Column Display Index: <N>"
+                        int colIdx = name.LastIndexOf(", Column Display Index:", StringComparison.Ordinal);
+                        if (colIdx < 0) continue;
 
-                        bool isTix = name.Contains("Event Ticket") || name.Contains("Ticket");
-                        string cardId = isTix ? "EVENT_TICKET" : name;
+                        string slotPart = name.Substring(0, colIdx).Trim();
+                        string colPart  = name.Substring(colIdx + ", Column Display Index:".Length).Trim();
 
-                        var card = new OfferedCard(cardId, name, 1);
+                        if (!int.TryParse(colPart, out int col)) continue;
 
-                        // Cards on the left = player's side, right = bot's side
-                        if (rect.Left < midX)
+                        // Extract card name from "Cardslot: <name>"
+                        string slotName = slotPart.StartsWith("Cardslot:", StringComparison.OrdinalIgnoreCase)
+                            ? slotPart.Substring("Cardslot:".Length).Trim()
+                            : slotPart;
+
+                        // Use slot+x position as key to group columns of same row
+                        string groupKey = $"{slotName}|{(rect.Left < midX ? "L" : "R")}|{rect.Top:F0}";
+
+                        if (!slotGroups.ContainsKey(groupKey))
+                            slotGroups[groupKey] = new Dictionary<int, (string, double)>();
+
+                        slotGroups[groupKey][col] = (slotName, rect.Left);
+                    }
+                    catch { }
+                }
+
+                // Build OfferedCard from each slot group
+                foreach (var kvp in slotGroups)
+                {
+                    try
+                    {
+                        var cols = kvp.Value;
+                        if (cols.Count == 0) continue;
+
+                        // Column 6 = card name, column 12 = set code (from AccessibilityInsights)
+                        string cardName = cols.ContainsKey(6)  ? cols[6].text  :
+                                          cols.ContainsKey(5)  ? cols[5].text  :
+                                          cols.First().Value.text;
+
+                        string setCode  = cols.ContainsKey(12) ? cols[12].text :
+                                          cols.ContainsKey(11) ? cols[11].text : "";
+
+                        if (string.IsNullOrWhiteSpace(cardName)) continue;
+
+                        bool isTix = cardName.Contains("Event Ticket") || cardName.Contains("Ticket");
+                        // CardId = "name|set" so the trade engine can look up by both
+                        string cardId = isTix ? "EVENT_TICKET" : $"{cardName}|{setCode}";
+
+                        double xPos = cols.First().Value.Item2;
+                        var card = new OfferedCard(cardId, cardName, 1, setCode);
+
+                        if (xPos < midX)
                             playerOffers.Add(card);
                         else
                             botOffers.Add(card);
@@ -131,7 +178,6 @@ public class MtgoMemoryReader : IDisposable
                 }
             }
 
-            // Check for Submit/Accept buttons to detect trade state
             bool bothSubmitted = IsTradeSubmitted(tradeWindow);
 
             _logger.LogDebug("Trade: player={Player} offers={POffers} botOffers={BOffers} submitted={Sub}",
@@ -300,4 +346,4 @@ public record TradeWindowSnapshot(
     List<OfferedCard> BotOffers,
     bool BothSubmitted);
 
-public record OfferedCard(string CardId, string CardName, int Quantity);
+public record OfferedCard(string CardId, string CardName, int Quantity, string SetCode = "");
