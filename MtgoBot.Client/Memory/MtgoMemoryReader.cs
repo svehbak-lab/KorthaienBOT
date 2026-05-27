@@ -1,10 +1,12 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.IO.Pipes;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
+using System.Windows.Automation;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace MtgoBot.Client.Memory;
 
@@ -12,33 +14,32 @@ internal static class NativeMethods
 {
     [DllImport("kernel32.dll", SetLastError = true)]
     public static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, int dwProcessId);
-    [DllImport("kernel32.dll", SetLastError = true)]
-    public static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, int dwSize, out int lpNumberOfBytesRead);
     [DllImport("kernel32.dll")]
     public static extern bool CloseHandle(IntPtr hObject);
-    public const uint PROCESS_VM_READ      = 0x0010;
-    public const uint PROCESS_VM_WRITE     = 0x0020;
-    public const uint PROCESS_VM_OPERATION = 0x0008;
-    public const uint PROCESS_QUERY_INFO   = 0x0400;
+    public const uint PROCESS_QUERY_INFO = 0x0400;
 }
 
+/// <summary>
+/// Reads the MTGO trade window using Windows UI Automation.
+/// No MTGOSDK, no bridge, no named pipe — direct WPF accessibility tree.
+/// </summary>
 public class MtgoMemoryReader : IDisposable
 {
     private readonly ILogger<MtgoMemoryReader> _logger;
-    private IntPtr _processHandle = IntPtr.Zero;
     private Process? _mtgoProcess;
-    private NamedPipeClientStream? _pipe;
-    private StreamReader? _pipeReader;
-    private StreamWriter? _pipeWriter;
+    private AutomationElement? _mtgoRoot;
     private bool _disposed;
 
-    private const string BridgePipeName     = "KorthaienBotBridge";
-    private const string BridgeExePath      = @"C:\KorthaienBOT\publish\bridge\MtgoBot.Bridge.exe";
-    private const int    PipeConnectTimeout = 10000;
+    public bool IsAttached => _mtgoProcess != null && !_mtgoProcess.HasExited;
 
-    public bool IsAttached => _processHandle != IntPtr.Zero;
+    public MtgoMemoryReader(ILogger<MtgoMemoryReader> logger)
+    {
+        _logger = logger;
+    }
 
-    public MtgoMemoryReader(ILogger<MtgoMemoryReader> logger) => _logger = logger;
+    // ─────────────────────────────────────────────────────────────────
+    // Attach
+    // ─────────────────────────────────────────────────────────────────
 
     public void Attach()
     {
@@ -46,191 +47,256 @@ public class MtgoMemoryReader : IDisposable
         if (processes.Length == 0)
             throw new InvalidOperationException("MTGO.exe is not running.");
 
-        _mtgoProcess   = processes[0];
-        _processHandle = NativeMethods.OpenProcess(
-            NativeMethods.PROCESS_VM_READ | NativeMethods.PROCESS_VM_WRITE |
-            NativeMethods.PROCESS_VM_OPERATION | NativeMethods.PROCESS_QUERY_INFO,
-            false, _mtgoProcess.Id);
+        _mtgoProcess = processes[0];
 
-        if (_processHandle == IntPtr.Zero)
-            throw new InvalidOperationException($"Failed to open MTGO handle. Win32: {Marshal.GetLastWin32Error()}");
+        // Get the root automation element for the MTGO window
+        _mtgoRoot = AutomationElement.FromHandle(_mtgoProcess.MainWindowHandle);
+        if (_mtgoRoot == null)
+            throw new InvalidOperationException("Could not get UI Automation root for MTGO.");
 
-        _logger.LogInformation("✅ Attached to MTGO.exe (PID {Pid})", _mtgoProcess.Id);
-        StartBridge();
-    }
-
-    private void StartBridge()
-    {
-        try
-        {
-            var existing = Process.GetProcessesByName("MtgoBot.Bridge");
-            if (existing.Length == 0)
-            {
-                _logger.LogInformation("Starting MtgoBot.Bridge...");
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = BridgeExePath, UseShellExecute = false, CreateNoWindow = true
-                });
-                System.Threading.Thread.Sleep(3000);
-            }
-            else
-            {
-                _logger.LogInformation("MtgoBot.Bridge already running (PID {Pid})", existing[0].Id);
-            }
-            ConnectToPipe();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to start bridge.");
-        }
-    }
-
-    private void ConnectToPipe()
-    {
-        try
-        {
-            _pipe?.Dispose();
-            _pipe = new NamedPipeClientStream(".", BridgePipeName, PipeDirection.InOut);
-            _pipe.Connect(PipeConnectTimeout);
-            _pipeReader = new StreamReader(_pipe, Encoding.UTF8);
-            _pipeWriter = new StreamWriter(_pipe, Encoding.UTF8) { AutoFlush = true };
-            _logger.LogInformation("✅ Connected to MtgoBot.Bridge pipe.");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to connect to bridge pipe — running in stub mode.");
-            _pipe = null;
-            _pipeReader = null;
-            _pipeWriter = null;
-        }
+        _logger.LogInformation("✅ Attached to MTGO.exe (PID {Pid}) via UI Automation.", _mtgoProcess.Id);
     }
 
     public void Detach()
     {
-        if (_processHandle != IntPtr.Zero)
-        {
-            NativeMethods.CloseHandle(_processHandle);
-            _processHandle = IntPtr.Zero;
-        }
-        _pipeReader?.Dispose();
-        _pipeWriter?.Dispose();
-        _pipe?.Dispose();
-        _pipe = null;
+        _mtgoRoot = null;
+        _mtgoProcess = null;
         _logger.LogInformation("Detached from MTGO.exe.");
     }
 
+    // ─────────────────────────────────────────────────────────────────
+    // Trade window reading
+    // ─────────────────────────────────────────────────────────────────
+
     public TradeWindowSnapshot? ReadTradeWindow()
     {
-        if (!IsAttached)
-            throw new InvalidOperationException("Not attached to MTGO.");
-
-        var response = SendCommand(new { cmd = "READ" });
-        if (response == null) return null;
+        if (!IsAttached || _mtgoRoot == null) return null;
 
         try
         {
-            var result = JsonConvert.DeserializeObject<dynamic>(response);
-            if (result?.snapshot == null) return null;
+            // Find the trade window — name starts with "Trade: "
+            var tradeWindow = FindTradeWindow();
+            if (tradeWindow == null)
+                return null;
 
-            var snapshot     = result.snapshot;
+            // Get player name from window title ("Trade: playername")
+            string windowName = tradeWindow.Current.Name ?? "";
+            string playerName = windowName.StartsWith("Trade: ", StringComparison.OrdinalIgnoreCase)
+                ? windowName.Substring(7).Trim().ToLowerInvariant()
+                : windowName.ToLowerInvariant();
+
+            _logger.LogDebug("Trade window found: [{Name}]", windowName);
+
+            // Find all Custom(50025) elements inside the trade window
+            var allItems = tradeWindow.FindAll(
+                TreeScope.Descendants,
+                new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Custom));
+
+            // Split items into player side and bot side
+            // MTGO trade window has two panels — we detect which side by position
             var playerOffers = new List<OfferedCard>();
             var botOffers    = new List<OfferedCard>();
 
-            foreach (var c in snapshot.playerOffers ?? new Newtonsoft.Json.Linq.JArray())
-                playerOffers.Add(new OfferedCard((string)c.cardId, (string)c.cardName, (int)c.quantity));
+            if (allItems != null)
+            {
+                // Get window bounds to determine left/right split
+                var windowRect = tradeWindow.Current.BoundingRectangle;
+                double midX = windowRect.Left + windowRect.Width / 2;
 
-            foreach (var c in snapshot.botOffers ?? new Newtonsoft.Json.Linq.JArray())
-                botOffers.Add(new OfferedCard((string)c.cardId, (string)c.cardName, (int)c.quantity));
+                foreach (AutomationElement item in allItems)
+                {
+                    try
+                    {
+                        var rect = item.Current.BoundingRectangle;
+                        if (rect.IsEmpty || rect.Width < 10 || rect.Height < 10) continue;
+
+                        string name = item.Current.Name ?? "";
+                        if (string.IsNullOrWhiteSpace(name)) continue;
+
+                        // Skip if it looks like a container, not a card
+                        if (name.Length < 2) continue;
+
+                        bool isTix = name.Contains("Event Ticket") || name.Contains("Ticket");
+                        string cardId = isTix ? "EVENT_TICKET" : name;
+
+                        var card = new OfferedCard(cardId, name, 1);
+
+                        // Cards on the left = player's side, right = bot's side
+                        if (rect.Left < midX)
+                            playerOffers.Add(card);
+                        else
+                            botOffers.Add(card);
+                    }
+                    catch { }
+                }
+            }
+
+            // Check for Submit/Accept buttons to detect trade state
+            bool bothSubmitted = IsTradeSubmitted(tradeWindow);
+
+            _logger.LogDebug("Trade: player={Player} offers={POffers} botOffers={BOffers} submitted={Sub}",
+                playerName, playerOffers.Count, botOffers.Count, bothSubmitted);
 
             return new TradeWindowSnapshot(
-                IsOpen:        (bool)snapshot.isOpen,
-                PlayerName:    (string)snapshot.playerName,
+                IsOpen:        true,
+                PlayerName:    playerName,
                 PlayerOffers:  playerOffers,
                 BotOffers:     botOffers,
-                BothSubmitted: (bool)snapshot.bothSubmitted);
+                BothSubmitted: bothSubmitted);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Failed to parse trade window snapshot.");
+            _logger.LogDebug(ex, "ReadTradeWindow failed.");
             return null;
         }
     }
 
-    public void AcceptTradeRequest()
+    private AutomationElement? FindTradeWindow()
     {
-        var response = SendCommand(new { cmd = "ACCEPT_REQUEST" });
-        if (response != null)
+        if (_mtgoRoot == null) return null;
+        try
         {
-            try
+            var condition = new PropertyCondition(
+                AutomationElement.NameProperty,
+                "Trade",
+                PropertyConditionFlags.IgnoreCase);
+
+            // Try exact "Trade" first, then search for anything starting with "Trade:"
+            var elements = _mtgoRoot.FindAll(TreeScope.Descendants, condition);
+            if (elements != null && elements.Count > 0)
+                return elements[0];
+
+            // Broader search — find any element whose name starts with "Trade:"
+            var allElements = _mtgoRoot.FindAll(
+                TreeScope.Descendants,
+                new PropertyCondition(AutomationElement.IsEnabledProperty, true));
+
+            if (allElements != null)
             {
-                var result = JsonConvert.DeserializeObject<dynamic>(response);
-                if (result?.ok == true)
-                    _logger.LogInformation("✅ Trade request accepted.");
-            }
-            catch { }
-        }
-    }
-
-    public void SendChatMessage(string message) =>
-        SendCommand(new { cmd = "CHAT", message });
-
-    public void ClickSubmit() =>
-        SendCommand(new { cmd = "SUBMIT" });
-
-    public void ClickAccept() =>
-        SendCommand(new { cmd = "ACCEPT" });
-
-    /// <summary>
-    /// Sends a command to the bridge and returns the response.
-    /// Automatically reconnects if the pipe is broken.
-    /// </summary>
-    private string? SendCommand(object command)
-    {
-        // Try to send; if it fails, reconnect and try once more
-        for (int attempt = 0; attempt < 2; attempt++)
-        {
-            try
-            {
-                if (_pipeWriter == null || _pipeReader == null)
+                foreach (AutomationElement el in allElements)
                 {
-                    ConnectToPipe();
-                    if (_pipeWriter == null) return null;
+                    try
+                    {
+                        string name = el.Current.Name ?? "";
+                        if (name.StartsWith("Trade:", StringComparison.OrdinalIgnoreCase))
+                            return el;
+                    }
+                    catch { }
                 }
-
-                var json = JsonConvert.SerializeObject(command);
-                _pipeWriter.WriteLine(json);
-                return _pipeReader.ReadLine();
             }
-            catch (Exception ex)
-            {
-                _logger.LogDebug("Pipe send failed (attempt {A}): {E}", attempt + 1, ex.Message);
-                // Reset pipe and retry
-                _pipeReader = null;
-                _pipeWriter = null;
-                _pipe?.Dispose();
-                _pipe = null;
-            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "FindTradeWindow failed.");
         }
         return null;
     }
 
-    public byte[] ReadBytes(IntPtr address, int count)
+    private bool IsTradeSubmitted(AutomationElement tradeWindow)
     {
-        var buffer = new byte[count];
-        NativeMethods.ReadProcessMemory(_processHandle, address, buffer, count, out _);
-        return buffer;
+        try
+        {
+            // If the Accept button is visible and enabled, both sides have submitted
+            var accept = tradeWindow.FindFirst(
+                TreeScope.Descendants,
+                new AndCondition(
+                    new PropertyCondition(AutomationElement.NameProperty, "Accept"),
+                    new PropertyCondition(AutomationElement.IsEnabledProperty, true)));
+            return accept != null;
+        }
+        catch { return false; }
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // UI interactions
+    // ─────────────────────────────────────────────────────────────────
+
+    public void AcceptTradeRequest()
+    {
+        if (_mtgoRoot == null) return;
+        try
+        {
+            var btn = _mtgoRoot.FindFirst(
+                TreeScope.Descendants,
+                new PropertyCondition(AutomationElement.NameProperty, "Accept"));
+
+            if (btn != null)
+            {
+                var invoke = btn.GetCurrentPattern(InvokePattern.Pattern) as InvokePattern;
+                invoke?.Invoke();
+                _logger.LogInformation("✅ Clicked Accept (trade request).");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "AcceptTradeRequest failed.");
+        }
+    }
+
+    public void ClickSubmit()
+    {
+        ClickButton("Submit");
+    }
+
+    public void ClickAccept()
+    {
+        ClickButton("Accept");
+    }
+
+    private void ClickButton(string name)
+    {
+        if (_mtgoRoot == null) return;
+        try
+        {
+            var tradeWindow = FindTradeWindow();
+            var root = tradeWindow ?? _mtgoRoot;
+
+            var btn = root.FindFirst(
+                TreeScope.Descendants,
+                new AndCondition(
+                    new PropertyCondition(AutomationElement.NameProperty, name),
+                    new PropertyCondition(AutomationElement.IsEnabledProperty, true)));
+
+            if (btn != null)
+            {
+                var invoke = btn.GetCurrentPattern(InvokePattern.Pattern) as InvokePattern;
+                invoke?.Invoke();
+                _logger.LogInformation("→ Clicked [{Name}]", name);
+            }
+            else
+            {
+                _logger.LogDebug("Button [{Name}] not found.", name);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "ClickButton({Name}) failed.", name);
+        }
+    }
+
+    public void SendChatMessage(string message)
+    {
+        // TODO: find chat input box and send message
+        _logger.LogInformation("[CHAT] {Msg}", message);
     }
 
     public void Dispose()
     {
-        if (!_disposed) { Detach(); _mtgoProcess?.Dispose(); _disposed = true; }
+        if (!_disposed)
+        {
+            Detach();
+            _mtgoProcess?.Dispose();
+            _disposed = true;
+        }
         GC.SuppressFinalize(this);
     }
 }
 
 public record TradeWindowSnapshot(
-    bool IsOpen, string PlayerName,
-    List<OfferedCard> PlayerOffers, List<OfferedCard> BotOffers,
+    bool IsOpen,
+    string PlayerName,
+    List<OfferedCard> PlayerOffers,
+    List<OfferedCard> BotOffers,
     bool BothSubmitted);
 
 public record OfferedCard(string CardId, string CardName, int Quantity);
