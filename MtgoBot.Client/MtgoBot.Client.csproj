@@ -8,8 +8,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <LangVersion>latest</LangVersion>
-    <UseWindowsForms>false</UseWindowsForms>
-    <UseWPF>false</UseWPF>
+    <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,16 +19,6 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <!-- UI Automation — built into Windows SDK -->
-    <Reference Include="UIAutomationClient">
-      <HintPath>$(NETFrameworkSDKDir)UIAutomationClient.dll</HintPath>
-    </Reference>
-    <Reference Include="UIAutomationTypes">
-      <HintPath>$(NETFrameworkSDKDir)UIAutomationTypes.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
