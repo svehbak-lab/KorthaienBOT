@@ -49,7 +49,7 @@ public class CardRepository
     {
         using var conn = Open();
         var rows = await conn.QueryAsync<MagicSet>("SELECT set_code, set_name, default_buy_multiplier, default_sell_multiplier, default_max_stock, base_set_size, updated_at FROM sets");
-        return rows.ToDictionary(s => s.SetCode);
+        return rows.GroupBy(s => s.SetCode).ToDictionary(g => g.Key, g => g.First());
     }
 
     public async Task UpdateMarketPriceAsync(string cardId, decimal newPrice)
