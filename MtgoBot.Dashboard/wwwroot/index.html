@@ -89,8 +89,9 @@
     <div class="logo">Korthaien<span>BOT</span></div>
     <nav>
       <a href="#" class="active" onclick="showTab('inventory')"><span class="icon">📦</span> Inventory</a>
-      <a href="#" onclick="showTab('sets')"><span class="icon">🃏</span> Filtre</a>
-      <a href="#" onclick="showTab('prices')"><span class="icon">💲</span> Priser</a>
+      <a href="#" onclick="showTab('sets')"><span class="icon">🔧</span> Filtre</a>
+      <a href="#" onclick="showTab('prices')"><span class="icon">🃏</span> Kort</a>
+      <a href="#" onclick="showTab('fullsets')"><span class="icon">🎁</span> Fullsett</a>
       <a href="#" onclick="showTab('credits')"><span class="icon">💰</span> Kunde-credits</a>
       <a href="#" onclick="showTab('bots')"><span class="icon">🤖</span> Botter</a>
     </nav>
@@ -119,6 +120,9 @@
         <div class="stat"><div class="label">Aktive botter</div><div class="value" id="statBots">—</div></div>
       </div>
       <div class="toolbar">
+        <select id="inventoryBotFilter" onchange="loadInventory()" style="min-width:180px">
+          <option value="">Alle botter</option>
+        </select>
         <input type="text" id="searchInput" placeholder="🔍  Søk kortnavn..." oninput="loadInventory()">
         <select id="setFilter" onchange="loadInventory()"><option value="">Alle sett</option></select>
         <select id="rarityFilter" onchange="loadInventory()">
@@ -217,10 +221,10 @@
       </div>
     </div>
 
-    <!-- PRICES TAB -->
+    <!-- KORT TAB (previously Priser) -->
     <div id="tab-prices" style="display:none">
       <div class="page-header">
-        <div class="page-title">Priser</div>
+        <div class="page-title">Kort</div>
         <span id="priceCardCount" class="badge blue" style="display:none"></span>
       </div>
 
@@ -257,6 +261,91 @@
               <tr><td colspan="7" class="loading">Velg et sett for å se priser.</td></tr>
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- FULLSETT TAB -->
+    <div id="tab-fullsets" style="display:none">
+      <div class="page-header">
+        <div class="page-title">Fullsett</div>
+        <span id="fullsetSetCount" class="badge blue" style="display:none"></span>
+      </div>
+
+      <!-- Set selector -->
+      <div class="panel" style="margin-bottom:16px; padding:16px 20px">
+        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap">
+          <select id="fullsetSetSelect" onchange="loadFullset()" style="min-width:260px; font-size:14px; padding:8px 14px">
+            <option value="">— Velg sett —</option>
+          </select>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+            <input type="checkbox" id="fullsetFoil" onchange="loadFullset()" style="accent-color:var(--accent);width:15px;height:15px"> Foil-sett
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+            <input type="checkbox" id="fullsetNonFoil" checked onchange="loadFullset()" style="accent-color:var(--accent);width:15px;height:15px"> Ikke-foil sett
+          </label>
+        </div>
+      </div>
+
+      <!-- Fullset stats -->
+      <div id="fullsetStats" style="display:none">
+        <div class="stats" style="grid-template-columns:repeat(4,1fr)">
+          <div class="stat"><div class="label">Antall kort i sett</div><div class="value accent" id="fsCardCount">—</div></div>
+          <div class="stat"><div class="label">Markedsverdi</div><div class="value accent2" id="fsMarketValue">—</div></div>
+          <div class="stat"><div class="label">Kjøpspris (sett)</div><div class="value text-warn" id="fsBuyPrice">—</div></div>
+          <div class="stat"><div class="label">Salgspris (sett)</div><div class="value text-green" id="fsSellPrice">—</div></div>
+        </div>
+
+        <!-- Override panel -->
+        <div class="panel" style="margin-bottom:16px">
+          <div class="panel-title">Prisoverstyring</div>
+          <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-end">
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">
+              Settstørrelse (antall kort)
+              <input type="number" id="fsOverrideSize" placeholder="Auto" step="1" min="1" style="width:120px">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">
+              Kjøpspris override (TIX)
+              <input type="number" id="fsOverrideBuy" placeholder="Auto (sum)" step="0.01" style="width:140px">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">
+              Salgspris override (TIX)
+              <input type="number" id="fsOverrideSell" placeholder="Auto (sum)" step="0.01" style="width:140px">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">
+              Kjøp komplette sett
+              <select id="fsOverrideBuyEnabled" style="width:100px">
+                <option value="true">Ja</option>
+                <option value="false">Nei</option>
+              </select>
+            </label>
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">
+              Selg komplette sett
+              <select id="fsOverrideSellEnabled" style="width:100px">
+                <option value="true">Ja</option>
+                <option value="false">Nei</option>
+              </select>
+            </label>
+            <button class="btn-primary" onclick="saveFullsetOverride()">💾 Lagre</button>
+            <button class="btn-secondary btn-small" onclick="clearFullsetOverride()">✕ Nullstill</button>
+          </div>
+        </div>
+
+        <!-- Card list -->
+        <div class="panel" style="padding:0">
+          <div style="padding:14px 16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center">
+            <div class="panel-title" style="margin-bottom:0">Kort i settet</div>
+            <input type="text" id="fullsetCardSearch" placeholder="🔍 Søk..." oninput="filterFullsetCards()" style="max-width:200px; min-width:140px; flex:unset">
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr>
+                <th>#</th><th>Kortnavn</th><th>Rarity</th>
+                <th>Markedspris</th><th>Kjøpspris</th><th>Salgspris</th>
+              </tr></thead>
+              <tbody id="fullsetCardBody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -321,6 +410,7 @@ function showTab(name) {
   if (name === 'credits')   loadCredits();
   if (name === 'bots')      loadBots();
   if (name === 'prices')    initPricesTab();
+  if (name === 'fullsets')  initFullsetsTab();
 }
 
 // ── Bot status bar ────────────────────────────────────────────────
@@ -333,6 +423,12 @@ async function loadBotStatusBar() {
       <span class="badge ${b.is_online ? 'green' : 'red'}" style="font-size:11px">
         ${b.is_online ? '●' : '○'} ${esc(b.account_name)}
       </span>`).join('');
+    // Populate inventory bot picker
+    const invSel = document.getElementById('inventoryBotFilter');
+    const prev = invSel.value;
+    invSel.innerHTML = '<option value="">Alle botter</option>' +
+      bots.map(b => `<option value="${esc(b.bot_id)}">${esc(b.account_name)}</option>`).join('');
+    if (prev) invSel.value = prev;
   } catch(e) {}
 }
 
@@ -340,9 +436,11 @@ async function loadBotStatusBar() {
 async function loadInventory() {
   const search = document.getElementById('searchInput').value;
   const set    = document.getElementById('setFilter').value;
+  const botId  = document.getElementById('inventoryBotFilter').value;
   let url = `${API}/inventory?`;
   if (search) url += `search=${encodeURIComponent(search)}&`;
   if (set)    url += `set=${encodeURIComponent(set)}&`;
+  if (botId)  url += `botId=${encodeURIComponent(botId)}&`;
   try {
     let rows = await fetchJson(url);
     rows = rows.filter(r => r.cardName && r.cardName.length > 0);
@@ -737,6 +835,125 @@ function rarityPill(r){const cls={M:'m',R:'r',U:'u',C:'c'}[r]??'c';return `<span
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
 function toast(msg){const el=document.createElement('div');el.textContent=msg;Object.assign(el.style,{position:'fixed',bottom:'20px',right:'20px',background:'#1a1d27',border:'1px solid #6c63ff',color:'#e8e9f0',padding:'10px 18px',borderRadius:'8px',fontSize:'13px',zIndex:9999,boxShadow:'0 4px 20px rgba(0,0,0,.4)'});document.body.appendChild(el);setTimeout(()=>el.remove(),3000);}
+
+// ══════════════════════════════════════════════════════════════════
+// FULLSETT TAB
+// ══════════════════════════════════════════════════════════════════
+let fullsetAllCards = [];
+let fullsetCurrentSet = '';
+let fullsetCurrentFoil = null;
+
+async function initFullsetsTab() {
+  const sel = document.getElementById('fullsetSetSelect');
+  if (sel.options.length > 1) return;
+  try {
+    const sets = await fetchJson('/api/sets');
+    const entries = Object.values(sets).sort((a, b) => (a.set_name||a.set_code).localeCompare(b.set_name||b.set_code));
+    sel.innerHTML = '<option value="">— Velg sett —</option>' +
+      entries.map(s => `<option value="${esc(s.set_code)}">${esc(s.set_name||s.set_code)} (${esc(s.set_code)})</option>`).join('');
+  } catch(e) { toast('⚠️ Kunne ikke laste sett: ' + e.message); }
+}
+
+async function loadFullset() {
+  const setCode   = document.getElementById('fullsetSetSelect').value;
+  const wantFoil  = document.getElementById('fullsetFoil').checked;
+  const wantNonFoil = document.getElementById('fullsetNonFoil').checked;
+  const statsDiv  = document.getElementById('fullsetStats');
+
+  if (!setCode) { statsDiv.style.display = 'none'; return; }
+
+  // Determine foil filter
+  let foilParam = null;
+  if (wantFoil && !wantNonFoil)    foilParam = true;
+  if (!wantFoil && wantNonFoil)    foilParam = false;
+  // if both checked, foilParam stays null = show all
+
+  fullsetCurrentSet  = setCode;
+  fullsetCurrentFoil = foilParam;
+
+  document.getElementById('fullsetCardBody').innerHTML =
+    '<tr><td colspan="6" class="loading">Laster...</td></tr>';
+  statsDiv.style.display = 'block';
+
+  try {
+    const url = `/api/prices?setCode=${encodeURIComponent(setCode)}${foilParam !== null ? '&foil=' + foilParam : ''}`;
+    fullsetAllCards = await fetchJson(url);
+
+    // Calculate stats
+    const totalMarket = fullsetAllCards.reduce((s, c) => s + (c.marketPriceTix || 0), 0);
+    const totalBuy    = fullsetAllCards.reduce((s, c) => s + (c.buyPrice || 0), 0);
+    const totalSell   = fullsetAllCards.reduce((s, c) => s + (c.sellPrice || 0), 0);
+
+    document.getElementById('fsCardCount').textContent    = fullsetAllCards.length;
+    document.getElementById('fsMarketValue').textContent  = totalMarket.toFixed(2) + ' TIX';
+    document.getElementById('fsBuyPrice').textContent     = totalBuy.toFixed(2) + ' TIX';
+    document.getElementById('fsSellPrice').textContent    = totalSell.toFixed(2) + ' TIX';
+
+    // Load existing overrides
+    try {
+      const ovr = await fetchJson(`/api/fullset-overrides/${encodeURIComponent(setCode)}?foil=${foilParam ?? ''}`);
+      document.getElementById('fsOverrideSize').value        = ovr.setSize || '';
+      document.getElementById('fsOverrideBuy').value         = ovr.buyPrice || '';
+      document.getElementById('fsOverrideSell').value        = ovr.sellPrice || '';
+      document.getElementById('fsOverrideBuyEnabled').value  = ovr.buyEnabled  !== false ? 'true' : 'false';
+      document.getElementById('fsOverrideSellEnabled').value = ovr.sellEnabled !== false ? 'true' : 'false';
+    } catch(e) {
+      document.getElementById('fsOverrideSize').value = '';
+      document.getElementById('fsOverrideBuy').value  = '';
+      document.getElementById('fsOverrideSell').value = '';
+    }
+
+    filterFullsetCards();
+  } catch(e) {
+    document.getElementById('fullsetCardBody').innerHTML =
+      `<tr><td colspan="6" class="loading text-red">Feil: ${e.message}</td></tr>`;
+  }
+}
+
+function filterFullsetCards() {
+  const q = (document.getElementById('fullsetCardSearch').value || '').toLowerCase();
+  const rows = q ? fullsetAllCards.filter(c => (c.cardName||'').toLowerCase().includes(q)) : fullsetAllCards;
+  const tbody = document.getElementById('fullsetCardBody');
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="6" class="loading muted">Ingen kort.</td></tr>'; return; }
+  tbody.innerHTML = rows.map((c, i) => `
+    <tr>
+      <td class="muted" style="font-size:11px">${c.collectorNumber || (i+1)}</td>
+      <td><strong>${esc(c.cardName)}</strong>${c.isFoil ? ' <span class="pill f">✨</span>' : ''}</td>
+      <td>${rarityPill(c.rarity)}</td>
+      <td class="mono">${(c.marketPriceTix||0).toFixed(4)}</td>
+      <td class="mono text-warn">${(c.buyPrice||0).toFixed(4)}</td>
+      <td class="mono text-green">${(c.sellPrice||0).toFixed(4)}</td>
+    </tr>`).join('');
+}
+
+async function saveFullsetOverride() {
+  const setCode  = fullsetCurrentSet;
+  if (!setCode) return;
+  const size     = parseInt(document.getElementById('fsOverrideSize').value) || null;
+  const buy      = parseFloat(document.getElementById('fsOverrideBuy').value) || null;
+  const sell     = parseFloat(document.getElementById('fsOverrideSell').value) || null;
+  const buyEn    = document.getElementById('fsOverrideBuyEnabled').value === 'true';
+  const sellEn   = document.getElementById('fsOverrideSellEnabled').value === 'true';
+  const isFoil   = fullsetCurrentFoil;
+  try {
+    await fetchJson(`/api/fullset-overrides/${encodeURIComponent(setCode)}`, 'PUT', {
+      setCode, isFoil, setSize: size, buyPrice: buy, sellPrice: sell,
+      buyEnabled: buyEn, sellEnabled: sellEn
+    });
+    toast('✅ Fullsett-innstillinger lagret');
+  } catch(e) { toast('⚠️ ' + e.message); }
+}
+
+async function clearFullsetOverride() {
+  const setCode = fullsetCurrentSet;
+  if (!setCode) return;
+  if (!confirm('Nullstille alle overrides for dette settet?')) return;
+  try {
+    await fetchJson(`/api/fullset-overrides/${encodeURIComponent(setCode)}`, 'DELETE');
+    toast('✅ Overrides nullstilt');
+    loadFullset();
+  } catch(e) { toast('⚠️ ' + e.message); }
+}
 
 // ── Init ──────────────────────────────────────────────────────────
 loadInventory();
