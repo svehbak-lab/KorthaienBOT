@@ -6,7 +6,6 @@ using Npgsql;
 
 namespace MtgoBot.Core.Data;
 
-// Enable snake_case → PascalCase mapping globally for Dapper
 public static class DapperConfig
 {
     public static void Initialize()
@@ -14,7 +13,6 @@ public static class DapperConfig
         Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
     }
 }
-
 
 public class CardRepository
 {
@@ -39,6 +37,14 @@ public class CardRepository
         return await conn.QuerySingleOrDefaultAsync<Card>("SELECT * FROM cards WHERE card_id = @Id", new { Id = cardId });
     }
 
+    public async Task<Card?> GetCardByNameAndSetAsync(string cardName, string setCode)
+    {
+        using var conn = Open();
+        return await conn.QueryFirstOrDefaultAsync<Card>(
+            "SELECT * FROM cards WHERE card_name ILIKE @Name AND set_code = @Set AND is_foil = false ORDER BY market_price_tix DESC LIMIT 1",
+            new { Name = cardName, Set = setCode });
+    }
+
     public async Task<MagicSet?> GetSetAsync(string setCode)
     {
         using var conn = Open();
@@ -50,6 +56,22 @@ public class CardRepository
         using var conn = Open();
         var rows = await conn.QueryAsync<MagicSet>("SELECT set_code, set_name, default_buy_multiplier, default_sell_multiplier, default_max_stock, base_set_size, updated_at FROM sets");
         return rows.GroupBy(s => s.SetCode).ToDictionary(g => g.Key, g => g.First());
+    }
+
+    public async Task<IEnumerable<PriceRow>> GetCardsBySetAsync(string setCode, bool? foilFilter = null)
+    {
+        using var conn = Open();
+        return await conn.QueryAsync<PriceRow>("""
+            SELECT c.card_id, c.card_name, c.set_code, c.rarity, c.is_foil,
+                   c.market_price_tix, c.collector_number,
+                   COALESCE(c.custom_buy_price,  c.market_price_tix * s.default_buy_multiplier)  AS buy_price,
+                   COALESCE(c.custom_sell_price, c.market_price_tix * s.default_sell_multiplier) AS sell_price
+            FROM cards c
+            JOIN sets s ON c.set_code = s.set_code
+            WHERE c.set_code = @SetCode
+              AND (@FoilFilter IS NULL OR c.is_foil = @FoilFilter)
+            ORDER BY c.rarity DESC, c.card_name
+            """, new { SetCode = setCode, FoilFilter = foilFilter });
     }
 
     public async Task UpdateMarketPriceAsync(string cardId, decimal newPrice)
@@ -72,9 +94,6 @@ public class CardRepository
             "UPDATE cards SET redeem_reserved = @Keep WHERE set_code = @Code",
             new { Keep = keepValue, Code = setCode });
     }
-
-
-
 
     public async Task<FullsetPricing?> GetFullsetPricingAsync(string setCode, bool isFoil)
     {
@@ -113,8 +132,7 @@ public class CardRepository
     public async Task<List<MagicSet>> GetActiveSetsAsync()
     {
         using var conn = Open();
-        var rows = await conn.QueryAsync<MagicSet>(
-            "SELECT * FROM sets ORDER BY set_code LIMIT 50");
+        var rows = await conn.QueryAsync<MagicSet>("SELECT * FROM sets ORDER BY set_code LIMIT 50");
         return rows.ToList();
     }
 
@@ -183,11 +201,6 @@ public class InventoryRepository
         return Math.Max(0, total - redeemReserved);
     }
 
-
-    /// <summary>
-    /// Network inventory aggregated across bots of a specific type (e.g. TRADE bots only).
-    /// Used for network-wide keep calculations.
-    /// </summary>
     public async Task<Dictionary<string, int>> GetNetworkInventoryByBotTypeAsync(string botType)
     {
         using var conn = Open();
@@ -201,10 +214,6 @@ public class InventoryRepository
         return rows.ToDictionary(r => r.CardId, r => r.Quantity);
     }
 
-    /// <summary>
-    /// Per-bot stock for a specific card, filtered by bot type.
-    /// Used to decide which bot to pull from during mule transfer.
-    /// </summary>
     public async Task<Dictionary<string, int>> GetCardStockPerBotAsync(string cardId, string botType)
     {
         using var conn = Open();
@@ -217,10 +226,6 @@ public class InventoryRepository
         return rows.ToDictionary(r => (string)r.bot_id, r => (int)r.quantity);
     }
 
-    /// <summary>
-    /// Available-for-sale quantity: network total minus network-wide keep target.
-    /// This is what trade bots use to decide how many to offer in a trade window.
-    /// </summary>
     public async Task<int> GetAvailableForSaleAsync(string cardId, int keepTarget)
     {
         using var conn = Open();
@@ -238,15 +243,12 @@ public class InventoryRepository
             WHERE bi.card_id = @CardId AND b.bot_type = 'MULE'
             """, new { CardId = cardId });
 
-        // Available = network trade stock - what's still needed for keep target
         int alreadyInMule = muleTotal;
         int stillNeeded   = Math.Max(0, keepTarget - alreadyInMule);
         int available     = Math.Max(0, networkTotal - stillNeeded);
         return available;
     }
 
-
-    /// <summary>Get quantity of a specific card on a specific bot.</summary>
     public async Task<int> GetCardQuantityAsync(string botId, string cardId)
     {
         using var conn = Open();
@@ -255,7 +257,6 @@ public class InventoryRepository
             new { BotId = botId, CardId = cardId });
     }
 
-    /// <summary>Get all TRADE bots with their TIX reserve targets.</summary>
     public async Task<Dictionary<string, int>> GetBotsWithReservesAsync(string botType)
     {
         using var conn = Open();
@@ -273,7 +274,7 @@ public class InventoryRepository
                 new { From = fromBotId, To = toBotId, CardId = order.CardId, Qty = order.Quantity });
     }
 
-    public async Task<IEnumerable<InventoryDashboardRow>> GetDashboardInventoryAsync(string? search = null, string? setCode = null)
+    public async Task<IEnumerable<InventoryDashboardRow>> GetDashboardInventoryAsync(string? search = null, string? setCode = null, string? botId = null)
     {
         using var conn = Open();
         return await conn.QueryAsync<InventoryDashboardRow>("""
@@ -288,15 +289,16 @@ public class InventoryRepository
             FROM cards c
             JOIN sets s ON c.set_code = s.set_code
             LEFT JOIN bot_inventory bi ON c.card_id = bi.card_id AND bi.quantity > 0
+                AND (@BotId IS NULL OR bi.bot_id = @BotId)
             WHERE (@Search IS NULL OR c.card_name ILIKE '%' || @Search || '%')
               AND (@SetCode IS NULL OR c.set_code = @SetCode)
             GROUP BY c.card_id, c.card_name, c.set_code, c.rarity, c.is_foil,
                      c.market_price_tix, c.custom_buy_price, c.custom_sell_price,
                      c.custom_max_stock, c.redeem_reserved,
-                c.collector_number,
+                     c.collector_number,
                      s.default_buy_multiplier, s.default_sell_multiplier, s.default_max_stock
             ORDER BY c.market_price_tix DESC
-            """, new { Search = search, SetCode = setCode });
+            """, new { Search = search, SetCode = setCode, BotId = botId });
     }
 }
 
@@ -316,6 +318,19 @@ public class InventoryDashboardRow
     public string BotDistribution { get; set; } = string.Empty;
     public string? CollectorNumber { get; set; }
     public string Status => TotalQuantity >= MaxStock ? "🛑 Maks nådd" : TotalQuantity <= RedeemReserved ? "🟡 Kun Redeem" : "🟢 Kjøper";
+}
+
+public class PriceRow
+{
+    public string CardId { get; set; } = string.Empty;
+    public string CardName { get; set; } = string.Empty;
+    public string SetCode { get; set; } = string.Empty;
+    public string Rarity { get; set; } = string.Empty;
+    public bool IsFoil { get; set; }
+    public decimal MarketPriceTix { get; set; }
+    public decimal BuyPrice { get; set; }
+    public decimal SellPrice { get; set; }
+    public string? CollectorNumber { get; set; }
 }
 
 public class CreditRepository
