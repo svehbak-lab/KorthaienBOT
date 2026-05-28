@@ -1,388 +1,970 @@
-using Dapper;
-using MtgoBot.Core.Models;
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KorthaienBOT — Dashboard</title>
+<style>
+  :root {
+    --bg:       #f0f4ff;
+    --surface:  #ffffff;
+    --border:   #d1d9f0;
+    --accent:   #4f46e5;
+    --accent2:  #059669;
+    --text:     #1e1b4b;
+    --muted:    #6366f1;
+    --danger:   #ef4444;
+    --warn:     #d97706;
+    --success:  #10b981;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font: 14px/1.5 'Inter', system-ui, sans-serif; min-height: 100vh; }
+  .shell { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+  .sidebar { background: #1e1b4b; border-right: 1px solid var(--border); padding: 24px 0; display: flex; flex-direction: column; }
+  .main { padding: 28px; overflow-y: auto; }
+  .logo { padding: 0 20px 24px; font-size: 18px; font-weight: 700; color: #ffffff; border-bottom: 1px solid var(--border); }
+  .logo span { color: var(--accent2); }
+  nav a { display: flex; align-items: center; gap: 10px; padding: 11px 20px; color: #c7d2fe; text-decoration: none; font-size: 13px; transition: all .15s; }
+  nav a:hover, nav a.active { background: rgba(255,255,255,.15); color: #ffffff; border-right: 2px solid var(--accent); }
+  nav a .icon { font-size: 16px; width: 20px; text-align: center; }
+  .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .page-title { font-size: 22px; font-weight: 700; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+  .badge.green { background: rgba(16,185,129,.15); color: var(--success); }
+  .badge.red   { background: rgba(239,68,68,.15);  color: var(--danger); }
+  .badge.blue  { background: rgba(79,70,229,.15);  color: var(--accent); }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+  .panel-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 16px; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+  .stat .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+  .stat .value { font-size: 26px; font-weight: 700; }
+  .stat .value.accent  { color: var(--accent); }
+  .stat .value.accent2 { color: var(--accent2); }
+  .toolbar { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
+  input[type=text], input[type=number], select {
+    background: var(--bg); border: 1px solid var(--border); color: var(--text);
+    border-radius: 6px; padding: 7px 12px; font-size: 13px; outline: none; transition: border-color .15s;
+  }
+  input:focus, select:focus { border-color: var(--accent); }
+  input[type=text] { flex: 1; min-width: 200px; }
+  button { padding: 7px 16px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; transition: all .15s; }
+  .btn-primary   { background: var(--accent);  color: #fff; }
+  .btn-primary:hover { background: #7c75ff; }
+  .btn-secondary { background: var(--border);  color: var(--text); }
+  .btn-secondary:hover { background: #c5cde8; }
+  .btn-success   { background: var(--accent2); color: #fff; }
+  .btn-success:hover { background: #047857; }
+  .btn-danger    { background: rgba(239,68,68,.15); color: var(--danger); border: 1px solid var(--danger); }
+  .btn-small     { padding: 4px 10px; font-size: 12px; }
+  .tbl-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 12px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(79,70,229,.02); }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+  .pill.r { background: rgba(239,68,68,.15);   color: #fca5a5; }
+  .pill.u { background: rgba(245,158,11,.15);  color: #fcd34d; }
+  .pill.c { background: rgba(107,114,128,.15); color: #9ca3af; }
+  .pill.m { background: rgba(168,85,247,.15);  color: #d8b4fe; }
+  .pill.f { background: rgba(0,212,170,.15);   color: var(--accent2); }
+  .muted      { color: var(--muted); }
+  .text-green { color: var(--success); }
+  .text-warn  { color: var(--warn); }
+  .text-red   { color: var(--danger); }
+  .mono       { font-family: 'Fira Code', monospace; }
+  .loading    { color: var(--muted); padding: 40px; text-align: center; }
+  .tag        { display: inline-block; background: rgba(108,99,255,.15); color: var(--accent); border-radius: 4px; padding: 1px 6px; font-size: 11px; margin: 1px; }
+  .hint       { background: #f8f9ff; border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; font-size: 12px; color: #64748b; margin-bottom: 16px; line-height: 1.8; }
+  /* Prices tab specific */
+  .foil-toggle { display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; user-select:none; }
+  .foil-toggle input[type=checkbox] { accent-color:var(--accent); width:15px; height:15px; cursor:pointer; }
+  #priceSetSelect { min-width:260px; font-size:14px; padding:8px 14px; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="logo">Korthaien<span>BOT</span></div>
+    <nav>
+      <a href="#" class="active" onclick="showTab('inventory')"><span class="icon">📦</span> Inventory</a>
+      <a href="#" onclick="showTab('sets')"><span class="icon">🔧</span> Filtre</a>
+      <a href="#" onclick="showTab('prices')"><span class="icon">🃏</span> Kort</a>
+      <a href="#" onclick="showTab('fullsets')"><span class="icon">🎁</span> Fullsett</a>
+      <a href="#" onclick="showTab('credits')"><span class="icon">💰</span> Kunde-credits</a>
+      <a href="#" onclick="showTab('bots')"><span class="icon">🤖</span> Botter</a>
+    </nav>
+    <div style="margin-top:auto; padding:20px; font-size:11px; color:var(--muted);">
+      Priser: <a href="https://www.goatbots.com" target="_blank" style="color:var(--accent2)">GoatBots</a><br>
+      Sist oppdatert: <span id="lastFeed">—</span>
+    </div>
+  </aside>
 
-using Microsoft.Extensions.Logging;
-using Npgsql;
+  <main class="main">
+    <div id="botStatusBar" style="display:flex; gap:12px; padding:8px 32px; background:#1e1b4b; border-bottom:1px solid #312e81; flex-wrap:wrap; margin:-28px -28px 28px -28px;">
+      <span style="font-size:11px;color:#94a3b8;align-self:center">BOTTER:</span>
+      <div id="botStatusItems" style="display:flex;gap:12px;flex-wrap:wrap"></div>
+    </div>
 
-namespace MtgoBot.Core.Data;
+    <!-- INVENTORY TAB -->
+    <div id="tab-inventory">
+      <div class="page-header">
+        <div class="page-title">Samlet Inventory</div>
+        <span class="badge green" id="botStatus">● Online</span>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="label">Totalt unike kort</div><div class="value accent" id="statCards">—</div></div>
+        <div class="stat"><div class="label">Total verdi (TIX)</div><div class="value accent2" id="statValue">—</div></div>
+        <div class="stat"><div class="label">Reservert Redeem</div><div class="value" id="statRedeem">—</div></div>
+        <div class="stat"><div class="label">Aktive botter</div><div class="value" id="statBots">—</div></div>
+      </div>
+      <div class="toolbar">
+        <select id="inventoryBotFilter" onchange="loadInventory()" style="min-width:180px">
+          <option value="">Alle botter</option>
+        </select>
+        <input type="text" id="searchInput" placeholder="🔍  Søk kortnavn..." oninput="loadInventory()">
+        <select id="setFilter" onchange="loadInventory()"><option value="">Alle sett</option></select>
+        <select id="rarityFilter" onchange="loadInventory()">
+          <option value="">Alle sjeldenhet</option>
+          <option value="M">Mythic</option><option value="R">Rare</option>
+          <option value="U">Uncommon</option><option value="C">Common</option>
+        </select>
+        <button class="btn-secondary btn-small" onclick="triggerPriceFeed()">🔄 Oppdater priser</button>
+      </div>
+      <div class="panel" style="padding:0">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>Kortnavn</th><th>Sett</th><th>Sjeldenhet</th><th>Totalt lager</th>
+              <th>Fordeling</th><th>Kjøpspris</th><th>Salgspris</th><th>Redeem</th><th>Status</th><th></th>
+            </tr></thead>
+            <tbody id="inventoryBody"><tr><td colspan="10" class="loading">Laster inventory...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
-public static class DapperConfig
-{
-    public static void Initialize()
-    {
-        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
-    }
+    <!-- FILTER TAB -->
+    <div id="tab-sets" style="display:none">
+      <div class="page-header"><div class="page-title">Filtre</div></div>
+      <div class="panel" style="margin-bottom:16px">
+        <div class="panel-title">Velg bot</div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center">
+          <select id="filterBotSelect" onchange="onFilterBotChange()" style="font-size:14px; padding:9px 14px; min-width:220px">
+            <option value="">— Velg bot —</option>
+          </select>
+          <span id="filterBotStatus" style="font-size:12px; color:var(--muted)"></span>
+        </div>
+      </div>
+      <div id="filterSetChecklist" style="display:none">
+        <div class="panel" style="margin-bottom:16px">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px">
+            <div class="panel-title" style="margin-bottom:0">Velg sett å handle</div>
+            <div style="display:flex; gap:8px">
+              <button class="btn-secondary btn-small" onclick="filterCheckAll(true)">Velg alle</button>
+              <button class="btn-secondary btn-small" onclick="filterCheckAll(false)">Fjern alle</button>
+              <button class="btn-primary" onclick="saveEnabledSets()">💾 Lagre valg</button>
+            </div>
+          </div>
+          <input type="text" id="filterSetSearch" placeholder="🔍 Filtrer sett..." oninput="renderSetChecklist()" style="width:100%; max-width:340px; margin-bottom:12px">
+          <div id="filterSetChecklistGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:6px; max-height:340px; overflow-y:auto; padding:4px"></div>
+        </div>
+        <div id="filterEnabledSetsPanel" style="display:none">
+          <div class="panel" style="padding:0; overflow:hidden; margin-bottom:16px">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:12px">
+              <div class="panel-title" style="margin-bottom:0">Aktive sett — regler</div>
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+                <span style="font-size:11px; color:var(--muted); font-weight:600">Sett alle:</span>
+                <input type="number" id="bulkBuy"  placeholder="Kjøp mult" step="0.01" style="width:80px; font-size:12px">
+                <input type="number" id="bulkSell" placeholder="Salg mult" step="0.01" style="width:80px; font-size:12px">
+                <input type="number" id="bulkMax"  placeholder="Maks lager" step="1"  style="width:80px; font-size:12px">
+                <input type="number" id="bulkKeep" placeholder="Keep"       step="1"  style="width:70px; font-size:12px">
+                <input type="number" id="bulkMpt"  placeholder="Per handel" step="1"  style="width:80px; font-size:12px">
+                <button class="btn-secondary btn-small" onclick="applyBulkRules()">Bruk på alle</button>
+              </div>
+            </div>
+            <div class="tbl-wrap">
+              <table>
+                <thead><tr>
+                  <th style="width:180px">Sett</th><th>Kjøps-mult</th><th>Salgs-mult</th>
+                  <th>Maks lager</th><th>Keep</th><th>Per handel</th><th style="width:110px"></th>
+                </tr></thead>
+                <tbody id="filterSetRulesBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div id="filterCardPanel" style="display:none">
+            <div class="panel" style="padding:0; overflow:hidden">
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:8px">
+                <div class="panel-title" style="margin-bottom:0">
+                  Kort i <span id="filterCardPanelSetName" style="color:var(--accent)">—</span>
+                  <span id="filterCardPanelCount" style="font-size:11px; color:var(--muted); font-weight:400; margin-left:8px"></span>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center">
+                  <input type="text" id="filterCardSearch" placeholder="🔍 Søk kort..." oninput="renderFilterCards()" style="width:200px; font-size:12px">
+                  <button class="btn-secondary btn-small" onclick="closeFilterCardPanel()">✕ Lukk</button>
+                </div>
+              </div>
+              <div class="tbl-wrap">
+                <table>
+                  <thead><tr>
+                    <th>Kortnavn</th><th>Rarity</th><th>Markedspris</th>
+                    <th>Kjøpspris</th><th>Salgspris</th><th>Keep</th><th>Maks lager</th><th>Per handel</th><th style="width:90px"></th>
+                  </tr></thead>
+                  <tbody id="filterCardBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KORT TAB (previously Priser) -->
+    <div id="tab-prices" style="display:none">
+      <div class="page-header">
+        <div class="page-title">Kort</div>
+        <span id="priceCardCount" class="badge blue" style="display:none"></span>
+      </div>
+
+      <!-- Controls -->
+      <div class="panel" style="margin-bottom:16px; padding:16px 20px">
+        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap">
+          <select id="priceSetSelect" onchange="loadPrices()">
+            <option value="">— Velg sett —</option>
+          </select>
+          <label class="foil-toggle">
+            <input type="checkbox" id="priceShowFoil" onchange="filterPriceTable()"> Vis foil
+          </label>
+          <label class="foil-toggle">
+            <input type="checkbox" id="priceShowNonFoil" checked onchange="filterPriceTable()"> Vis ikke-foil
+          </label>
+          <input type="text" id="priceCardSearch" placeholder="🔍 Søk kortnavn..." oninput="filterPriceTable()" style="max-width:220px; min-width:150px; flex:unset">
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="panel" style="padding:0">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>#</th>
+              <th onclick="sortPrices('cardName')" style="cursor:pointer">Kortnavn ↕</th>
+              <th onclick="sortPrices('rarity')" style="cursor:pointer">Rarity ↕</th>
+              <th>Foil</th>
+              <th onclick="sortPrices('marketPriceTix')" style="cursor:pointer">Markedspris ↕</th>
+              <th onclick="sortPrices('buyPrice')" style="cursor:pointer">Kjøpspris ↕</th>
+              <th onclick="sortPrices('sellPrice')" style="cursor:pointer">Salgspris ↕</th>
+            </tr></thead>
+            <tbody id="priceBody">
+              <tr><td colspan="7" class="loading">Velg et sett for å se priser.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- FULLSETT TAB -->
+    <div id="tab-fullsets" style="display:none">
+      <div class="page-header">
+        <div class="page-title">Fullsett</div>
+        <span id="fullsetSetCount" class="badge blue" style="display:none"></span>
+      </div>
+
+      <!-- Set selector -->
+      <div class="panel" style="margin-bottom:16px; padding:16px 20px">
+        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap">
+          <select id="fullsetSetSelect" onchange="loadFullset()" style="min-width:260px; font-size:14px; padding:8px 14px">
+            <option value="">— Velg sett —</option>
+          </select>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+            <input type="checkbox" id="fullsetFoil" onchange="loadFullset()" style="accent-color:var(--accent);width:15px;height:15px"> Foil-sett
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+            <input type="checkbox" id="fullsetNonFoil" checked onchange="loadFullset()" style="accent-color:var(--accent);width:15px;height:15px"> Ikke-foil sett
+          </label>
+        </div>
+      </div>
+
+      <!-- Fullset stats -->
+      <div id="fullsetStats" style="display:none">
+        <div class="stats" style="grid-template-columns:repeat(4,1fr)">
+          <div class="stat"><div class="label">Antall kort i sett</div><div class="value accent" id="fsCardCount">—</div></div>
+          <div class="stat"><div class="label">Markedsverdi</div><div class="value accent2" id="fsMarketValue">—</div></div>
+          <div class="stat"><div class="label">Kjøpspris (sett)</div><div class="value text-warn" id="fsBuyPrice">—</div></div>
+          <div class="stat"><div class="label">Salgspris (sett)</div><div class="value text-green" id="fsSellPrice">—</div></div>
+        </div>
+
+        <!-- Override panel -->
+        <div class="panel" style="margin-bottom:16px">
+          <div class="panel-title">Prisoverstyring</div>
+          <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-end">
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">
+              Settstørrelse (antall kort)
+              <input type="number" id="fsOverrideSize" placeholder="Auto" step="1" min="1" style="width:120px">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">
+              Kjøpspris override (TIX)
+              <input type="number" id="fsOverrideBuy" placeholder="Auto (sum)" step="0.01" style="width:140px">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">
+              Salgspris override (TIX)
+              <input type="number" id="fsOverrideSell" placeholder="Auto (sum)" step="0.01" style="width:140px">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">
+              Kjøp komplette sett
+              <select id="fsOverrideBuyEnabled" style="width:100px">
+                <option value="true">Ja</option>
+                <option value="false">Nei</option>
+              </select>
+            </label>
+            <label style="display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted)">
+              Selg komplette sett
+              <select id="fsOverrideSellEnabled" style="width:100px">
+                <option value="true">Ja</option>
+                <option value="false">Nei</option>
+              </select>
+            </label>
+            <button class="btn-primary" onclick="saveFullsetOverride()">💾 Lagre</button>
+            <button class="btn-secondary btn-small" onclick="clearFullsetOverride()">✕ Nullstill</button>
+          </div>
+        </div>
+
+        <!-- Card list -->
+        <div class="panel" style="padding:0">
+          <div style="padding:14px 16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center">
+            <div class="panel-title" style="margin-bottom:0">Kort i settet</div>
+            <input type="text" id="fullsetCardSearch" placeholder="🔍 Søk..." oninput="filterFullsetCards()" style="max-width:200px; min-width:140px; flex:unset">
+          </div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr>
+                <th>#</th><th>Kortnavn</th><th>Rarity</th>
+                <th>Markedspris</th><th>Kjøpspris</th><th>Salgspris</th>
+              </tr></thead>
+              <tbody id="fullsetCardBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CREDITS TAB -->
+    <div id="tab-credits" style="display:none">
+      <div class="page-header">
+        <div class="page-title">Kunde-Credits</div>
+        <button class="btn-danger btn-small" onclick="purgeCredits()">🧹 Slette inaktive (90d)</button>
+      </div>
+      <div class="panel" style="padding:0">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Spiller</th><th>Saldo (TIX)</th><th>Siste handel</th><th></th></tr></thead>
+            <tbody id="creditsBody"><tr><td colspan="4" class="loading">Laster credits...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTS TAB -->
+    <div id="tab-bots" style="display:none; width:100%; min-height:400px">
+      <div class="page-header">
+        <div class="page-title">Botter</div>
+        <button class="btn-primary btn-small" onclick="addBot()">+ Legg til bot</button>
+      </div>
+      <div class="hint">
+        <strong>💡 Bot-roller</strong><br>
+        <b>TRADE:</b> Kjøper og selger singles. Holder maks lokalt antall, sender resten til K-76.<br>
+        <b>MULE:</b> Privat hvelv. Samler komplette sett, sender til Fullset-bot.<br>
+        <b>FULLSET:</b> Selger komplette sett. Kjøper ingenting.
+      </div>
+      <div id="botsContainer"></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const API = '/api';
+let allBotIds  = [];
+let allSetCards = [];
+let currentSetCode = '';
+let sortCol = 'marketPriceTix';
+let sortDir = -1;
+
+// Prices tab state
+let priceAllRows   = [];
+let priceSortCol   = 'cardName';
+let priceSortDir   = 1;
+
+loadBotStatusBar();
+setInterval(loadBotStatusBar, 30000);
+
+function showTab(name) {
+  document.querySelectorAll('[id^=tab-]').forEach(el => el.style.display = 'none');
+  document.getElementById('tab-' + name).style.display = 'block';
+  document.querySelectorAll('nav a').forEach(a =>
+    a.classList.toggle('active', a.getAttribute('onclick')?.includes(name)));
+  if (name === 'inventory') loadInventory();
+  if (name === 'sets')      initFilterTab();
+  if (name === 'credits')   loadCredits();
+  if (name === 'bots')      loadBots();
+  if (name === 'prices')    initPricesTab();
+  if (name === 'fullsets')  initFullsetsTab();
 }
 
-public class CardRepository
-{
-    private readonly DatabaseConnectionFactory _db;
-    private readonly ILogger<CardRepository> _logger;
-
-    public CardRepository(DatabaseConnectionFactory db, ILogger<CardRepository> logger)
-    { _db = db; _logger = logger; }
-
-    private NpgsqlConnection Open() => (NpgsqlConnection)_db.CreateConnectionAsync().GetAwaiter().GetResult();
-
-    public async Task<Dictionary<string, Card>> GetCardsByIdsAsync(IEnumerable<string> cardIds)
-    {
-        using var conn = Open();
-        var rows = await conn.QueryAsync<Card>("SELECT * FROM cards WHERE card_id = ANY(@Ids)", new { Ids = cardIds.ToArray() });
-        return rows.ToDictionary(c => c.CardId);
-    }
-
-    public async Task<Card?> GetCardByIdAsync(string cardId)
-    {
-        using var conn = Open();
-        return await conn.QuerySingleOrDefaultAsync<Card>("SELECT * FROM cards WHERE card_id = @Id", new { Id = cardId });
-    }
-
-    public async Task<Card?> GetCardByNameAndSetAsync(string cardName, string setCode)
-    {
-        using var conn = Open();
-        return await conn.QueryFirstOrDefaultAsync<Card>(
-            "SELECT * FROM cards WHERE card_name ILIKE @Name AND set_code = @Set AND is_foil = false ORDER BY market_price_tix DESC LIMIT 1",
-            new { Name = cardName, Set = setCode });
-    }
-
-    public async Task<MagicSet?> GetSetAsync(string setCode)
-    {
-        using var conn = Open();
-        return await conn.QuerySingleOrDefaultAsync<MagicSet>("SELECT * FROM sets WHERE set_code = @Code", new { Code = setCode });
-    }
-
-    public async Task<Dictionary<string, MagicSet>> GetAllSetsAsync()
-    {
-        using var conn = Open();
-        var rows = await conn.QueryAsync<MagicSet>("SELECT set_code, set_name, default_buy_multiplier, default_sell_multiplier, default_max_stock, base_set_size, updated_at FROM sets");
-        return rows.GroupBy(s => s.SetCode).ToDictionary(g => g.Key, g => g.First());
-    }
-
-    public async Task<IEnumerable<PriceRow>> GetCardsBySetAsync(string setCode, bool? foilFilter = null)
-    {
-        using var conn = Open();
-        return await conn.QueryAsync<PriceRow>("""
-            SELECT c.card_id, c.card_name, c.set_code, c.rarity, c.is_foil,
-                   c.market_price_tix, c.collector_number,
-                   COALESCE(c.custom_buy_price,  c.market_price_tix * s.default_buy_multiplier)  AS buy_price,
-                   COALESCE(c.custom_sell_price, c.market_price_tix * s.default_sell_multiplier) AS sell_price
-            FROM cards c
-            JOIN sets s ON c.set_code = s.set_code
-            WHERE c.set_code = @SetCode
-              AND (@FoilFilter IS NULL OR c.is_foil = @FoilFilter)
-            ORDER BY c.rarity DESC, c.card_name
-            """, new { SetCode = setCode, FoilFilter = foilFilter });
-    }
-
-    public async Task UpdateMarketPriceAsync(string cardId, decimal newPrice)
-    {
-        using var conn = Open();
-        await conn.ExecuteAsync("UPDATE cards SET market_price_tix = @Price WHERE card_id = @Id", new { Price = newPrice, Id = cardId });
-    }
-
-    public async Task SetCardOverridesAsync(string cardId, decimal? customBuy, decimal? customSell, int? customMaxStock, int redeemReserved, int maxPerTrade = 4)
-    {
-        using var conn = Open();
-        await conn.ExecuteAsync("UPDATE cards SET custom_buy_price=@Buy, custom_sell_price=@Sell, custom_max_stock=@MaxStock, redeem_reserved=@Redeem, max_per_trade=@MaxPerTrade WHERE card_id=@Id",
-            new { Buy = customBuy, Sell = customSell, MaxStock = customMaxStock, Redeem = redeemReserved, MaxPerTrade = maxPerTrade, Id = cardId });
-    }
-
-    public async Task ApplyKeepToSetAsync(string setCode, int keepValue)
-    {
-        using var conn = Open();
-        await conn.ExecuteAsync(
-            "UPDATE cards SET redeem_reserved = @Keep WHERE set_code = @Code",
-            new { Keep = keepValue, Code = setCode });
-    }
-
-    public async Task<FullsetPricing?> GetFullsetPricingAsync(string setCode, bool isFoil)
-    {
-        using var conn = Open();
-        if (isFoil)
-            return await conn.QuerySingleOrDefaultAsync<FullsetPricing>("""
-                SELECT fullset_foil_buy AS fullset_buy, fullset_foil_sell AS fullset_sell,
-                       fullset_foil_enabled AS fullset_enabled
-                FROM set_price_overrides WHERE set_code = @Code
-                """, new { Code = setCode });
-        return await conn.QuerySingleOrDefaultAsync<FullsetPricing>(
-            "SELECT fullset_buy, fullset_sell, fullset_enabled FROM set_price_overrides WHERE set_code = @Code",
-            new { Code = setCode });
-    }
-
-    public async Task SetCreditAsync(string playerName, decimal newBalance)
-    {
-        using var conn = Open();
-        await conn.ExecuteAsync("""
-            INSERT INTO users (username, balance_tix, last_trade)
-            VALUES (@Name, @Balance, NOW())
-            ON CONFLICT (username) DO UPDATE SET
-                balance_tix = @Balance,
-                last_trade  = NOW()
-            """, new { Name = playerName, Balance = newBalance });
-    }
-
-    public async Task<decimal> GetPlayerCreditAsync(string playerName)
-    {
-        using var conn = Open();
-        return await conn.QuerySingleOrDefaultAsync<decimal>(
-            "SELECT COALESCE(balance_tix, 0) FROM users WHERE username = @Name",
-            new { Name = playerName });
-    }
-
-    public async Task<List<MagicSet>> GetActiveSetsAsync()
-    {
-        using var conn = Open();
-        var rows = await conn.QueryAsync<MagicSet>("SELECT * FROM sets ORDER BY set_code LIMIT 50");
-        return rows.ToList();
-    }
-
-    public async Task<List<Card>> SearchCardsByNameAsync(string name)
-    {
-        using var conn = Open();
-        var rows = await conn.QueryAsync<Card>(
-            "SELECT * FROM cards WHERE card_name ILIKE @Name AND is_foil = false ORDER BY market_price_tix DESC LIMIT 5",
-            new { Name = $"%{name}%" });
-        return rows.ToList();
-    }
-
-    public async Task UpdateSetRulesAsync(string setCode, decimal buyMultiplier, decimal sellMultiplier, int maxStock, int? baseSetSize = null)
-    {
-        using var conn = Open();
-        await conn.ExecuteAsync("UPDATE sets SET default_buy_multiplier=@Buy, default_sell_multiplier=@Sell, default_max_stock=@Max, base_set_size=@BaseSize, updated_at=NOW() WHERE set_code=@Code",
-            new { Buy = buyMultiplier, Sell = sellMultiplier, Max = maxStock, BaseSize = baseSetSize, Code = setCode });
-    }
+// ── Bot status bar ────────────────────────────────────────────────
+async function loadBotStatusBar() {
+  try {
+    const bots = await fetchJson('/api/bots');
+    allBotIds = bots.map(b => b.bot_id);
+    document.getElementById('statBots').textContent = bots.filter(b => b.is_online).length;
+    document.getElementById('botStatusItems').innerHTML = bots.map(b => `
+      <span class="badge ${b.is_online ? 'green' : 'red'}" style="font-size:11px">
+        ${b.is_online ? '●' : '○'} ${esc(b.account_name)}
+      </span>`).join('');
+    // Populate inventory bot picker
+    const invSel = document.getElementById('inventoryBotFilter');
+    const prev = invSel.value;
+    invSel.innerHTML = '<option value="">Alle botter</option>' +
+      bots.map(b => `<option value="${esc(b.bot_id)}">${esc(b.account_name)}</option>`).join('');
+    if (prev) invSel.value = prev;
+  } catch(e) {}
 }
 
-public class InventoryRepository
-{
-    private readonly DatabaseConnectionFactory _db;
-    public InventoryRepository(DatabaseConnectionFactory db) => _db = db;
-    private NpgsqlConnection Open() => (NpgsqlConnection)_db.CreateConnectionAsync().GetAwaiter().GetResult();
-
-    public async Task<Dictionary<string, int>> GetBotInventoryAsync(string botId)
-    {
-        using var conn = Open();
-        var rows = await conn.QueryAsync<BotInventoryEntry>("SELECT card_id, quantity FROM bot_inventory WHERE bot_id=@BotId AND quantity>0", new { BotId = botId });
-        return rows.ToDictionary(r => r.CardId, r => r.Quantity);
-    }
-
-    public async Task<Dictionary<string, int>> GetNetworkInventoryAsync()
-    {
-        using var conn = Open();
-        var rows = await conn.QueryAsync<BotInventoryEntry>("SELECT card_id, SUM(quantity) AS quantity FROM bot_inventory GROUP BY card_id");
-        return rows.ToDictionary(r => r.CardId, r => r.Quantity);
-    }
-
-    public async Task<Dictionary<string, decimal>> GetInventoryValueBySetAsync(string botId)
-    {
-        using var conn = Open();
-        var rows = await conn.QueryAsync("SELECT c.set_code, SUM(bi.quantity * c.market_price_tix) AS total_value FROM bot_inventory bi JOIN cards c ON bi.card_id=c.card_id WHERE bi.bot_id=@BotId AND bi.quantity>0 GROUP BY c.set_code", new { BotId = botId });
-        return rows.ToDictionary(r => (string)r.set_code, r => (decimal)r.total_value);
-    }
-
-    public async Task ApplyInventoryDeltasAsync(string botId, Dictionary<string, int> deltas)
-    {
-        using var conn = Open();
-        await using var tx = await conn.BeginTransactionAsync();
-        try
-        {
-            foreach (var (cardId, delta) in deltas)
-                await conn.ExecuteAsync("INSERT INTO bot_inventory (bot_id,card_id,quantity) VALUES (@BotId,@CardId,@Delta) ON CONFLICT (bot_id,card_id) DO UPDATE SET quantity=GREATEST(0,bot_inventory.quantity+EXCLUDED.quantity)",
-                    new { BotId = botId, CardId = cardId, Delta = delta }, tx);
-            await tx.CommitAsync();
-        }
-        catch { await tx.RollbackAsync(); throw; }
-    }
-
-    public async Task<int> GetAvailableStockAsync(string botId, string cardId, int redeemReserved)
-    {
-        using var conn = Open();
-        var total = await conn.QuerySingleOrDefaultAsync<int>("SELECT COALESCE(quantity,0) FROM bot_inventory WHERE bot_id=@BotId AND card_id=@CardId", new { BotId = botId, CardId = cardId });
-        return Math.Max(0, total - redeemReserved);
-    }
-
-    public async Task<Dictionary<string, int>> GetNetworkInventoryByBotTypeAsync(string botType)
-    {
-        using var conn = Open();
-        var rows = await conn.QueryAsync<BotInventoryEntry>("""
-            SELECT bi.card_id, SUM(bi.quantity) AS quantity
-            FROM bot_inventory bi
-            JOIN bots b ON bi.bot_id = b.bot_id
-            WHERE b.bot_type = @BotType AND bi.quantity > 0
-            GROUP BY bi.card_id
-            """, new { BotType = botType });
-        return rows.ToDictionary(r => r.CardId, r => r.Quantity);
-    }
-
-    public async Task<Dictionary<string, int>> GetCardStockPerBotAsync(string cardId, string botType)
-    {
-        using var conn = Open();
-        var rows = await conn.QueryAsync("""
-            SELECT bi.bot_id, bi.quantity
-            FROM bot_inventory bi
-            JOIN bots b ON bi.bot_id = b.bot_id
-            WHERE bi.card_id = @CardId AND b.bot_type = @BotType AND bi.quantity > 0
-            """, new { CardId = cardId, BotType = botType });
-        return rows.ToDictionary(r => (string)r.bot_id, r => (int)r.quantity);
-    }
-
-    public async Task<int> GetAvailableForSaleAsync(string cardId, int keepTarget)
-    {
-        using var conn = Open();
-        var networkTotal = await conn.QuerySingleOrDefaultAsync<int>("""
-            SELECT COALESCE(SUM(bi.quantity), 0)
-            FROM bot_inventory bi
-            JOIN bots b ON bi.bot_id = b.bot_id
-            WHERE bi.card_id = @CardId AND b.bot_type = 'TRADE'
-            """, new { CardId = cardId });
-
-        var muleTotal = await conn.QuerySingleOrDefaultAsync<int>("""
-            SELECT COALESCE(SUM(bi.quantity), 0)
-            FROM bot_inventory bi
-            JOIN bots b ON bi.bot_id = b.bot_id
-            WHERE bi.card_id = @CardId AND b.bot_type = 'MULE'
-            """, new { CardId = cardId });
-
-        int alreadyInMule = muleTotal;
-        int stillNeeded   = Math.Max(0, keepTarget - alreadyInMule);
-        int available     = Math.Max(0, networkTotal - stillNeeded);
-        return available;
-    }
-
-    public async Task<int> GetCardQuantityAsync(string botId, string cardId)
-    {
-        using var conn = Open();
-        return await conn.QuerySingleOrDefaultAsync<int>(
-            "SELECT COALESCE(quantity,0) FROM bot_inventory WHERE bot_id=@BotId AND card_id=@CardId",
-            new { BotId = botId, CardId = cardId });
-    }
-
-    public async Task<Dictionary<string, int>> GetBotsWithReservesAsync(string botType)
-    {
-        using var conn = Open();
-        var rows = await conn.QueryAsync(
-            "SELECT bot_id, tix_reserve FROM bots WHERE bot_type = @BotType",
-            new { BotType = botType });
-        return rows.ToDictionary(r => (string)r.bot_id, r => (int)r.tix_reserve);
-    }
-
-    public async Task QueueMuleTransfersAsync(string fromBotId, string toBotId, IEnumerable<TransferOrder> orders)
-    {
-        using var conn = Open();
-        foreach (var order in orders)
-            await conn.ExecuteAsync("INSERT INTO mule_transfer_queue (from_bot_id,to_bot_id,card_id,quantity,status) VALUES (@From,@To,@CardId,@Qty,'PENDING')",
-                new { From = fromBotId, To = toBotId, CardId = order.CardId, Qty = order.Quantity });
-    }
-
-    public async Task<IEnumerable<InventoryDashboardRow>> GetDashboardInventoryAsync(string? search = null, string? setCode = null, string? botId = null)
-    {
-        using var conn = Open();
-        return await conn.QueryAsync<InventoryDashboardRow>("""
-            SELECT c.card_id, c.card_name, c.set_code, c.rarity, c.is_foil, c.market_price_tix,
-                COALESCE(c.custom_buy_price,  c.market_price_tix * s.default_buy_multiplier)  AS effective_buy_price,
-                COALESCE(c.custom_sell_price, c.market_price_tix * s.default_sell_multiplier) AS effective_sell_price,
-                COALESCE(c.custom_max_stock,  s.default_max_stock) AS max_stock,
-                c.redeem_reserved,
-                c.collector_number,
-                COALESCE(SUM(bi.quantity), 0) AS total_quantity,
-                STRING_AGG(bi.bot_id || ':' || bi.quantity, ' ') AS bot_distribution
-            FROM cards c
-            JOIN sets s ON c.set_code = s.set_code
-            LEFT JOIN bot_inventory bi ON c.card_id = bi.card_id AND bi.quantity > 0
-                AND (@BotId IS NULL OR bi.bot_id = @BotId)
-            WHERE (@Search IS NULL OR c.card_name ILIKE '%' || @Search || '%')
-              AND (@SetCode IS NULL OR c.set_code = @SetCode)
-            GROUP BY c.card_id, c.card_name, c.set_code, c.rarity, c.is_foil,
-                     c.market_price_tix, c.custom_buy_price, c.custom_sell_price,
-                     c.custom_max_stock, c.redeem_reserved,
-                     c.collector_number,
-                     s.default_buy_multiplier, s.default_sell_multiplier, s.default_max_stock
-            ORDER BY c.market_price_tix DESC
-            """, new { Search = search, SetCode = setCode, BotId = botId });
-    }
+// ── Inventory ─────────────────────────────────────────────────────
+async function loadInventory() {
+  const search = document.getElementById('searchInput').value;
+  const set    = document.getElementById('setFilter').value;
+  const botId  = document.getElementById('inventoryBotFilter').value;
+  let url = `${API}/inventory?`;
+  if (search) url += `search=${encodeURIComponent(search)}&`;
+  if (set)    url += `set=${encodeURIComponent(set)}&`;
+  if (botId)  url += `botId=${encodeURIComponent(botId)}&`;
+  try {
+    let rows = await fetchJson(url);
+    rows = rows.filter(r => r.cardName && r.cardName.length > 0);
+    const tbody = document.getElementById('inventoryBody');
+    if (!rows.length) { tbody.innerHTML = '<tr><td colspan="10" class="loading muted">Ingen kort funnet.</td></tr>'; return; }
+    document.getElementById('statCards').textContent = rows.length.toLocaleString();
+    document.getElementById('statValue').textContent = rows.reduce((s, r) => s + (r.totalQuantity * r.marketPriceTix), 0).toFixed(2);
+    document.getElementById('statRedeem').textContent = rows.reduce((s, r) => s + r.redeemReserved, 0);
+    tbody.innerHTML = rows.map(r => `
+      <tr>
+        <td><strong>${esc(r.cardName)}</strong>${r.isFoil ? ' <span class="pill f">Foil</span>' : ''}</td>
+        <td><span class="tag">${esc(r.setCode)}</span></td>
+        <td>${rarityPill(r.rarity)}</td>
+        <td class="mono">${r.totalQuantity} stk</td>
+        <td class="muted" style="font-size:11px">${esc(r.botDistribution || '—')}</td>
+        <td class="mono text-warn">${r.effectiveBuyPrice.toFixed(4)}</td>
+        <td class="mono text-green">${r.effectiveSellPrice.toFixed(4)}</td>
+        <td class="mono ${r.redeemReserved > 0 ? 'text-warn' : 'muted'}">${r.redeemReserved}</td>
+        <td>${r.status || '—'}</td>
+        <td><button class="btn-secondary btn-small"
+              onclick="editCard('${esc(r.cardId)}','${esc(r.cardName)}',${r.effectiveBuyPrice},${r.effectiveSellPrice},${r.maxStock},${r.redeemReserved})">✏️</button></td>
+      </tr>`).join('');
+  } catch(e) {
+    document.getElementById('inventoryBody').innerHTML = `<tr><td colspan="10" class="loading text-red">Feil: ${e.message}</td></tr>`;
+  }
 }
 
-public class InventoryDashboardRow
-{
-    public string CardId { get; set; } = string.Empty;
-    public string CardName { get; set; } = string.Empty;
-    public string SetCode { get; set; } = string.Empty;
-    public string Rarity { get; set; } = string.Empty;
-    public bool IsFoil { get; set; }
-    public decimal MarketPriceTix { get; set; }
-    public decimal EffectiveBuyPrice { get; set; }
-    public decimal EffectiveSellPrice { get; set; }
-    public int MaxStock { get; set; }
-    public int RedeemReserved { get; set; }
-    public int TotalQuantity { get; set; }
-    public string BotDistribution { get; set; } = string.Empty;
-    public string? CollectorNumber { get; set; }
-    public string Status => TotalQuantity >= MaxStock ? "🛑 Maks nådd" : TotalQuantity <= RedeemReserved ? "🟡 Kun Redeem" : "🟢 Kjøper";
+function editCard(id, name, buy, sell, max, redeem) {
+  const newBuy  = parseFloat(prompt(`Kjøpspris for ${name}:`, buy));
+  if (isNaN(newBuy)) return;
+  const newSell = parseFloat(prompt(`Salgspris for ${name}:`, sell));
+  const newMax  = parseInt(prompt(`Maks lager:`, max));
+  const newRed  = parseInt(prompt(`Redeem-reservert:`, redeem));
+  fetchJson(`${API}/cards/${id}/overrides`, 'PUT', {
+    customBuyPrice: newBuy || null, customSellPrice: newSell || null,
+    customMaxStock: newMax || null, redeemReserved:  newRed  || 0
+  }).then(() => { toast(`✅ ${name} oppdatert`); loadInventory(); });
 }
 
-public class PriceRow
-{
-    public string CardId { get; set; } = string.Empty;
-    public string CardName { get; set; } = string.Empty;
-    public string SetCode { get; set; } = string.Empty;
-    public string Rarity { get; set; } = string.Empty;
-    public bool IsFoil { get; set; }
-    public decimal MarketPriceTix { get; set; }
-    public decimal BuyPrice { get; set; }
-    public decimal SellPrice { get; set; }
-    public string? CollectorNumber { get; set; }
+// ══════════════════════════════════════════════════════════════════
+// PRICES TAB
+// ══════════════════════════════════════════════════════════════════
+
+async function initPricesTab() {
+  const sel = document.getElementById('priceSetSelect');
+  if (sel.options.length > 1) return; // already loaded
+  try {
+    const sets = await fetchJson('/api/sets');
+    const entries = Object.values(sets).sort((a, b) => (a.set_name || a.set_code).localeCompare(b.set_name || b.set_code));
+    sel.innerHTML = '<option value="">— Velg sett —</option>' +
+      entries.map(s => `<option value="${esc(s.set_code)}">${esc(s.set_name || s.set_code)} (${esc(s.set_code)})</option>`).join('');
+  } catch(e) { toast('⚠️ Kunne ikke laste sett: ' + e.message); }
 }
 
-public class CreditRepository
-{
-    private readonly DatabaseConnectionFactory _db;
-    private readonly ILogger<CreditRepository> _logger;
-    public CreditRepository(DatabaseConnectionFactory db, ILogger<CreditRepository> logger)
-    { _db = db; _logger = logger; }
-    private NpgsqlConnection Open() => (NpgsqlConnection)_db.CreateConnectionAsync().GetAwaiter().GetResult();
-
-    public async Task<UserCredit> GetOrCreateUserAsync(string playerName)
-    {
-        var lower = playerName.ToLowerInvariant();
-        using var conn = Open();
-        await conn.ExecuteAsync("INSERT INTO users (player_name,credit_tix,last_trade_at) VALUES (@Name,0,NOW()) ON CONFLICT (player_name) DO NOTHING", new { Name = lower });
-        return await conn.QuerySingleAsync<UserCredit>("SELECT * FROM users WHERE player_name=@Name", new { Name = lower });
-    }
-
-    public async Task<decimal> ApplyCreditDeltaAsync(string playerName, string botId, decimal delta, string reason)
-    {
-        var lower = playerName.ToLowerInvariant();
-        using var conn = Open();
-        await using var tx = await conn.BeginTransactionAsync();
-        try
-        {
-            var current = await conn.QuerySingleOrDefaultAsync<decimal>("SELECT credit_tix FROM users WHERE player_name=@Name FOR UPDATE", new { Name = lower }, tx);
-            var newBalance = current + delta;
-            if (newBalance < 0) throw new InvalidOperationException($"Credit underflow for {lower}");
-            await conn.ExecuteAsync("UPDATE users SET credit_tix=@Bal, last_trade_at=NOW() WHERE player_name=@Name", new { Bal = newBalance, Name = lower }, tx);
-            await conn.ExecuteAsync("INSERT INTO credit_log (player_name,bot_id,delta_amount,new_balance,reason) VALUES (@P,@B,@D,@N,@R)",
-                new { P = lower, B = botId, D = delta, N = newBalance, R = reason }, tx);
-            await tx.CommitAsync();
-            _logger.LogInformation("Credit [{Player}]: {Delta:+0.0000;-0.0000} -> {New:0.0000}", lower, delta, newBalance);
-            return newBalance;
-        }
-        catch { await tx.RollbackAsync(); throw; }
-    }
-
-    public async Task<int> PurgeInactiveCreditAsync(int days = 90)
-    {
-        using var conn = Open();
-        var purged = await conn.QueryAsync<string>("DELETE FROM users WHERE credit_tix>0 AND last_trade_at<NOW()-INTERVAL '1 day'*@Days RETURNING player_name", new { Days = days });
-        var count = purged.Count();
-        _logger.LogInformation("Credit purge: {Count} players.", count);
-        return count;
-    }
-
-    public async Task<IEnumerable<UserCredit>> GetAllCreditsAsync()
-    {
-        using var conn = Open();
-        return await conn.QueryAsync<UserCredit>("SELECT * FROM users WHERE credit_tix>0 ORDER BY credit_tix DESC");
-    }
+async function loadPrices() {
+  const setCode = document.getElementById('priceSetSelect').value;
+  if (!setCode) {
+    priceAllRows = [];
+    document.getElementById('priceBody').innerHTML = '<tr><td colspan="7" class="loading">Velg et sett for å se priser.</td></tr>';
+    document.getElementById('priceCardCount').style.display = 'none';
+    return;
+  }
+  document.getElementById('priceBody').innerHTML = '<tr><td colspan="7" class="loading">Laster...</td></tr>';
+  try {
+    priceAllRows = await fetchJson(`/api/prices?setCode=${encodeURIComponent(setCode)}`);
+    filterPriceTable();
+  } catch(e) {
+    document.getElementById('priceBody').innerHTML = `<tr><td colspan="7" class="loading text-red">Feil: ${e.message}</td></tr>`;
+  }
 }
 
-public record TransferOrder(string CardId, string CardName, int Quantity);
+function filterPriceTable() {
+  const showFoil    = document.getElementById('priceShowFoil').checked;
+  const showNonFoil = document.getElementById('priceShowNonFoil').checked;
+  const q = (document.getElementById('priceCardSearch').value || '').toLowerCase();
+
+  let rows = priceAllRows.filter(r => {
+    if (r.isFoil && !showFoil)    return false;
+    if (!r.isFoil && !showNonFoil) return false;
+    if (q && !(r.cardName || '').toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  // Sort
+  rows = [...rows].sort((a, b) => {
+    let va = a[priceSortCol] ?? '';
+    let vb = b[priceSortCol] ?? '';
+    if (typeof va === 'string') return priceSortDir * va.localeCompare(vb);
+    return priceSortDir * (va - vb);
+  });
+
+  const badge = document.getElementById('priceCardCount');
+  badge.style.display = 'inline-flex';
+  badge.textContent = `${rows.length} kort`;
+
+  const tbody = document.getElementById('priceBody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="loading muted">Ingen kort funnet.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = rows.map((r, i) => `
+    <tr>
+      <td class="muted" style="font-size:11px">${i + 1}</td>
+      <td>
+        <strong>${esc(r.cardName)}</strong>
+        ${r.collectorNumber ? `<span style="font-size:10px;color:#94a3b8"> #${r.collectorNumber}</span>` : ''}
+      </td>
+      <td>${rarityPill(r.rarity)}</td>
+      <td>${r.isFoil ? '<span class="pill f">✨ Foil</span>' : '<span style="color:var(--muted);font-size:11px">—</span>'}</td>
+      <td class="mono">${(r.marketPriceTix || 0).toFixed(4)}</td>
+      <td class="mono text-warn">${(r.buyPrice || 0).toFixed(4)}</td>
+      <td class="mono text-green">${(r.sellPrice || 0).toFixed(4)}</td>
+    </tr>`).join('');
+}
+
+function sortPrices(col) {
+  if (priceSortCol === col) priceSortDir *= -1;
+  else { priceSortCol = col; priceSortDir = 1; }
+  filterPriceTable();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// FILTER TAB
+// ══════════════════════════════════════════════════════════════════
+let filterBotId    = '';
+let filterAllSets  = [];
+let filterCardData = [];
+let filterCardSetCode = '';
+
+async function initFilterTab() {
+  try {
+    const bots = await fetchJson('/api/bots');
+    const sel  = document.getElementById('filterBotSelect');
+    const prev = sel.value;
+    sel.innerHTML = '<option value="">— Velg bot —</option>' +
+      bots.map(b => `<option value="${esc(b.bot_id)}">${esc(b.account_name)} (${esc(b.bot_type)})</option>`).join('');
+    if (prev) { sel.value = prev; }
+    if (sel.value) onFilterBotChange();
+  } catch(e) { console.error('initFilterTab:', e); }
+}
+
+async function onFilterBotChange() {
+  filterBotId = document.getElementById('filterBotSelect').value;
+  const checklist = document.getElementById('filterSetChecklist');
+  const status    = document.getElementById('filterBotStatus');
+  if (!filterBotId) { checklist.style.display = 'none'; status.textContent = ''; return; }
+  checklist.style.display = 'block';
+  document.getElementById('filterEnabledSetsPanel').style.display = 'none';
+  document.getElementById('filterCardPanel').style.display = 'none';
+  status.textContent = 'Laster...';
+  try {
+    filterAllSets = await fetchJson(`/api/bots/${filterBotId}/set-rules`);
+    renderSetChecklist();
+    const enabledCount = filterAllSets.filter(s => s.enabled).length;
+    status.textContent = `${enabledCount} aktive sett`;
+    if (enabledCount > 0) renderEnabledSetsTable();
+  } catch(e) { status.textContent = '⚠️ ' + e.message; }
+}
+
+function renderSetChecklist() {
+  const q    = (document.getElementById('filterSetSearch').value || '').toLowerCase();
+  const grid = document.getElementById('filterSetChecklistGrid');
+  const list = q ? filterAllSets.filter(s => (s.set_name||s.set_code||'').toLowerCase().includes(q)) : filterAllSets;
+  grid.innerHTML = list.map(s => {
+    const code = s.set_code; const name = s.set_name || code;
+    return `<label id="chk-label-${esc(code)}"
+             style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:13px;user-select:none;
+                    background:${s.enabled?'rgba(79,70,229,.07)':'transparent'};border:1px solid ${s.enabled?'var(--accent)':'var(--border)'}">
+        <input type="checkbox" ${s.enabled?'checked':''} onchange="toggleSetEnabled('${esc(code)}',this.checked)"
+               style="accent-color:var(--accent);width:15px;height:15px;flex-shrink:0">
+        <span class="tag" style="font-size:10px;flex-shrink:0">${esc(code)}</span>
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(name)}">${esc(name)}</span>
+      </label>`;
+  }).join('');
+}
+
+function toggleSetEnabled(setCode, checked) {
+  const s = filterAllSets.find(x => x.set_code === setCode);
+  if (s) s.enabled = checked;
+  const lbl = document.getElementById(`chk-label-${setCode}`);
+  if (lbl) { lbl.style.background = checked?'rgba(79,70,229,.07)':'transparent'; lbl.style.border=`1px solid ${checked?'var(--accent)':'var(--border)'}`; }
+}
+
+function filterCheckAll(state) { filterAllSets.forEach(s => s.enabled = state); renderSetChecklist(); }
+
+async function saveEnabledSets() {
+  const enabledSets = filterAllSets.filter(s => s.enabled).map(s => s.set_code);
+  try {
+    await fetchJson(`/api/bots/${filterBotId}/enabled-sets`, 'PUT', { enabledSets });
+    toast(`✅ ${enabledSets.length} sett aktivert for ${filterBotId}`);
+    filterAllSets = await fetchJson(`/api/bots/${filterBotId}/set-rules`);
+    renderSetChecklist(); renderEnabledSetsTable();
+    document.getElementById('filterBotStatus').textContent = `${enabledSets.length} aktive sett`;
+  } catch(e) { toast('⚠️ ' + e.message); }
+}
+
+function renderEnabledSetsTable() {
+  const enabled = filterAllSets.filter(s => s.enabled);
+  const panel = document.getElementById('filterEnabledSetsPanel');
+  if (!enabled.length) { panel.style.display='none'; return; }
+  panel.style.display='block';
+  document.getElementById('filterSetRulesBody').innerHTML = enabled.map(s => {
+    const code=s.set_code, name=s.set_name||code;
+    return `<tr>
+      <td style="cursor:pointer" onclick="openFilterCardPanel('${esc(code)}','${esc(name)}')">
+        <span class="tag">${esc(code)}</span> <span style="margin-left:6px;font-size:12px">${esc(name)}</span></td>
+      <td><input type="number" step="0.01" id="sr-buy-${esc(code)}"  value="${s.buy_multiplier??0.80}"  style="width:72px;font-size:12px" class="mono"></td>
+      <td><input type="number" step="0.01" id="sr-sell-${esc(code)}" value="${s.sell_multiplier??1.00}" style="width:72px;font-size:12px" class="mono"></td>
+      <td><input type="number" step="1"    id="sr-max-${esc(code)}"  value="${s.max_local_stock??8}"   style="width:64px;font-size:12px" class="mono"></td>
+      <td><input type="number" step="1"    id="sr-keep-${esc(code)}" value="${s.keep_local??0}"        style="width:56px;font-size:12px" class="mono"></td>
+      <td><input type="number" step="1"    id="sr-mpt-${esc(code)}"  value="${s.max_per_trade??4}"     style="width:64px;font-size:12px" class="mono"></td>
+      <td style="white-space:nowrap">
+        <button class="btn-primary btn-small" onclick="saveSetRule('${esc(code)}')">💾</button>
+        <button class="btn-secondary btn-small" style="margin-left:4px" onclick="openFilterCardPanel('${esc(code)}','${esc(name)}')">🃏</button>
+      </td></tr>`;
+  }).join('');
+}
+
+async function saveSetRule(setCode) {
+  const buy=parseFloat(document.getElementById(`sr-buy-${setCode}`)?.value)||null;
+  const sell=parseFloat(document.getElementById(`sr-sell-${setCode}`)?.value)||null;
+  const max=parseInt(document.getElementById(`sr-max-${setCode}`)?.value)||null;
+  const keep=parseInt(document.getElementById(`sr-keep-${setCode}`)?.value)||null;
+  const mpt=parseInt(document.getElementById(`sr-mpt-${setCode}`)?.value)||null;
+  try {
+    await fetchJson(`/api/bots/${filterBotId}/set-rules/${setCode}`,'PUT',{enabled:true,maxLocalStock:max,keepLocal:keep,maxPerTrade:mpt,buyMultiplier:buy,sellMultiplier:sell});
+    toast(`✅ ${setCode} regler lagret`);
+  } catch(e) { toast('⚠️ '+e.message); }
+}
+
+async function applyBulkRules() {
+  const buy=parseFloat(document.getElementById('bulkBuy').value)||null;
+  const sell=parseFloat(document.getElementById('bulkSell').value)||null;
+  const max=parseInt(document.getElementById('bulkMax').value)||null;
+  const keep=parseInt(document.getElementById('bulkKeep').value)||null;
+  const mpt=parseInt(document.getElementById('bulkMpt').value)||null;
+  if(!buy&&!sell&&!max&&!keep&&!mpt){toast('⚠️ Fyll inn minst én verdi');return;}
+  let saved=0;
+  for(const s of filterAllSets.filter(x=>x.enabled)){
+    try{await fetchJson(`/api/bots/${filterBotId}/set-rules/${s.set_code}`,'PUT',{enabled:true,buyMultiplier:buy??s.buy_multiplier,sellMultiplier:sell??s.sell_multiplier,maxLocalStock:max??s.max_local_stock,keepLocal:keep??s.keep_local,maxPerTrade:mpt??s.max_per_trade});saved++;}catch(e){}
+  }
+  toast(`✅ Bulk-regler lagret for ${saved} sett`);
+  filterAllSets=await fetchJson(`/api/bots/${filterBotId}/set-rules`);
+  renderSetChecklist();renderEnabledSetsTable();
+}
+
+async function openFilterCardPanel(setCode, setName) {
+  filterCardSetCode=setCode;
+  document.getElementById('filterCardPanelSetName').textContent=`${setName} (${setCode})`;
+  document.getElementById('filterCardPanelCount').textContent='';
+  document.getElementById('filterCardSearch').value='';
+  const panel=document.getElementById('filterCardPanel');
+  panel.style.display='block';
+  document.getElementById('filterCardBody').innerHTML='<tr><td colspan="9" class="loading muted">Laster kort...</td></tr>';
+  panel.scrollIntoView({behavior:'smooth',block:'start'});
+  try {
+    filterCardData=await fetchJson(`/api/bots/${filterBotId}/card-rules?setCode=${encodeURIComponent(setCode)}`);
+    document.getElementById('filterCardPanelCount').textContent=`${filterCardData.length} kort`;
+    renderFilterCards();
+  } catch(e) { document.getElementById('filterCardBody').innerHTML=`<tr><td colspan="9" class="loading text-red">Feil: ${e.message}</td></tr>`; }
+}
+
+function closeFilterCardPanel(){document.getElementById('filterCardPanel').style.display='none';filterCardData=[];filterCardSetCode='';}
+
+function renderFilterCards(){
+  const q=(document.getElementById('filterCardSearch').value||'').toLowerCase();
+  const cards=q?filterCardData.filter(c=>(c.card_name||'').toLowerCase().includes(q)):filterCardData;
+  const tbody=document.getElementById('filterCardBody');
+  if(!cards.length){tbody.innerHTML='<tr><td colspan="9" class="loading muted">Ingen kort funnet.</td></tr>';return;}
+  tbody.innerHTML=cards.map(c=>{
+    const id=c.card_id,name=c.card_name,market=(c.market_price_tix||0).toFixed(4),buy=(c.effective_buy_price||0).toFixed(4),sell=(c.effective_sell_price||0).toFixed(4),keep=c.redeem_reserved??0,max=c.max_stock??8,mpt=c.max_per_trade??4,isOvr=c.has_bot_override;
+    return `<tr style="${isOvr?'background:rgba(79,70,229,.04)':''}">
+      <td><strong>${esc(name)}</strong>${c.collector_number?`<span style="font-size:10px;color:#94a3b8"> #${c.collector_number}</span>`:''}${c.is_foil?' <span class="pill f">✨</span>':''}${isOvr?' <span style="font-size:10px;color:var(--accent)" title="Bot-override">★</span>':''}</td>
+      <td>${rarityPill(c.rarity)}</td><td class="mono">${market}</td>
+      <td><input type="number" value="${buy}"  step="0.0001" style="width:80px" id="fcbuy-${esc(id)}"  class="mono"></td>
+      <td><input type="number" value="${sell}" step="0.0001" style="width:80px" id="fcsell-${esc(id)}" class="mono"></td>
+      <td><input type="number" value="${keep}" step="1" min="0" style="width:56px" id="fckeep-${esc(id)}" class="mono"></td>
+      <td><input type="number" value="${max}"  step="1" min="0" style="width:60px" id="fcmax-${esc(id)}"  class="mono"></td>
+      <td><input type="number" value="${mpt}"  step="1" min="1" style="width:60px" id="fcmpt-${esc(id)}"  class="mono"></td>
+      <td style="white-space:nowrap"><button class="btn-primary btn-small" onclick="saveFilterCard('${esc(id)}')">💾</button>${isOvr?`<button class="btn-danger btn-small" style="margin-left:4px" onclick="resetFilterCard('${esc(id)}')">✕</button>`:''}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function saveFilterCard(cardId){
+  const buy=parseFloat(document.getElementById(`fcbuy-${cardId}`)?.value)||null;
+  const sell=parseFloat(document.getElementById(`fcsell-${cardId}`)?.value)||null;
+  const keep=parseInt(document.getElementById(`fckeep-${cardId}`)?.value)||0;
+  const max=parseInt(document.getElementById(`fcmax-${cardId}`)?.value)||null;
+  const mpt=parseInt(document.getElementById(`fcmpt-${cardId}`)?.value)||4;
+  try{await fetchJson(`/api/bots/${filterBotId}/card-rules/${cardId}`,'PUT',{customBuyPrice:buy,customSellPrice:sell,customMaxStock:max,redeemReserved:keep,maxPerTrade:mpt});toast('✅ Lagret');const c=filterCardData.find(x=>x.card_id===cardId);if(c)c.has_bot_override=true;renderFilterCards();}
+  catch(e){toast('⚠️ '+e.message);}
+}
+
+async function resetFilterCard(cardId){
+  if(!confirm('Fjerne bot-spesifikk override?'))return;
+  try{await fetchJson(`/api/bots/${filterBotId}/card-rules/${cardId}`,'DELETE');toast('✅ Override fjernet');await openFilterCardPanel(filterCardSetCode,document.getElementById('filterCardPanelSetName').textContent.replace(/ \(.*\)$/,''));}
+  catch(e){toast('⚠️ '+e.message);}
+}
+
+// ══════════════════════════════════════════════════════════════════
+// BOTS TAB
+// ══════════════════════════════════════════════════════════════════
+async function loadBots(){
+  try{
+    const bots=await fetchJson('/api/bots');allBotIds=bots.map(b=>b.bot_id);
+    document.getElementById('botsContainer').innerHTML=bots.map(b=>`
+      <div class="panel" style="margin-bottom:12px;padding:0;overflow:hidden" id="botcard-${esc(b.bot_id)}">
+        <div style="display:flex;align-items:center;gap:16px;padding:12px 16px;background:#f8f9ff;cursor:pointer" onclick="toggleBotRules('${esc(b.bot_id)}')">
+          <strong style="font-size:14px;min-width:180px">${esc(b.account_name)}</strong>
+          <span class="badge ${b.bot_type==='TRADE'?'blue':b.bot_type==='MULE'?'green':'red'}">${b.bot_type}</span>
+          <span style="font-size:12px;color:#94a3b8;flex:1">${esc(b.description||'')}</span>
+          <span class="badge ${b.is_online?'green':'red'}">${b.is_online?'● Online':'○ Offline'}</span>
+          <span style="font-size:12px;color:#94a3b8">${b.total_cards} kort</span>
+          <span style="font-size:16px;color:var(--muted)">▼</span>
+        </div>
+        <div id="botrules-${esc(b.bot_id)}" style="display:none;padding:16px;border-top:1px solid var(--border)">
+          <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end">
+            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Type
+              <select class="bot-type-sel" style="width:100px">${['TRADE','MULE','FULLSET'].map(t=>`<option value="${t}"${b.bot_type===t?' selected':''}>${t}</option>`).join('')}</select></label>
+            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Beskrivelse
+              <input type="text" value="${esc(b.description||'')}" style="width:200px" class="bot-desc"></label>
+            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Trade-melding
+              <input type="text" value="${esc(b.trade_message||'')}" style="width:360px" class="bot-trade-msg"></label>
+            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Overfør til
+              <select class="bot-transfer-sel" style="width:160px"><option value="">—</option>${allBotIds.filter(id=>id!==b.bot_id).map(id=>`<option value="${esc(id)}"${b.transfer_to===id?' selected':''}>${esc(id)}</option>`).join('')}</select></label>
+          </div>
+          <div style="background:#fff8e1;border-radius:8px;padding:12px;margin-bottom:12px;border:1px solid #fde68a">
+            <div style="font-size:11px;font-weight:700;color:#92400e;margin-bottom:8px">💵 TIX-regler</div>
+            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">TIX reserve
+              <input type="number" value="${b.tix_reserve||0}" step="100" min="0" style="width:90px" class="bot-tix-reserve"></label>
+          </div>
+          <div style="background:#f0f9ff;border-radius:8px;padding:12px;margin-bottom:12px;border:1px solid #bae6fd">
+            <div style="font-size:11px;font-weight:700;color:#0369a1;margin-bottom:8px">🃏 Kortregler</div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end">
+              <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Maks lokalt lager
+                <input type="number" value="${b.max_local_stock||4}" step="1" min="0" style="width:80px" class="bot-max-local"></label>
+              <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Over maks → overfør til
+                <select class="bot-card-transfer-sel" style="width:160px"><option value="">—</option>${allBotIds.filter(id=>id!==b.bot_id).map(id=>`<option value="${esc(id)}"${b.card_transfer_to===id?' selected':''}>${esc(id)}</option>`).join('')}</select></label>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="btn-primary" onclick="saveBot('${esc(b.bot_id)}','${esc(b.account_name)}')">💾 Lagre</button>
+            <button class="btn-danger btn-small" onclick="deleteBot('${esc(b.bot_id)}')">🗑️ Slett</button>
+          </div>
+        </div>
+      </div>`).join('');
+  }catch(e){document.getElementById('botsContainer').innerHTML=`<div class="loading text-red">⚠️ Feil: ${e.message}</div>`;}
+}
+
+function toggleBotRules(botId){const el=document.getElementById(`botrules-${botId}`);el.style.display=el.style.display==='none'?'block':'none';}
+
+async function saveBot(botId,accountName){
+  const card=document.getElementById(`botcard-${botId}`);
+  await fetchJson(`/api/bots/${botId}`,'PUT',{accountName,botType:card.querySelector('.bot-type-sel').value,description:card.querySelector('.bot-desc').value,transferTo:card.querySelector('.bot-transfer-sel').value||null,tixReserve:parseInt(card.querySelector('.bot-tix-reserve').value)||0,maxLocalStock:parseInt(card.querySelector('.bot-max-local').value)||4,cardTransferTo:card.querySelector('.bot-card-transfer-sel').value||null,tradeMessage:card.querySelector('.bot-trade-msg')?.value||null});
+  toast(`✅ ${botId} lagret`);loadBots();
+}
+
+async function deleteBot(botId){if(!confirm(`Slette bot ${botId}?`))return;await fetchJson(`/api/bots/${botId}`,'DELETE');toast(`🗑️ ${botId} slettet`);loadBots();}
+
+function addBot(){const name=prompt('MTGO-kontonavn for ny bot:');if(!name)return;fetchJson(`/api/bots/${name}`,'PUT',{accountName:name,botType:'TRADE',description:'',transferTo:null,tixReserve:500,maxLocalStock:4,cardTransferTo:'K-76'}).then(()=>{toast(`✅ ${name} lagt til`);loadBots();});}
+
+// ── Credits ───────────────────────────────────────────────────────
+async function loadCredits(){
+  try{
+    const credits=await fetchJson(`${API}/credits`);
+    document.getElementById('creditsBody').innerHTML=credits.length
+      ?credits.map(c=>`<tr><td><strong>${esc(c.playerName)}</strong></td><td class="mono text-green">${c.creditTix.toFixed(4)} TIX</td><td class="muted">${new Date(c.lastTradeAt).toLocaleDateString('no-NO')}</td><td><button class="btn-secondary btn-small" onclick="adjustCredit('${esc(c.playerName)}')">Juster</button></td></tr>`).join('')
+      :'<tr><td colspan="4" class="loading muted">Ingen credits.</td></tr>';
+  }catch(e){document.getElementById('creditsBody').innerHTML=`<tr><td colspan="4" class="loading text-red">Feil: ${e.message}</td></tr>`;}
+}
+
+async function purgeCredits(){if(!confirm('Slette credits for spillere inaktive >90 dager?'))return;const r=await fetchJson(`${API}/credits/purge-inactive`,'POST');toast(`🧹 Slettet credits for ${r.purged} spillere`);loadCredits();}
+
+async function adjustCredit(player){const delta=parseFloat(prompt(`Juster credit for ${player}:`));if(isNaN(delta))return;const reason=prompt('Årsak:')||'Manuell justering';await fetchJson(`${API}/credits/${player}/adjust`,'POST',{delta,reason});toast(`✅ Credit justert for ${player}`);loadCredits();}
+
+// ── Misc ──────────────────────────────────────────────────────────
+async function triggerPriceFeed(){await fetchJson(`${API}/pricefeed/refresh`,'POST');toast('🔄 Prisoppdatering startet...');}
+
+// ── Helpers ───────────────────────────────────────────────────────
+async function fetchJson(url,method='GET',body=null){
+  const opts={method,headers:{'Content-Type':'application/json'}};
+  if(body)opts.body=JSON.stringify(body);
+  const res=await fetch(url,opts);
+  if(!res.ok)throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+function rarityPill(r){const cls={M:'m',R:'r',U:'u',C:'c'}[r]??'c';return `<span class="pill ${cls}">${r||'?'}</span>`;}
+
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+function toast(msg){const el=document.createElement('div');el.textContent=msg;Object.assign(el.style,{position:'fixed',bottom:'20px',right:'20px',background:'#1a1d27',border:'1px solid #6c63ff',color:'#e8e9f0',padding:'10px 18px',borderRadius:'8px',fontSize:'13px',zIndex:9999,boxShadow:'0 4px 20px rgba(0,0,0,.4)'});document.body.appendChild(el);setTimeout(()=>el.remove(),3000);}
+
+// ══════════════════════════════════════════════════════════════════
+// FULLSETT TAB
+// ══════════════════════════════════════════════════════════════════
+let fullsetAllCards = [];
+let fullsetCurrentSet = '';
+let fullsetCurrentFoil = null;
+
+async function initFullsetsTab() {
+  const sel = document.getElementById('fullsetSetSelect');
+  if (sel.options.length > 1) return;
+  try {
+    const sets = await fetchJson('/api/sets');
+    const entries = Object.values(sets).sort((a, b) => (a.set_name||a.set_code).localeCompare(b.set_name||b.set_code));
+    sel.innerHTML = '<option value="">— Velg sett —</option>' +
+      entries.map(s => `<option value="${esc(s.set_code)}">${esc(s.set_name||s.set_code)} (${esc(s.set_code)})</option>`).join('');
+  } catch(e) { toast('⚠️ Kunne ikke laste sett: ' + e.message); }
+}
+
+async function loadFullset() {
+  const setCode   = document.getElementById('fullsetSetSelect').value;
+  const wantFoil  = document.getElementById('fullsetFoil').checked;
+  const wantNonFoil = document.getElementById('fullsetNonFoil').checked;
+  const statsDiv  = document.getElementById('fullsetStats');
+
+  if (!setCode) { statsDiv.style.display = 'none'; return; }
+
+  // Determine foil filter
+  let foilParam = null;
+  if (wantFoil && !wantNonFoil)    foilParam = true;
+  if (!wantFoil && wantNonFoil)    foilParam = false;
+  // if both checked, foilParam stays null = show all
+
+  fullsetCurrentSet  = setCode;
+  fullsetCurrentFoil = foilParam;
+
+  document.getElementById('fullsetCardBody').innerHTML =
+    '<tr><td colspan="6" class="loading">Laster...</td></tr>';
+  statsDiv.style.display = 'block';
+
+  try {
+    const url = `/api/prices?setCode=${encodeURIComponent(setCode)}${foilParam !== null ? '&foil=' + foilParam : ''}`;
+    fullsetAllCards = await fetchJson(url);
+
+    // Calculate stats
+    const totalMarket = fullsetAllCards.reduce((s, c) => s + (c.marketPriceTix || 0), 0);
+    const totalBuy    = fullsetAllCards.reduce((s, c) => s + (c.buyPrice || 0), 0);
+    const totalSell   = fullsetAllCards.reduce((s, c) => s + (c.sellPrice || 0), 0);
+
+    document.getElementById('fsCardCount').textContent    = fullsetAllCards.length;
+    document.getElementById('fsMarketValue').textContent  = totalMarket.toFixed(2) + ' TIX';
+    document.getElementById('fsBuyPrice').textContent     = totalBuy.toFixed(2) + ' TIX';
+    document.getElementById('fsSellPrice').textContent    = totalSell.toFixed(2) + ' TIX';
+
+    // Load existing overrides
+    try {
+      const endpoint = isFoil === true
+        ? `/api/sets/${encodeURIComponent(setCode)}/fullset-foil-pricing`
+        : `/api/sets/${encodeURIComponent(setCode)}/fullset-pricing`;
+      const ovr = await fetchJson(endpoint);
+      document.getElementById('fsOverrideSize').value        = ovr.cardCount || '';
+      document.getElementById('fsOverrideBuy').value         = ovr.fullsetBuy || '';
+      document.getElementById('fsOverrideSell').value        = ovr.fullsetSell || '';
+      document.getElementById('fsOverrideBuyEnabled').value  = ovr.fullsetEnabled ? 'true' : 'false';
+      document.getElementById('fsOverrideSellEnabled').value = ovr.fullsetEnabled ? 'true' : 'false';
+    } catch(e) {
+      document.getElementById('fsOverrideSize').value = '';
+      document.getElementById('fsOverrideBuy').value  = '';
+      document.getElementById('fsOverrideSell').value = '';
+    }
+
+    filterFullsetCards();
+  } catch(e) {
+    document.getElementById('fullsetCardBody').innerHTML =
+      `<tr><td colspan="6" class="loading text-red">Feil: ${e.message}</td></tr>`;
+  }
+}
+
+function filterFullsetCards() {
+  const q = (document.getElementById('fullsetCardSearch').value || '').toLowerCase();
+  const rows = q ? fullsetAllCards.filter(c => (c.cardName||'').toLowerCase().includes(q)) : fullsetAllCards;
+  const tbody = document.getElementById('fullsetCardBody');
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="6" class="loading muted">Ingen kort.</td></tr>'; return; }
+  tbody.innerHTML = rows.map((c, i) => `
+    <tr>
+      <td class="muted" style="font-size:11px">${c.collectorNumber || (i+1)}</td>
+      <td><strong>${esc(c.cardName)}</strong>${c.isFoil ? ' <span class="pill f">✨</span>' : ''}</td>
+      <td>${rarityPill(c.rarity)}</td>
+      <td class="mono">${(c.marketPriceTix||0).toFixed(4)}</td>
+      <td class="mono text-warn">${(c.buyPrice||0).toFixed(4)}</td>
+      <td class="mono text-green">${(c.sellPrice||0).toFixed(4)}</td>
+    </tr>`).join('');
+}
+
+async function saveFullsetOverride() {
+  const setCode  = fullsetCurrentSet;
+  if (!setCode) return;
+  const buy      = parseFloat(document.getElementById('fsOverrideBuy').value) || null;
+  const sell     = parseFloat(document.getElementById('fsOverrideSell').value) || null;
+  const enabled  = document.getElementById('fsOverrideBuyEnabled').value === 'true';
+  const isFoil   = fullsetCurrentFoil;
+  const endpoint = isFoil === true
+    ? `/api/sets/${encodeURIComponent(setCode)}/fullset-foil-pricing`
+    : `/api/sets/${encodeURIComponent(setCode)}/fullset-pricing`;
+  try {
+    await fetchJson(endpoint, 'PUT', {
+      fullsetBuy: buy, fullsetSell: sell, fullsetEnabled: enabled
+    });
+    toast('✅ Fullsett-innstillinger lagret');
+  } catch(e) { toast('⚠️ ' + e.message); }
+}
+
+async function clearFullsetOverride() {
+  const setCode = fullsetCurrentSet;
+  if (!setCode) return;
+  if (!confirm('Nullstille alle overrides for dette settet?')) return;
+  const isFoil   = fullsetCurrentFoil;
+  const endpoint = isFoil === true
+    ? `/api/sets/${encodeURIComponent(setCode)}/fullset-foil-pricing`
+    : `/api/sets/${encodeURIComponent(setCode)}/fullset-pricing`;
+  try {
+    await fetchJson(endpoint, 'PUT', { fullsetBuy: null, fullsetSell: null, fullsetEnabled: false });
+    toast('✅ Overrides nullstilt');
+    loadFullset();
+  } catch(e) { toast('⚠️ ' + e.message); }
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+loadInventory();
+document.getElementById('lastFeed').textContent = new Date().toLocaleTimeString('no-NO');
+</script>
+</body>
+</html>
