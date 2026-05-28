@@ -891,12 +891,15 @@ async function loadFullset() {
 
     // Load existing overrides
     try {
-      const ovr = await fetchJson(`/api/fullset-overrides/${encodeURIComponent(setCode)}?foil=${foilParam ?? ''}`);
-      document.getElementById('fsOverrideSize').value        = ovr.setSize || '';
-      document.getElementById('fsOverrideBuy').value         = ovr.buyPrice || '';
-      document.getElementById('fsOverrideSell').value        = ovr.sellPrice || '';
-      document.getElementById('fsOverrideBuyEnabled').value  = ovr.buyEnabled  !== false ? 'true' : 'false';
-      document.getElementById('fsOverrideSellEnabled').value = ovr.sellEnabled !== false ? 'true' : 'false';
+      const endpoint = isFoil === true
+        ? `/api/sets/${encodeURIComponent(setCode)}/fullset-foil-pricing`
+        : `/api/sets/${encodeURIComponent(setCode)}/fullset-pricing`;
+      const ovr = await fetchJson(endpoint);
+      document.getElementById('fsOverrideSize').value        = ovr.cardCount || '';
+      document.getElementById('fsOverrideBuy').value         = ovr.fullsetBuy || '';
+      document.getElementById('fsOverrideSell').value        = ovr.fullsetSell || '';
+      document.getElementById('fsOverrideBuyEnabled').value  = ovr.fullsetEnabled ? 'true' : 'false';
+      document.getElementById('fsOverrideSellEnabled').value = ovr.fullsetEnabled ? 'true' : 'false';
     } catch(e) {
       document.getElementById('fsOverrideSize').value = '';
       document.getElementById('fsOverrideBuy').value  = '';
@@ -929,16 +932,16 @@ function filterFullsetCards() {
 async function saveFullsetOverride() {
   const setCode  = fullsetCurrentSet;
   if (!setCode) return;
-  const size     = parseInt(document.getElementById('fsOverrideSize').value) || null;
   const buy      = parseFloat(document.getElementById('fsOverrideBuy').value) || null;
   const sell     = parseFloat(document.getElementById('fsOverrideSell').value) || null;
-  const buyEn    = document.getElementById('fsOverrideBuyEnabled').value === 'true';
-  const sellEn   = document.getElementById('fsOverrideSellEnabled').value === 'true';
+  const enabled  = document.getElementById('fsOverrideBuyEnabled').value === 'true';
   const isFoil   = fullsetCurrentFoil;
+  const endpoint = isFoil === true
+    ? `/api/sets/${encodeURIComponent(setCode)}/fullset-foil-pricing`
+    : `/api/sets/${encodeURIComponent(setCode)}/fullset-pricing`;
   try {
-    await fetchJson(`/api/fullset-overrides/${encodeURIComponent(setCode)}`, 'PUT', {
-      setCode, isFoil, setSize: size, buyPrice: buy, sellPrice: sell,
-      buyEnabled: buyEn, sellEnabled: sellEn
+    await fetchJson(endpoint, 'PUT', {
+      fullsetBuy: buy, fullsetSell: sell, fullsetEnabled: enabled
     });
     toast('✅ Fullsett-innstillinger lagret');
   } catch(e) { toast('⚠️ ' + e.message); }
@@ -948,8 +951,12 @@ async function clearFullsetOverride() {
   const setCode = fullsetCurrentSet;
   if (!setCode) return;
   if (!confirm('Nullstille alle overrides for dette settet?')) return;
+  const isFoil   = fullsetCurrentFoil;
+  const endpoint = isFoil === true
+    ? `/api/sets/${encodeURIComponent(setCode)}/fullset-foil-pricing`
+    : `/api/sets/${encodeURIComponent(setCode)}/fullset-pricing`;
   try {
-    await fetchJson(`/api/fullset-overrides/${encodeURIComponent(setCode)}`, 'DELETE');
+    await fetchJson(endpoint, 'PUT', { fullsetBuy: null, fullsetSell: null, fullsetEnabled: false });
     toast('✅ Overrides nullstilt');
     loadFullset();
   } catch(e) { toast('⚠️ ' + e.message); }
