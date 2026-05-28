@@ -27,18 +27,28 @@ app.UseCors();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-app.MapGet("/api/inventory", async (InventoryRepository inv, string? search = null, string? set = null) =>
-    Results.Ok(await inv.GetDashboardInventoryAsync(search, set)))
+// ── Inventory ────────────────────────────────────────────────────
+
+app.MapGet("/api/inventory", async (InventoryRepository inv, string? search = null, string? set = null, string? botId = null) =>
+    Results.Ok(await inv.GetDashboardInventoryAsync(search, set, botId)))
 .WithName("GetInventory");
 
 app.MapGet("/api/inventory/{botId}", async (string botId, InventoryRepository inv) =>
     Results.Ok(await inv.GetBotInventoryAsync(botId)));
+
+// ── Cards / Prices ───────────────────────────────────────────────
+
+app.MapGet("/api/prices", async (CardRepository cards, string setCode, bool? foil = null) =>
+    Results.Ok(await cards.GetCardsBySetAsync(setCode, foil)))
+.WithSummary("Get card prices for a set, optionally filtered by foil");
 
 app.MapPut("/api/cards/{cardId}/overrides", async (string cardId, CardOverrideRequest req, CardRepository cards) =>
 {
     await cards.SetCardOverridesAsync(cardId, req.CustomBuyPrice, req.CustomSellPrice, req.CustomMaxStock, req.RedeemReserved, req.MaxPerTrade);
     return Results.Ok(new { message = $"Overrides updated for {cardId}" });
 });
+
+// ── Sets ─────────────────────────────────────────────────────────
 
 app.MapPut("/api/sets/{setCode}/rules", async (string setCode, SetRulesRequest req, CardRepository cards) =>
 {
@@ -53,6 +63,8 @@ app.MapPost("/api/sets/{setCode}/apply-keep", async (string setCode, ApplyKeepRe
 });
 
 app.MapGet("/api/sets", async (CardRepository cards) => Results.Ok(await cards.GetAllSetsAsync()));
+
+// ── Bot set rules ────────────────────────────────────────────────
 
 app.MapGet("/api/bots/{botId}/set-rules", async (string botId, DatabaseConnectionFactory dbf) =>
 {
@@ -105,6 +117,8 @@ app.MapDelete("/api/bots/{botId}/set-rules/{setCode}", async (string botId, stri
     return Results.Ok(new { message = "Deleted" });
 });
 
+// ── Bot card rules ───────────────────────────────────────────────
+
 app.MapGet("/api/bots/{botId}/card-rules", async (string botId, string? setCode, DatabaseConnectionFactory dbf) =>
 {
     using var conn = (Npgsql.NpgsqlConnection)await dbf.CreateConnectionAsync();
@@ -145,6 +159,8 @@ app.MapDelete("/api/bots/{botId}/card-rules/{cardId}", async (string botId, stri
     return Results.Ok(new { message = "Bot card rule deleted" });
 });
 
+// ── Credits ──────────────────────────────────────────────────────
+
 app.MapGet("/api/credits", async (CreditRepository credits) => Results.Ok(await credits.GetAllCreditsAsync()));
 
 app.MapPost("/api/credits/{playerName}/adjust", async (string playerName, CreditAdjustRequest req, CreditRepository credits) =>
@@ -155,6 +171,8 @@ app.MapPost("/api/credits/{playerName}/adjust", async (string playerName, Credit
 
 app.MapPost("/api/credits/purge-inactive", async (CreditRepository credits, int days = 90) =>
     Results.Ok(new { purged = await credits.PurgeInactiveCreditAsync(days), days }));
+
+// ── Bots ─────────────────────────────────────────────────────────
 
 app.MapGet("/api/bots", async (DatabaseConnectionFactory dbf) =>
 {
@@ -168,7 +186,9 @@ app.MapGet("/api/bots", async (DatabaseConnectionFactory dbf) =>
                COALESCE(SUM(bi.quantity), 0) AS total_cards
         FROM bots b
         LEFT JOIN bot_inventory bi ON b.bot_id = bi.bot_id
-        GROUP BY b.bot_id, b.account_name, b.bot_type, b.description, b.transfer_to, b.is_online, b.last_seen
+        GROUP BY b.bot_id, b.account_name, b.bot_type, b.description, b.transfer_to, b.is_online, b.last_seen,
+                 b.tix_reserve, b.max_local_stock, b.card_transfer_to, b.fullset_transfer_to, b.trade_message,
+                 b.fullset_buy_enabled, b.fullset_sell_enabled, b.max_sets_per_trade
         ORDER BY b.bot_type, b.bot_id
         """);
     return Results.Ok(bots);
@@ -198,6 +218,8 @@ app.MapDelete("/api/bots/{botId}", async (string botId, DatabaseConnectionFactor
     await conn.ExecuteAsync("DELETE FROM bots WHERE bot_id = @BotId", new { BotId=botId });
     return Results.Ok(new { message = $"Bot {botId} deleted" });
 });
+
+// ── Fullset pricing ───────────────────────────────────────────────
 
 app.MapGet("/api/sets/{setCode}/fullset-pricing", async (string setCode, DatabaseConnectionFactory dbf) =>
 {
@@ -255,6 +277,8 @@ app.MapPut("/api/sets/{setCode}/fullset-foil-pricing", async (string setCode, Fu
     return Results.Ok(new { message = $"Foil fullset pricing updated for {setCode}" });
 });
 
+// ── Settings ─────────────────────────────────────────────────────
+
 app.MapGet("/api/settings/foil-multiplier", async (DatabaseConnectionFactory dbf) =>
 {
     using var conn = (Npgsql.NpgsqlConnection)await dbf.CreateConnectionAsync();
@@ -276,6 +300,7 @@ app.MapGet("/api/status", () => Results.Ok(new { service="KorthaienBOT Dashboard
 
 app.Run();
 
+// ── Request/response models ───────────────────────────────────────
 record CardOverrideRequest(decimal? CustomBuyPrice, decimal? CustomSellPrice, int? CustomMaxStock, int RedeemReserved, int MaxPerTrade = 4);
 record SetRulesRequest(decimal BuyMultiplier, decimal SellMultiplier, int MaxStock, int? BaseSetSize = null);
 record CreditAdjustRequest(decimal Delta, string? Reason);
