@@ -19,54 +19,36 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font: 14px/1.5 'Inter', system-ui, sans-serif; min-height: 100vh; }
-
-  /* ── Layout ── */
   .shell { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
   .sidebar { background: #1e1b4b; border-right: 1px solid var(--border); padding: 24px 0; display: flex; flex-direction: column; }
   .main { padding: 28px; overflow-y: auto; }
-
-  /* ── Sidebar ── */
   .logo { padding: 0 20px 24px; font-size: 18px; font-weight: 700; color: #ffffff; border-bottom: 1px solid var(--border); }
   .logo span { color: var(--accent2); }
   nav a { display: flex; align-items: center; gap: 10px; padding: 11px 20px; color: #c7d2fe; text-decoration: none; font-size: 13px; transition: all .15s; }
   nav a:hover, nav a.active { background: rgba(255,255,255,.15); color: #ffffff; border-right: 2px solid var(--accent); }
   nav a .icon { font-size: 16px; width: 20px; text-align: center; }
-
-  /* ── Header ── */
   .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
   .page-title { font-size: 22px; font-weight: 700; }
   .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; }
   .badge.green { background: rgba(16,185,129,.15); color: var(--success); }
   .badge.red   { background: rgba(239,68,68,.15);  color: var(--danger); }
   .badge.blue  { background: rgba(79,70,229,.15);  color: var(--accent); }
-
-  /* ── Cards / Panels ── */
   .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
   .panel-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 16px; }
-
-  /* ── Stat tiles ── */
   .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
   .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
   .stat .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
   .stat .value { font-size: 26px; font-weight: 700; }
   .stat .value.accent  { color: var(--accent); }
   .stat .value.accent2 { color: var(--accent2); }
-
-  /* ── Search & filters bar ── */
   .toolbar { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
   input[type=text], input[type=number], select {
     background: var(--bg); border: 1px solid var(--border); color: var(--text);
-    border-radius: 6px; padding: 7px 12px; font-size: 13px; outline: none;
-    transition: border-color .15s;
+    border-radius: 6px; padding: 7px 12px; font-size: 13px; outline: none; transition: border-color .15s;
   }
   input:focus, select:focus { border-color: var(--accent); }
   input[type=text] { flex: 1; min-width: 200px; }
-
-  /* ── Buttons ── */
-  button {
-    padding: 7px 16px; border-radius: 6px; border: none; cursor: pointer;
-    font-size: 13px; font-weight: 600; transition: all .15s;
-  }
+  button { padding: 7px 16px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; transition: all .15s; }
   .btn-primary   { background: var(--accent);  color: #fff; }
   .btn-primary:hover { background: #7c75ff; }
   .btn-secondary { background: var(--border);  color: var(--text); }
@@ -75,8 +57,6 @@
   .btn-success:hover { background: #047857; }
   .btn-danger    { background: rgba(239,68,68,.15); color: var(--danger); border: 1px solid var(--danger); }
   .btn-small     { padding: 4px 10px; font-size: 12px; }
-
-  /* ── Table ── */
   .tbl-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   th { text-align: left; padding: 10px 12px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--border); white-space: nowrap; }
@@ -89,8 +69,6 @@
   .pill.c { background: rgba(107,114,128,.15); color: #9ca3af; }
   .pill.m { background: rgba(168,85,247,.15);  color: #d8b4fe; }
   .pill.f { background: rgba(0,212,170,.15);   color: var(--accent2); }
-
-  /* ── Misc ── */
   .muted      { color: var(--muted); }
   .text-green { color: var(--success); }
   .text-warn  { color: var(--warn); }
@@ -99,17 +77,20 @@
   .loading    { color: var(--muted); padding: 40px; text-align: center; }
   .tag        { display: inline-block; background: rgba(108,99,255,.15); color: var(--accent); border-radius: 4px; padding: 1px 6px; font-size: 11px; margin: 1px; }
   .hint       { background: #f8f9ff; border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; font-size: 12px; color: #64748b; margin-bottom: 16px; line-height: 1.8; }
+  /* Prices tab specific */
+  .foil-toggle { display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; user-select:none; }
+  .foil-toggle input[type=checkbox] { accent-color:var(--accent); width:15px; height:15px; cursor:pointer; }
+  #priceSetSelect { min-width:260px; font-size:14px; padding:8px 14px; }
 </style>
 </head>
 <body>
 <div class="shell">
-
-  <!-- ── Sidebar ── -->
   <aside class="sidebar">
     <div class="logo">Korthaien<span>BOT</span></div>
     <nav>
       <a href="#" class="active" onclick="showTab('inventory')"><span class="icon">📦</span> Inventory</a>
       <a href="#" onclick="showTab('sets')"><span class="icon">🃏</span> Filtre</a>
+      <a href="#" onclick="showTab('prices')"><span class="icon">💲</span> Priser</a>
       <a href="#" onclick="showTab('credits')"><span class="icon">💰</span> Kunde-credits</a>
       <a href="#" onclick="showTab('bots')"><span class="icon">🤖</span> Botter</a>
     </nav>
@@ -119,18 +100,13 @@
     </div>
   </aside>
 
-  <!-- ── Main ── -->
   <main class="main">
-
-    <!-- BOT STATUS BAR -->
     <div id="botStatusBar" style="display:flex; gap:12px; padding:8px 32px; background:#1e1b4b; border-bottom:1px solid #312e81; flex-wrap:wrap; margin:-28px -28px 28px -28px;">
       <span style="font-size:11px;color:#94a3b8;align-self:center">BOTTER:</span>
       <div id="botStatusItems" style="display:flex;gap:12px;flex-wrap:wrap"></div>
     </div>
 
-    <!-- ══════════════════════════════════════════════════════════
-         INVENTORY TAB
-    ══════════════════════════════════════════════════════════════ -->
+    <!-- INVENTORY TAB -->
     <div id="tab-inventory">
       <div class="page-header">
         <div class="page-title">Samlet Inventory</div>
@@ -147,10 +123,8 @@
         <select id="setFilter" onchange="loadInventory()"><option value="">Alle sett</option></select>
         <select id="rarityFilter" onchange="loadInventory()">
           <option value="">Alle sjeldenhet</option>
-          <option value="M">Mythic</option>
-          <option value="R">Rare</option>
-          <option value="U">Uncommon</option>
-          <option value="C">Common</option>
+          <option value="M">Mythic</option><option value="R">Rare</option>
+          <option value="U">Uncommon</option><option value="C">Common</option>
         </select>
         <button class="btn-secondary btn-small" onclick="triggerPriceFeed()">🔄 Oppdater priser</button>
       </div>
@@ -161,35 +135,24 @@
               <th>Kortnavn</th><th>Sett</th><th>Sjeldenhet</th><th>Totalt lager</th>
               <th>Fordeling</th><th>Kjøpspris</th><th>Salgspris</th><th>Redeem</th><th>Status</th><th></th>
             </tr></thead>
-            <tbody id="inventoryBody">
-              <tr><td colspan="10" class="loading">Laster inventory...</td></tr>
-            </tbody>
+            <tbody id="inventoryBody"><tr><td colspan="10" class="loading">Laster inventory...</td></tr></tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════════════════════════
-         FILTER TAB  (replaces old sets tab)
-    ══════════════════════════════════════════════════════════════ -->
+    <!-- FILTER TAB -->
     <div id="tab-sets" style="display:none">
-      <div class="page-header">
-        <div class="page-title">Filtre</div>
-      </div>
-
-      <!-- Step 1: Bot picker -->
+      <div class="page-header"><div class="page-title">Filtre</div></div>
       <div class="panel" style="margin-bottom:16px">
         <div class="panel-title">Velg bot</div>
         <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center">
-          <select id="filterBotSelect" onchange="onFilterBotChange()"
-                  style="font-size:14px; padding:9px 14px; min-width:220px">
+          <select id="filterBotSelect" onchange="onFilterBotChange()" style="font-size:14px; padding:9px 14px; min-width:220px">
             <option value="">— Velg bot —</option>
           </select>
           <span id="filterBotStatus" style="font-size:12px; color:var(--muted)"></span>
         </div>
       </div>
-
-      <!-- Step 2: Set checklist -->
       <div id="filterSetChecklist" style="display:none">
         <div class="panel" style="margin-bottom:16px">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px">
@@ -200,20 +163,13 @@
               <button class="btn-primary" onclick="saveEnabledSets()">💾 Lagre valg</button>
             </div>
           </div>
-          <input type="text" id="filterSetSearch" placeholder="🔍 Filtrer sett..."
-                 oninput="renderSetChecklist()"
-                 style="width:100%; max-width:340px; margin-bottom:12px">
-          <div id="filterSetChecklistGrid"
-               style="display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:6px; max-height:340px; overflow-y:auto; padding:4px">
-          </div>
+          <input type="text" id="filterSetSearch" placeholder="🔍 Filtrer sett..." oninput="renderSetChecklist()" style="width:100%; max-width:340px; margin-bottom:12px">
+          <div id="filterSetChecklistGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:6px; max-height:340px; overflow-y:auto; padding:4px"></div>
         </div>
-
-        <!-- Step 3: Enabled sets table -->
         <div id="filterEnabledSetsPanel" style="display:none">
           <div class="panel" style="padding:0; overflow:hidden; margin-bottom:16px">
             <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:12px">
               <div class="panel-title" style="margin-bottom:0">Aktive sett — regler</div>
-              <!-- Bulk row -->
               <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
                 <span style="font-size:11px; color:var(--muted); font-weight:600">Sett alle:</span>
                 <input type="number" id="bulkBuy"  placeholder="Kjøp mult" step="0.01" style="width:80px; font-size:12px">
@@ -227,20 +183,13 @@
             <div class="tbl-wrap">
               <table>
                 <thead><tr>
-                  <th style="width:180px">Sett</th>
-                  <th>Kjøps-mult</th>
-                  <th>Salgs-mult</th>
-                  <th>Maks lager</th>
-                  <th>Keep</th>
-                  <th>Per handel</th>
-                  <th style="width:110px"></th>
+                  <th style="width:180px">Sett</th><th>Kjøps-mult</th><th>Salgs-mult</th>
+                  <th>Maks lager</th><th>Keep</th><th>Per handel</th><th style="width:110px"></th>
                 </tr></thead>
                 <tbody id="filterSetRulesBody"></tbody>
               </table>
             </div>
           </div>
-
-          <!-- Step 4: Card list for selected set -->
           <div id="filterCardPanel" style="display:none">
             <div class="panel" style="padding:0; overflow:hidden">
               <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:8px">
@@ -249,8 +198,7 @@
                   <span id="filterCardPanelCount" style="font-size:11px; color:var(--muted); font-weight:400; margin-left:8px"></span>
                 </div>
                 <div style="display:flex; gap:8px; align-items:center">
-                  <input type="text" id="filterCardSearch" placeholder="🔍 Søk kort..."
-                         oninput="renderFilterCards()" style="width:200px; font-size:12px">
+                  <input type="text" id="filterCardSearch" placeholder="🔍 Søk kort..." oninput="renderFilterCards()" style="width:200px; font-size:12px">
                   <button class="btn-secondary btn-small" onclick="closeFilterCardPanel()">✕ Lukk</button>
                 </div>
               </div>
@@ -258,8 +206,7 @@
                 <table>
                   <thead><tr>
                     <th>Kortnavn</th><th>Rarity</th><th>Markedspris</th>
-                    <th>Kjøpspris</th><th>Salgspris</th><th>Keep</th>
-                    <th>Maks lager</th><th>Per handel</th><th style="width:90px"></th>
+                    <th>Kjøpspris</th><th>Salgspris</th><th>Keep</th><th>Maks lager</th><th>Per handel</th><th style="width:90px"></th>
                   </tr></thead>
                   <tbody id="filterCardBody"></tbody>
                 </table>
@@ -270,9 +217,51 @@
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════════════════════════
-         CREDITS TAB
-    ══════════════════════════════════════════════════════════════ -->
+    <!-- PRICES TAB -->
+    <div id="tab-prices" style="display:none">
+      <div class="page-header">
+        <div class="page-title">Priser</div>
+        <span id="priceCardCount" class="badge blue" style="display:none"></span>
+      </div>
+
+      <!-- Controls -->
+      <div class="panel" style="margin-bottom:16px; padding:16px 20px">
+        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap">
+          <select id="priceSetSelect" onchange="loadPrices()">
+            <option value="">— Velg sett —</option>
+          </select>
+          <label class="foil-toggle">
+            <input type="checkbox" id="priceShowFoil" onchange="filterPriceTable()"> Vis foil
+          </label>
+          <label class="foil-toggle">
+            <input type="checkbox" id="priceShowNonFoil" checked onchange="filterPriceTable()"> Vis ikke-foil
+          </label>
+          <input type="text" id="priceCardSearch" placeholder="🔍 Søk kortnavn..." oninput="filterPriceTable()" style="max-width:220px; min-width:150px; flex:unset">
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="panel" style="padding:0">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>#</th>
+              <th onclick="sortPrices('cardName')" style="cursor:pointer">Kortnavn ↕</th>
+              <th onclick="sortPrices('rarity')" style="cursor:pointer">Rarity ↕</th>
+              <th>Foil</th>
+              <th onclick="sortPrices('marketPriceTix')" style="cursor:pointer">Markedspris ↕</th>
+              <th onclick="sortPrices('buyPrice')" style="cursor:pointer">Kjøpspris ↕</th>
+              <th onclick="sortPrices('sellPrice')" style="cursor:pointer">Salgspris ↕</th>
+            </tr></thead>
+            <tbody id="priceBody">
+              <tr><td colspan="7" class="loading">Velg et sett for å se priser.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CREDITS TAB -->
     <div id="tab-credits" style="display:none">
       <div class="page-header">
         <div class="page-title">Kunde-Credits</div>
@@ -281,20 +270,14 @@
       <div class="panel" style="padding:0">
         <div class="tbl-wrap">
           <table>
-            <thead><tr>
-              <th>Spiller</th><th>Saldo (TIX)</th><th>Siste handel</th><th></th>
-            </tr></thead>
-            <tbody id="creditsBody">
-              <tr><td colspan="4" class="loading">Laster credits...</td></tr>
-            </tbody>
+            <thead><tr><th>Spiller</th><th>Saldo (TIX)</th><th>Siste handel</th><th></th></tr></thead>
+            <tbody id="creditsBody"><tr><td colspan="4" class="loading">Laster credits...</td></tr></tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════════════════════════
-         BOTS TAB
-    ══════════════════════════════════════════════════════════════ -->
+    <!-- BOTS TAB -->
     <div id="tab-bots" style="display:none; width:100%; min-height:400px">
       <div class="page-header">
         <div class="page-title">Botter</div>
@@ -309,29 +292,21 @@
       <div id="botsContainer"></div>
     </div>
 
-    <!-- ══════════════════════════════════════════════════════════
-         SETTINGS TAB
-    ══════════════════════════════════════════════════════════════ -->
-    <div id="tab-settings" style="display:none">
-      <div class="page-header"><div class="page-title">Innstillinger</div></div>
-      <div class="panel">
-        <div class="panel-title">Foil-premium</div>
-        <label>Foil multiplier: <input type="number" id="foilMult" value="1.00" step="0.05" style="width:80px"> × normal pris</label>
-      </div>
-    </div>
-
   </main>
 </div>
 
 <script>
 const API = '/api';
-
-// ── Tab switching ─────────────────────────────────────────────────
 let allBotIds  = [];
 let allSetCards = [];
 let currentSetCode = '';
 let sortCol = 'marketPriceTix';
 let sortDir = -1;
+
+// Prices tab state
+let priceAllRows   = [];
+let priceSortCol   = 'cardName';
+let priceSortDir   = 1;
 
 loadBotStatusBar();
 setInterval(loadBotStatusBar, 30000);
@@ -345,6 +320,7 @@ function showTab(name) {
   if (name === 'sets')      initFilterTab();
   if (name === 'credits')   loadCredits();
   if (name === 'bots')      loadBots();
+  if (name === 'prices')    initPricesTab();
 }
 
 // ── Bot status bar ────────────────────────────────────────────────
@@ -371,15 +347,10 @@ async function loadInventory() {
     let rows = await fetchJson(url);
     rows = rows.filter(r => r.cardName && r.cardName.length > 0);
     const tbody = document.getElementById('inventoryBody');
-    if (!rows.length) {
-      tbody.innerHTML = '<tr><td colspan="10" class="loading muted">Ingen kort funnet.</td></tr>';
-      return;
-    }
+    if (!rows.length) { tbody.innerHTML = '<tr><td colspan="10" class="loading muted">Ingen kort funnet.</td></tr>'; return; }
     document.getElementById('statCards').textContent = rows.length.toLocaleString();
-    document.getElementById('statValue').textContent =
-      rows.reduce((s, r) => s + (r.totalQuantity * r.marketPriceTix), 0).toFixed(2);
-    document.getElementById('statRedeem').textContent =
-      rows.reduce((s, r) => s + r.redeemReserved, 0);
+    document.getElementById('statValue').textContent = rows.reduce((s, r) => s + (r.totalQuantity * r.marketPriceTix), 0).toFixed(2);
+    document.getElementById('statRedeem').textContent = rows.reduce((s, r) => s + r.redeemReserved, 0);
     tbody.innerHTML = rows.map(r => `
       <tr>
         <td><strong>${esc(r.cardName)}</strong>${r.isFoil ? ' <span class="pill f">Foil</span>' : ''}</td>
@@ -395,12 +366,10 @@ async function loadInventory() {
               onclick="editCard('${esc(r.cardId)}','${esc(r.cardName)}',${r.effectiveBuyPrice},${r.effectiveSellPrice},${r.maxStock},${r.redeemReserved})">✏️</button></td>
       </tr>`).join('');
   } catch(e) {
-    document.getElementById('inventoryBody').innerHTML =
-      `<tr><td colspan="10" class="loading text-red">Feil: ${e.message}</td></tr>`;
+    document.getElementById('inventoryBody').innerHTML = `<tr><td colspan="10" class="loading text-red">Feil: ${e.message}</td></tr>`;
   }
 }
 
-// ── Card edit (inventory tab) ─────────────────────────────────────
 function editCard(id, name, buy, sell, max, redeem) {
   const newBuy  = parseFloat(prompt(`Kjøpspris for ${name}:`, buy));
   if (isNaN(newBuy)) return;
@@ -414,12 +383,94 @@ function editCard(id, name, buy, sell, max, redeem) {
 }
 
 // ══════════════════════════════════════════════════════════════════
-// FILTER TAB
+// PRICES TAB
 // ══════════════════════════════════════════════════════════════════
 
-let filterBotId       = '';
-let filterAllSets     = [];
-let filterCardData    = [];
+async function initPricesTab() {
+  const sel = document.getElementById('priceSetSelect');
+  if (sel.options.length > 1) return; // already loaded
+  try {
+    const sets = await fetchJson('/api/sets');
+    const entries = Object.values(sets).sort((a, b) => (a.set_name || a.set_code).localeCompare(b.set_name || b.set_code));
+    sel.innerHTML = '<option value="">— Velg sett —</option>' +
+      entries.map(s => `<option value="${esc(s.set_code)}">${esc(s.set_name || s.set_code)} (${esc(s.set_code)})</option>`).join('');
+  } catch(e) { toast('⚠️ Kunne ikke laste sett: ' + e.message); }
+}
+
+async function loadPrices() {
+  const setCode = document.getElementById('priceSetSelect').value;
+  if (!setCode) {
+    priceAllRows = [];
+    document.getElementById('priceBody').innerHTML = '<tr><td colspan="7" class="loading">Velg et sett for å se priser.</td></tr>';
+    document.getElementById('priceCardCount').style.display = 'none';
+    return;
+  }
+  document.getElementById('priceBody').innerHTML = '<tr><td colspan="7" class="loading">Laster...</td></tr>';
+  try {
+    priceAllRows = await fetchJson(`/api/prices?setCode=${encodeURIComponent(setCode)}`);
+    filterPriceTable();
+  } catch(e) {
+    document.getElementById('priceBody').innerHTML = `<tr><td colspan="7" class="loading text-red">Feil: ${e.message}</td></tr>`;
+  }
+}
+
+function filterPriceTable() {
+  const showFoil    = document.getElementById('priceShowFoil').checked;
+  const showNonFoil = document.getElementById('priceShowNonFoil').checked;
+  const q = (document.getElementById('priceCardSearch').value || '').toLowerCase();
+
+  let rows = priceAllRows.filter(r => {
+    if (r.isFoil && !showFoil)    return false;
+    if (!r.isFoil && !showNonFoil) return false;
+    if (q && !(r.cardName || '').toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  // Sort
+  rows = [...rows].sort((a, b) => {
+    let va = a[priceSortCol] ?? '';
+    let vb = b[priceSortCol] ?? '';
+    if (typeof va === 'string') return priceSortDir * va.localeCompare(vb);
+    return priceSortDir * (va - vb);
+  });
+
+  const badge = document.getElementById('priceCardCount');
+  badge.style.display = 'inline-flex';
+  badge.textContent = `${rows.length} kort`;
+
+  const tbody = document.getElementById('priceBody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="loading muted">Ingen kort funnet.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = rows.map((r, i) => `
+    <tr>
+      <td class="muted" style="font-size:11px">${i + 1}</td>
+      <td>
+        <strong>${esc(r.cardName)}</strong>
+        ${r.collectorNumber ? `<span style="font-size:10px;color:#94a3b8"> #${r.collectorNumber}</span>` : ''}
+      </td>
+      <td>${rarityPill(r.rarity)}</td>
+      <td>${r.isFoil ? '<span class="pill f">✨ Foil</span>' : '<span style="color:var(--muted);font-size:11px">—</span>'}</td>
+      <td class="mono">${(r.marketPriceTix || 0).toFixed(4)}</td>
+      <td class="mono text-warn">${(r.buyPrice || 0).toFixed(4)}</td>
+      <td class="mono text-green">${(r.sellPrice || 0).toFixed(4)}</td>
+    </tr>`).join('');
+}
+
+function sortPrices(col) {
+  if (priceSortCol === col) priceSortDir *= -1;
+  else { priceSortCol = col; priceSortDir = 1; }
+  filterPriceTable();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// FILTER TAB
+// ══════════════════════════════════════════════════════════════════
+let filterBotId    = '';
+let filterAllSets  = [];
+let filterCardData = [];
 let filterCardSetCode = '';
 
 async function initFilterTab() {
@@ -428,9 +479,7 @@ async function initFilterTab() {
     const sel  = document.getElementById('filterBotSelect');
     const prev = sel.value;
     sel.innerHTML = '<option value="">— Velg bot —</option>' +
-      bots.map(b =>
-        `<option value="${esc(b.bot_id)}">${esc(b.account_name)} (${esc(b.bot_type)})</option>`
-      ).join('');
+      bots.map(b => `<option value="${esc(b.bot_id)}">${esc(b.account_name)} (${esc(b.bot_type)})</option>`).join('');
     if (prev) { sel.value = prev; }
     if (sel.value) onFilterBotChange();
   } catch(e) { console.error('initFilterTab:', e); }
@@ -440,51 +489,33 @@ async function onFilterBotChange() {
   filterBotId = document.getElementById('filterBotSelect').value;
   const checklist = document.getElementById('filterSetChecklist');
   const status    = document.getElementById('filterBotStatus');
-
-  if (!filterBotId) {
-    checklist.style.display = 'none';
-    status.textContent = '';
-    return;
-  }
+  if (!filterBotId) { checklist.style.display = 'none'; status.textContent = ''; return; }
   checklist.style.display = 'block';
   document.getElementById('filterEnabledSetsPanel').style.display = 'none';
   document.getElementById('filterCardPanel').style.display = 'none';
   status.textContent = 'Laster...';
-
   try {
     filterAllSets = await fetchJson(`/api/bots/${filterBotId}/set-rules`);
     renderSetChecklist();
     const enabledCount = filterAllSets.filter(s => s.enabled).length;
     status.textContent = `${enabledCount} aktive sett`;
     if (enabledCount > 0) renderEnabledSetsTable();
-  } catch(e) {
-    status.textContent = '⚠️ ' + e.message;
-  }
+  } catch(e) { status.textContent = '⚠️ ' + e.message; }
 }
 
-// ── Checklist ─────────────────────────────────────────────────────
 function renderSetChecklist() {
   const q    = (document.getElementById('filterSetSearch').value || '').toLowerCase();
   const grid = document.getElementById('filterSetChecklistGrid');
-  const list = q
-    ? filterAllSets.filter(s => (s.set_name||s.set_code||'').toLowerCase().includes(q))
-    : filterAllSets;
-
+  const list = q ? filterAllSets.filter(s => (s.set_name||s.set_code||'').toLowerCase().includes(q)) : filterAllSets;
   grid.innerHTML = list.map(s => {
-    const code = s.set_code;
-    const name = s.set_name || code;
-    return `
-      <label id="chk-label-${esc(code)}"
-             style="display:flex; align-items:center; gap:8px; padding:6px 10px;
-                    border-radius:6px; cursor:pointer; font-size:13px; user-select:none;
-                    background:${s.enabled ? 'rgba(79,70,229,.07)' : 'transparent'};
-                    border:1px solid ${s.enabled ? 'var(--accent)' : 'var(--border)'}">
-        <input type="checkbox" ${s.enabled ? 'checked' : ''}
-               onchange="toggleSetEnabled('${esc(code)}', this.checked)"
-               style="accent-color:var(--accent); width:15px; height:15px; flex-shrink:0">
-        <span class="tag" style="font-size:10px; flex-shrink:0">${esc(code)}</span>
-        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap"
-              title="${esc(name)}">${esc(name)}</span>
+    const code = s.set_code; const name = s.set_name || code;
+    return `<label id="chk-label-${esc(code)}"
+             style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:13px;user-select:none;
+                    background:${s.enabled?'rgba(79,70,229,.07)':'transparent'};border:1px solid ${s.enabled?'var(--accent)':'var(--border)'}">
+        <input type="checkbox" ${s.enabled?'checked':''} onchange="toggleSetEnabled('${esc(code)}',this.checked)"
+               style="accent-color:var(--accent);width:15px;height:15px;flex-shrink:0">
+        <span class="tag" style="font-size:10px;flex-shrink:0">${esc(code)}</span>
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(name)}">${esc(name)}</span>
       </label>`;
   }).join('');
 }
@@ -493,16 +524,10 @@ function toggleSetEnabled(setCode, checked) {
   const s = filterAllSets.find(x => x.set_code === setCode);
   if (s) s.enabled = checked;
   const lbl = document.getElementById(`chk-label-${setCode}`);
-  if (lbl) {
-    lbl.style.background = checked ? 'rgba(79,70,229,.07)' : 'transparent';
-    lbl.style.border     = `1px solid ${checked ? 'var(--accent)' : 'var(--border)'}`;
-  }
+  if (lbl) { lbl.style.background = checked?'rgba(79,70,229,.07)':'transparent'; lbl.style.border=`1px solid ${checked?'var(--accent)':'var(--border)'}`; }
 }
 
-function filterCheckAll(state) {
-  filterAllSets.forEach(s => s.enabled = state);
-  renderSetChecklist();
-}
+function filterCheckAll(state) { filterAllSets.forEach(s => s.enabled = state); renderSetChecklist(); }
 
 async function saveEnabledSets() {
   const enabledSets = filterAllSets.filter(s => s.enabled).map(s => s.set_code);
@@ -510,433 +535,208 @@ async function saveEnabledSets() {
     await fetchJson(`/api/bots/${filterBotId}/enabled-sets`, 'PUT', { enabledSets });
     toast(`✅ ${enabledSets.length} sett aktivert for ${filterBotId}`);
     filterAllSets = await fetchJson(`/api/bots/${filterBotId}/set-rules`);
-    renderSetChecklist();
-    renderEnabledSetsTable();
+    renderSetChecklist(); renderEnabledSetsTable();
     document.getElementById('filterBotStatus').textContent = `${enabledSets.length} aktive sett`;
   } catch(e) { toast('⚠️ ' + e.message); }
 }
 
-// ── Enabled sets table ────────────────────────────────────────────
 function renderEnabledSetsTable() {
   const enabled = filterAllSets.filter(s => s.enabled);
-  const panel   = document.getElementById('filterEnabledSetsPanel');
-  const tbody   = document.getElementById('filterSetRulesBody');
-
-  if (!enabled.length) { panel.style.display = 'none'; return; }
-  panel.style.display = 'block';
-
-  tbody.innerHTML = enabled.map(s => {
-    const code    = s.set_code;
-    const name    = s.set_name || code;
-    const defBuy  = s.default_buy_multiplier  || 0.80;
-    const defSell = s.default_sell_multiplier || 1.00;
-    const defMax  = s.default_max_stock       || 8;
-    return `
-      <tr>
-        <td style="cursor:pointer" onclick="openFilterCardPanel('${esc(code)}','${esc(name)}')">
-          <span class="tag">${esc(code)}</span>
-          <span style="margin-left:6px; font-size:12px">${esc(name)}</span>
-        </td>
-        <td><input type="number" step="0.01" id="sr-buy-${esc(code)}"
-                   value="${s.buy_multiplier ?? defBuy}"
-                   style="width:72px; font-size:12px" class="mono"></td>
-        <td><input type="number" step="0.01" id="sr-sell-${esc(code)}"
-                   value="${s.sell_multiplier ?? defSell}"
-                   style="width:72px; font-size:12px" class="mono"></td>
-        <td><input type="number" step="1"    id="sr-max-${esc(code)}"
-                   value="${s.max_local_stock ?? defMax}"
-                   style="width:64px; font-size:12px" class="mono"></td>
-        <td><input type="number" step="1" min="0" id="sr-keep-${esc(code)}"
-                   value="${s.keep_local ?? 0}"
-                   style="width:56px; font-size:12px" class="mono"></td>
-        <td><input type="number" step="1" min="1" id="sr-mpt-${esc(code)}"
-                   value="${s.max_per_trade ?? 4}"
-                   style="width:64px; font-size:12px" class="mono"></td>
-        <td style="white-space:nowrap">
-          <button class="btn-primary btn-small" onclick="saveSetRule('${esc(code)}')">💾</button>
-          <button class="btn-secondary btn-small" style="margin-left:4px"
-                  onclick="openFilterCardPanel('${esc(code)}','${esc(name)}')">🃏</button>
-        </td>
-      </tr>`;
+  const panel = document.getElementById('filterEnabledSetsPanel');
+  if (!enabled.length) { panel.style.display='none'; return; }
+  panel.style.display='block';
+  document.getElementById('filterSetRulesBody').innerHTML = enabled.map(s => {
+    const code=s.set_code, name=s.set_name||code;
+    return `<tr>
+      <td style="cursor:pointer" onclick="openFilterCardPanel('${esc(code)}','${esc(name)}')">
+        <span class="tag">${esc(code)}</span> <span style="margin-left:6px;font-size:12px">${esc(name)}</span></td>
+      <td><input type="number" step="0.01" id="sr-buy-${esc(code)}"  value="${s.buy_multiplier??0.80}"  style="width:72px;font-size:12px" class="mono"></td>
+      <td><input type="number" step="0.01" id="sr-sell-${esc(code)}" value="${s.sell_multiplier??1.00}" style="width:72px;font-size:12px" class="mono"></td>
+      <td><input type="number" step="1"    id="sr-max-${esc(code)}"  value="${s.max_local_stock??8}"   style="width:64px;font-size:12px" class="mono"></td>
+      <td><input type="number" step="1"    id="sr-keep-${esc(code)}" value="${s.keep_local??0}"        style="width:56px;font-size:12px" class="mono"></td>
+      <td><input type="number" step="1"    id="sr-mpt-${esc(code)}"  value="${s.max_per_trade??4}"     style="width:64px;font-size:12px" class="mono"></td>
+      <td style="white-space:nowrap">
+        <button class="btn-primary btn-small" onclick="saveSetRule('${esc(code)}')">💾</button>
+        <button class="btn-secondary btn-small" style="margin-left:4px" onclick="openFilterCardPanel('${esc(code)}','${esc(name)}')">🃏</button>
+      </td></tr>`;
   }).join('');
 }
 
 async function saveSetRule(setCode) {
-  const buy  = parseFloat(document.getElementById(`sr-buy-${setCode}`)?.value)  || null;
-  const sell = parseFloat(document.getElementById(`sr-sell-${setCode}`)?.value) || null;
-  const max  = parseInt(document.getElementById(`sr-max-${setCode}`)?.value)    || null;
-  const keep = parseInt(document.getElementById(`sr-keep-${setCode}`)?.value)   || null;
-  const mpt  = parseInt(document.getElementById(`sr-mpt-${setCode}`)?.value)    || null;
+  const buy=parseFloat(document.getElementById(`sr-buy-${setCode}`)?.value)||null;
+  const sell=parseFloat(document.getElementById(`sr-sell-${setCode}`)?.value)||null;
+  const max=parseInt(document.getElementById(`sr-max-${setCode}`)?.value)||null;
+  const keep=parseInt(document.getElementById(`sr-keep-${setCode}`)?.value)||null;
+  const mpt=parseInt(document.getElementById(`sr-mpt-${setCode}`)?.value)||null;
   try {
-    await fetchJson(`/api/bots/${filterBotId}/set-rules/${setCode}`, 'PUT', {
-      enabled: true, maxLocalStock: max, keepLocal: keep,
-      maxPerTrade: mpt, buyMultiplier: buy, sellMultiplier: sell
-    });
+    await fetchJson(`/api/bots/${filterBotId}/set-rules/${setCode}`,'PUT',{enabled:true,maxLocalStock:max,keepLocal:keep,maxPerTrade:mpt,buyMultiplier:buy,sellMultiplier:sell});
     toast(`✅ ${setCode} regler lagret`);
-    const s = filterAllSets.find(x => x.set_code === setCode);
-    if (s) { s.buy_multiplier = buy; s.sell_multiplier = sell;
-             s.max_local_stock = max; s.keep_local = keep; s.max_per_trade = mpt; }
-  } catch(e) { toast('⚠️ ' + e.message); }
+  } catch(e) { toast('⚠️ '+e.message); }
 }
 
 async function applyBulkRules() {
-  const buy  = parseFloat(document.getElementById('bulkBuy').value)  || null;
-  const sell = parseFloat(document.getElementById('bulkSell').value) || null;
-  const max  = parseInt(document.getElementById('bulkMax').value)    || null;
-  const keep = parseInt(document.getElementById('bulkKeep').value)   || null;
-  const mpt  = parseInt(document.getElementById('bulkMpt').value)    || null;
-  if (!buy && !sell && !max && !keep && !mpt) { toast('⚠️ Fyll inn minst én verdi'); return; }
-
-  const enabled = filterAllSets.filter(s => s.enabled);
-  let saved = 0;
-  for (const s of enabled) {
-    const code = s.set_code;
-    try {
-      await fetchJson(`/api/bots/${filterBotId}/set-rules/${code}`, 'PUT', {
-        enabled:        true,
-        buyMultiplier:  buy  ?? s.buy_multiplier,
-        sellMultiplier: sell ?? s.sell_multiplier,
-        maxLocalStock:  max  ?? s.max_local_stock,
-        keepLocal:      keep ?? s.keep_local,
-        maxPerTrade:    mpt  ?? s.max_per_trade
-      });
-      saved++;
-    } catch(e) { console.error(`Failed ${code}:`, e); }
+  const buy=parseFloat(document.getElementById('bulkBuy').value)||null;
+  const sell=parseFloat(document.getElementById('bulkSell').value)||null;
+  const max=parseInt(document.getElementById('bulkMax').value)||null;
+  const keep=parseInt(document.getElementById('bulkKeep').value)||null;
+  const mpt=parseInt(document.getElementById('bulkMpt').value)||null;
+  if(!buy&&!sell&&!max&&!keep&&!mpt){toast('⚠️ Fyll inn minst én verdi');return;}
+  let saved=0;
+  for(const s of filterAllSets.filter(x=>x.enabled)){
+    try{await fetchJson(`/api/bots/${filterBotId}/set-rules/${s.set_code}`,'PUT',{enabled:true,buyMultiplier:buy??s.buy_multiplier,sellMultiplier:sell??s.sell_multiplier,maxLocalStock:max??s.max_local_stock,keepLocal:keep??s.keep_local,maxPerTrade:mpt??s.max_per_trade});saved++;}catch(e){}
   }
   toast(`✅ Bulk-regler lagret for ${saved} sett`);
-  filterAllSets = await fetchJson(`/api/bots/${filterBotId}/set-rules`);
-  renderSetChecklist();
-  renderEnabledSetsTable();
+  filterAllSets=await fetchJson(`/api/bots/${filterBotId}/set-rules`);
+  renderSetChecklist();renderEnabledSetsTable();
 }
 
-// ── Card panel ────────────────────────────────────────────────────
 async function openFilterCardPanel(setCode, setName) {
-  filterCardSetCode = setCode;
-  const panel = document.getElementById('filterCardPanel');
-  document.getElementById('filterCardPanelSetName').textContent = `${setName} (${setCode})`;
-  document.getElementById('filterCardPanelCount').textContent   = '';
-  document.getElementById('filterCardSearch').value = '';
-  panel.style.display = 'block';
-  document.getElementById('filterCardBody').innerHTML =
-    '<tr><td colspan="9" class="loading muted">Laster kort...</td></tr>';
-  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
+  filterCardSetCode=setCode;
+  document.getElementById('filterCardPanelSetName').textContent=`${setName} (${setCode})`;
+  document.getElementById('filterCardPanelCount').textContent='';
+  document.getElementById('filterCardSearch').value='';
+  const panel=document.getElementById('filterCardPanel');
+  panel.style.display='block';
+  document.getElementById('filterCardBody').innerHTML='<tr><td colspan="9" class="loading muted">Laster kort...</td></tr>';
+  panel.scrollIntoView({behavior:'smooth',block:'start'});
   try {
-    filterCardData = await fetchJson(
-      `/api/bots/${filterBotId}/card-rules?setCode=${encodeURIComponent(setCode)}`);
-    document.getElementById('filterCardPanelCount').textContent = `${filterCardData.length} kort`;
+    filterCardData=await fetchJson(`/api/bots/${filterBotId}/card-rules?setCode=${encodeURIComponent(setCode)}`);
+    document.getElementById('filterCardPanelCount').textContent=`${filterCardData.length} kort`;
     renderFilterCards();
-  } catch(e) {
-    document.getElementById('filterCardBody').innerHTML =
-      `<tr><td colspan="9" class="loading text-red">Feil: ${e.message}</td></tr>`;
-  }
+  } catch(e) { document.getElementById('filterCardBody').innerHTML=`<tr><td colspan="9" class="loading text-red">Feil: ${e.message}</td></tr>`; }
 }
 
-function closeFilterCardPanel() {
-  document.getElementById('filterCardPanel').style.display = 'none';
-  filterCardData = []; filterCardSetCode = '';
-}
+function closeFilterCardPanel(){document.getElementById('filterCardPanel').style.display='none';filterCardData=[];filterCardSetCode='';}
 
-function renderFilterCards() {
-  const q     = (document.getElementById('filterCardSearch').value || '').toLowerCase();
-  const tbody = document.getElementById('filterCardBody');
-  const cards = q
-    ? filterCardData.filter(c => (c.card_name||'').toLowerCase().includes(q))
-    : filterCardData;
-
-  if (!cards.length) {
-    tbody.innerHTML = '<tr><td colspan="9" class="loading muted">Ingen kort funnet.</td></tr>';
-    return;
-  }
-  tbody.innerHTML = cards.map(c => {
-    const id     = c.card_id;
-    const name   = c.card_name;
-    const market = (c.market_price_tix || 0).toFixed(4);
-    const buy    = (c.effective_buy_price  || 0).toFixed(4);
-    const sell   = (c.effective_sell_price || 0).toFixed(4);
-    const keep   = c.redeem_reserved  ?? 0;
-    const max    = c.max_stock        ?? 8;
-    const mpt    = c.max_per_trade    ?? 4;
-    const isOvr  = c.has_bot_override;
-    return `
-      <tr style="${isOvr ? 'background:rgba(79,70,229,.04)' : ''}">
-        <td>
-          <strong>${esc(name)}</strong>
-          ${c.collector_number ? `<span style="font-size:10px;color:#94a3b8"> #${c.collector_number}</span>` : ''}
-          ${c.is_foil ? ' <span class="pill f">✨</span>' : ''}
-          ${isOvr ? ' <span style="font-size:10px;color:var(--accent)" title="Bot-override aktiv">★</span>' : ''}
-        </td>
-        <td>${rarityPill(c.rarity)}</td>
-        <td class="mono">${market}</td>
-        <td><input type="number" value="${buy}"  step="0.0001" style="width:80px" id="fcbuy-${esc(id)}"  class="mono"></td>
-        <td><input type="number" value="${sell}" step="0.0001" style="width:80px" id="fcsell-${esc(id)}" class="mono"></td>
-        <td><input type="number" value="${keep}" step="1" min="0" style="width:56px" id="fckeep-${esc(id)}" class="mono"></td>
-        <td><input type="number" value="${max}"  step="1" min="0" style="width:60px" id="fcmax-${esc(id)}"  class="mono"></td>
-        <td><input type="number" value="${mpt}"  step="1" min="1" style="width:60px" id="fcmpt-${esc(id)}"  class="mono"></td>
-        <td style="white-space:nowrap">
-          <button class="btn-primary btn-small" onclick="saveFilterCard('${esc(id)}')">💾</button>
-          ${isOvr ? `<button class="btn-danger btn-small" style="margin-left:4px"
-                             onclick="resetFilterCard('${esc(id)}')" title="Fjern bot-override">✕</button>` : ''}
-        </td>
-      </tr>`;
+function renderFilterCards(){
+  const q=(document.getElementById('filterCardSearch').value||'').toLowerCase();
+  const cards=q?filterCardData.filter(c=>(c.card_name||'').toLowerCase().includes(q)):filterCardData;
+  const tbody=document.getElementById('filterCardBody');
+  if(!cards.length){tbody.innerHTML='<tr><td colspan="9" class="loading muted">Ingen kort funnet.</td></tr>';return;}
+  tbody.innerHTML=cards.map(c=>{
+    const id=c.card_id,name=c.card_name,market=(c.market_price_tix||0).toFixed(4),buy=(c.effective_buy_price||0).toFixed(4),sell=(c.effective_sell_price||0).toFixed(4),keep=c.redeem_reserved??0,max=c.max_stock??8,mpt=c.max_per_trade??4,isOvr=c.has_bot_override;
+    return `<tr style="${isOvr?'background:rgba(79,70,229,.04)':''}">
+      <td><strong>${esc(name)}</strong>${c.collector_number?`<span style="font-size:10px;color:#94a3b8"> #${c.collector_number}</span>`:''}${c.is_foil?' <span class="pill f">✨</span>':''}${isOvr?' <span style="font-size:10px;color:var(--accent)" title="Bot-override">★</span>':''}</td>
+      <td>${rarityPill(c.rarity)}</td><td class="mono">${market}</td>
+      <td><input type="number" value="${buy}"  step="0.0001" style="width:80px" id="fcbuy-${esc(id)}"  class="mono"></td>
+      <td><input type="number" value="${sell}" step="0.0001" style="width:80px" id="fcsell-${esc(id)}" class="mono"></td>
+      <td><input type="number" value="${keep}" step="1" min="0" style="width:56px" id="fckeep-${esc(id)}" class="mono"></td>
+      <td><input type="number" value="${max}"  step="1" min="0" style="width:60px" id="fcmax-${esc(id)}"  class="mono"></td>
+      <td><input type="number" value="${mpt}"  step="1" min="1" style="width:60px" id="fcmpt-${esc(id)}"  class="mono"></td>
+      <td style="white-space:nowrap"><button class="btn-primary btn-small" onclick="saveFilterCard('${esc(id)}')">💾</button>${isOvr?`<button class="btn-danger btn-small" style="margin-left:4px" onclick="resetFilterCard('${esc(id)}')">✕</button>`:''}</td>
+    </tr>`;
   }).join('');
 }
 
-async function saveFilterCard(cardId) {
-  const buy  = parseFloat(document.getElementById(`fcbuy-${cardId}`)?.value)  || null;
-  const sell = parseFloat(document.getElementById(`fcsell-${cardId}`)?.value) || null;
-  const keep = parseInt(document.getElementById(`fckeep-${cardId}`)?.value)   || 0;
-  const max  = parseInt(document.getElementById(`fcmax-${cardId}`)?.value)    || null;
-  const mpt  = parseInt(document.getElementById(`fcmpt-${cardId}`)?.value)    || 4;
-  try {
-    await fetchJson(`/api/bots/${filterBotId}/card-rules/${cardId}`, 'PUT', {
-      customBuyPrice: buy, customSellPrice: sell,
-      customMaxStock: max, redeemReserved: keep, maxPerTrade: mpt
-    });
-    toast('✅ Lagret');
-    const c = filterCardData.find(x => x.card_id === cardId);
-    if (c) c.has_bot_override = true;
-    renderFilterCards();
-  } catch(e) { toast('⚠️ ' + e.message); }
+async function saveFilterCard(cardId){
+  const buy=parseFloat(document.getElementById(`fcbuy-${cardId}`)?.value)||null;
+  const sell=parseFloat(document.getElementById(`fcsell-${cardId}`)?.value)||null;
+  const keep=parseInt(document.getElementById(`fckeep-${cardId}`)?.value)||0;
+  const max=parseInt(document.getElementById(`fcmax-${cardId}`)?.value)||null;
+  const mpt=parseInt(document.getElementById(`fcmpt-${cardId}`)?.value)||4;
+  try{await fetchJson(`/api/bots/${filterBotId}/card-rules/${cardId}`,'PUT',{customBuyPrice:buy,customSellPrice:sell,customMaxStock:max,redeemReserved:keep,maxPerTrade:mpt});toast('✅ Lagret');const c=filterCardData.find(x=>x.card_id===cardId);if(c)c.has_bot_override=true;renderFilterCards();}
+  catch(e){toast('⚠️ '+e.message);}
 }
 
-async function resetFilterCard(cardId) {
-  if (!confirm('Fjerne bot-spesifikk override? Globale regler vil gjelde igjen.')) return;
-  try {
-    await fetchJson(`/api/bots/${filterBotId}/card-rules/${cardId}`, 'DELETE');
-    toast('✅ Override fjernet');
-    await openFilterCardPanel(
-      filterCardSetCode,
-      document.getElementById('filterCardPanelSetName').textContent.replace(/ \(.*\)$/, '')
-    );
-  } catch(e) { toast('⚠️ ' + e.message); }
+async function resetFilterCard(cardId){
+  if(!confirm('Fjerne bot-spesifikk override?'))return;
+  try{await fetchJson(`/api/bots/${filterBotId}/card-rules/${cardId}`,'DELETE');toast('✅ Override fjernet');await openFilterCardPanel(filterCardSetCode,document.getElementById('filterCardPanelSetName').textContent.replace(/ \(.*\)$/,''));}
+  catch(e){toast('⚠️ '+e.message);}
 }
 
 // ══════════════════════════════════════════════════════════════════
 // BOTS TAB
 // ══════════════════════════════════════════════════════════════════
-
-async function loadBots() {
-  try {
-    const bots = await fetchJson('/api/bots');
-    allBotIds = bots.map(b => b.bot_id);
-    const container = document.getElementById('botsContainer');
-
-    container.innerHTML = bots.map(b => `
-      <div class="panel" style="margin-bottom:12px; padding:0; overflow:hidden" id="botcard-${esc(b.bot_id)}">
-        <div style="display:flex; align-items:center; gap:16px; padding:12px 16px; background:#f8f9ff; cursor:pointer"
-             onclick="toggleBotRules('${esc(b.bot_id)}')">
-          <strong style="font-size:14px; min-width:180px">${esc(b.account_name)}</strong>
+async function loadBots(){
+  try{
+    const bots=await fetchJson('/api/bots');allBotIds=bots.map(b=>b.bot_id);
+    document.getElementById('botsContainer').innerHTML=bots.map(b=>`
+      <div class="panel" style="margin-bottom:12px;padding:0;overflow:hidden" id="botcard-${esc(b.bot_id)}">
+        <div style="display:flex;align-items:center;gap:16px;padding:12px 16px;background:#f8f9ff;cursor:pointer" onclick="toggleBotRules('${esc(b.bot_id)}')">
+          <strong style="font-size:14px;min-width:180px">${esc(b.account_name)}</strong>
           <span class="badge ${b.bot_type==='TRADE'?'blue':b.bot_type==='MULE'?'green':'red'}">${b.bot_type}</span>
           <span style="font-size:12px;color:#94a3b8;flex:1">${esc(b.description||'')}</span>
           <span class="badge ${b.is_online?'green':'red'}">${b.is_online?'● Online':'○ Offline'}</span>
           <span style="font-size:12px;color:#94a3b8">${b.total_cards} kort</span>
           <span style="font-size:16px;color:var(--muted)">▼</span>
         </div>
-        <div id="botrules-${esc(b.bot_id)}" style="display:none; padding:16px; border-top:1px solid var(--border)">
-          <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px; align-items:flex-end">
-            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-              Type
-              <select class="bot-type-sel" style="width:100px">
-                ${['TRADE','MULE','FULLSET'].map(t => `<option value="${t}"${b.bot_type===t?' selected':''}>${t}</option>`).join('')}
-              </select>
-            </label>
-            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-              Beskrivelse
-              <input type="text" value="${esc(b.description||'')}" style="width:200px" class="bot-desc">
-            </label>
-            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-              Trade-melding (vises i MTGO)
-              <input type="text" value="${esc(b.trade_message||'')}" style="width:360px" class="bot-trade-msg">
-            </label>
-            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-              Overfør til
-              <select class="bot-transfer-sel" style="width:160px">
-                <option value="">—</option>
-                ${allBotIds.filter(id => id !== b.bot_id).map(id =>
-                  `<option value="${esc(id)}"${b.transfer_to===id?' selected':''}>${esc(id)}</option>`).join('')}
-              </select>
-            </label>
+        <div id="botrules-${esc(b.bot_id)}" style="display:none;padding:16px;border-top:1px solid var(--border)">
+          <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end">
+            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Type
+              <select class="bot-type-sel" style="width:100px">${['TRADE','MULE','FULLSET'].map(t=>`<option value="${t}"${b.bot_type===t?' selected':''}>${t}</option>`).join('')}</select></label>
+            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Beskrivelse
+              <input type="text" value="${esc(b.description||'')}" style="width:200px" class="bot-desc"></label>
+            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Trade-melding
+              <input type="text" value="${esc(b.trade_message||'')}" style="width:360px" class="bot-trade-msg"></label>
+            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Overfør til
+              <select class="bot-transfer-sel" style="width:160px"><option value="">—</option>${allBotIds.filter(id=>id!==b.bot_id).map(id=>`<option value="${esc(id)}"${b.transfer_to===id?' selected':''}>${esc(id)}</option>`).join('')}</select></label>
           </div>
-          <div style="background:#fff8e1; border-radius:8px; padding:12px; margin-bottom:12px; border:1px solid #fde68a">
+          <div style="background:#fff8e1;border-radius:8px;padding:12px;margin-bottom:12px;border:1px solid #fde68a">
             <div style="font-size:11px;font-weight:700;color:#92400e;margin-bottom:8px">💵 TIX-regler</div>
-            <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-end">
-              <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-                TIX reserve
-                <input type="number" value="${b.tix_reserve||0}" step="100" min="0" style="width:90px" class="bot-tix-reserve">
-              </label>
+            <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">TIX reserve
+              <input type="number" value="${b.tix_reserve||0}" step="100" min="0" style="width:90px" class="bot-tix-reserve"></label>
+          </div>
+          <div style="background:#f0f9ff;border-radius:8px;padding:12px;margin-bottom:12px;border:1px solid #bae6fd">
+            <div style="font-size:11px;font-weight:700;color:#0369a1;margin-bottom:8px">🃏 Kortregler</div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end">
+              <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Maks lokalt lager
+                <input type="number" value="${b.max_local_stock||4}" step="1" min="0" style="width:80px" class="bot-max-local"></label>
+              <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">Over maks → overfør til
+                <select class="bot-card-transfer-sel" style="width:160px"><option value="">—</option>${allBotIds.filter(id=>id!==b.bot_id).map(id=>`<option value="${esc(id)}"${b.card_transfer_to===id?' selected':''}>${esc(id)}</option>`).join('')}</select></label>
             </div>
           </div>
-          <div style="background:#f0f9ff; border-radius:8px; padding:12px; margin-bottom:12px; border:1px solid #bae6fd">
-            <div style="font-size:11px;font-weight:700;color:#0369a1;margin-bottom:8px">🃏 Kortregler (alle sett)</div>
-            <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-end">
-              <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-                Maks lokalt lager
-                <input type="number" value="${b.max_local_stock||4}" step="1" min="0" style="width:80px" class="bot-max-local">
-              </label>
-              <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-                Over maks → overfør til
-                <select class="bot-card-transfer-sel" style="width:160px">
-                  <option value="">—</option>
-                  ${allBotIds.filter(id => id !== b.bot_id).map(id =>
-                    `<option value="${esc(id)}"${b.card_transfer_to===id?' selected':''}>${esc(id)}</option>`).join('')}
-                </select>
-              </label>
-              <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-                Komplett sett → overfør til
-                <select class="bot-fullset-transfer-sel" style="width:160px">
-                  <option value="">— (ingen overføring)</option>
-                  ${allBotIds.filter(id => id !== b.bot_id).map(id =>
-                    `<option value="${esc(id)}"${b.fullset_transfer_to===id?' selected':''}>${esc(id)}</option>`).join('')}
-                </select>
-              </label>
-            </div>
-          </div>
-          ${b.bot_type === 'FULLSET' ? `
-          <div style="background:#fdf4ff; border-radius:8px; padding:12px; margin-bottom:12px; border:1px solid #e9d5ff">
-            <div style="font-size:11px;font-weight:700;color:#7e22ce;margin-bottom:8px">🎁 Fullset-bot regler</div>
-            <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center">
-              <label style="display:flex;align-items:center;gap:6px;font-size:12px">
-                <input type="checkbox" class="bot-fs-buy" ${b.fullset_buy_enabled ? 'checked' : ''}>
-                Kjøp komplette sett
-              </label>
-              <label style="display:flex;align-items:center;gap:6px;font-size:12px">
-                <input type="checkbox" class="bot-fs-sell" ${b.fullset_sell_enabled ? 'checked' : ''}>
-                Selg komplette sett
-              </label>
-              <label style="display:flex;flex-direction:column;gap:2px;font-size:11px;font-weight:600;color:var(--muted)">
-                Maks sett per handel
-                <input type="number" value="${b.max_sets_per_trade||1}" step="1" min="1" style="width:70px" class="bot-max-sets">
-              </label>
-            </div>
-          </div>` : ''}
-          <div style="display:flex; gap:8px; margin-top:4px">
+          <div style="display:flex;gap:8px;margin-top:4px">
             <button class="btn-primary" onclick="saveBot('${esc(b.bot_id)}','${esc(b.account_name)}')">💾 Lagre</button>
             <button class="btn-danger btn-small" onclick="deleteBot('${esc(b.bot_id)}')">🗑️ Slett</button>
           </div>
         </div>
       </div>`).join('');
-  } catch(e) {
-    document.getElementById('botsContainer').innerHTML =
-      `<div class="loading text-red">⚠️ Feil: ${e.message}</div>`;
-  }
+  }catch(e){document.getElementById('botsContainer').innerHTML=`<div class="loading text-red">⚠️ Feil: ${e.message}</div>`;}
 }
 
-function toggleBotRules(botId) {
-  const el = document.getElementById(`botrules-${botId}`);
-  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+function toggleBotRules(botId){const el=document.getElementById(`botrules-${botId}`);el.style.display=el.style.display==='none'?'block':'none';}
+
+async function saveBot(botId,accountName){
+  const card=document.getElementById(`botcard-${botId}`);
+  await fetchJson(`/api/bots/${botId}`,'PUT',{accountName,botType:card.querySelector('.bot-type-sel').value,description:card.querySelector('.bot-desc').value,transferTo:card.querySelector('.bot-transfer-sel').value||null,tixReserve:parseInt(card.querySelector('.bot-tix-reserve').value)||0,maxLocalStock:parseInt(card.querySelector('.bot-max-local').value)||4,cardTransferTo:card.querySelector('.bot-card-transfer-sel').value||null,tradeMessage:card.querySelector('.bot-trade-msg')?.value||null});
+  toast(`✅ ${botId} lagret`);loadBots();
 }
 
-async function saveBot(botId, accountName) {
-  const card      = document.getElementById(`botcard-${botId}`);
-  const type      = card.querySelector('.bot-type-sel').value;
-  const desc      = card.querySelector('.bot-desc').value;
-  const transfer  = card.querySelector('.bot-transfer-sel').value || null;
-  const tixRes    = parseInt(card.querySelector('.bot-tix-reserve').value) || 0;
-  const maxLocal  = parseInt(card.querySelector('.bot-max-local').value) || 4;
-  const cardXfer  = card.querySelector('.bot-card-transfer-sel').value || null;
-  const fsXfer    = card.querySelector('.bot-fullset-transfer-sel')?.value || null;
-  const tradeMsg  = card.querySelector('.bot-trade-msg')?.value || null;
-  const fsBuy     = card.querySelector('.bot-fs-buy')?.checked  ?? false;
-  const fsSell    = card.querySelector('.bot-fs-sell')?.checked ?? true;
-  const maxSets   = parseInt(card.querySelector('.bot-max-sets')?.value) || 1;
-  await fetchJson(`/api/bots/${botId}`, 'PUT', {
-    accountName, botType: type, description: desc, transferTo: transfer,
-    tixReserve: tixRes, maxLocalStock: maxLocal, cardTransferTo: cardXfer,
-    fullsetTransferTo: fsXfer, tradeMessage: tradeMsg,
-    fullsetBuyEnabled: fsBuy, fullsetSellEnabled: fsSell, maxSetsPerTrade: maxSets
-  });
-  toast(`✅ ${botId} lagret`);
-  loadBots();
-}
+async function deleteBot(botId){if(!confirm(`Slette bot ${botId}?`))return;await fetchJson(`/api/bots/${botId}`,'DELETE');toast(`🗑️ ${botId} slettet`);loadBots();}
 
-async function deleteBot(botId) {
-  if (!confirm(`Slette bot ${botId}?`)) return;
-  await fetchJson(`/api/bots/${botId}`, 'DELETE');
-  toast(`🗑️ ${botId} slettet`);
-  loadBots();
-}
-
-function addBot() {
-  const name = prompt('MTGO-kontonavn for ny bot:');
-  if (!name) return;
-  fetchJson(`/api/bots/${name}`, 'PUT', {
-    accountName: name, botType: 'TRADE', description: '',
-    transferTo: null, tixReserve: 500, maxLocalStock: 4, cardTransferTo: 'K-76'
-  }).then(() => { toast(`✅ ${name} lagt til`); loadBots(); });
-}
+function addBot(){const name=prompt('MTGO-kontonavn for ny bot:');if(!name)return;fetchJson(`/api/bots/${name}`,'PUT',{accountName:name,botType:'TRADE',description:'',transferTo:null,tixReserve:500,maxLocalStock:4,cardTransferTo:'K-76'}).then(()=>{toast(`✅ ${name} lagt til`);loadBots();});}
 
 // ── Credits ───────────────────────────────────────────────────────
-async function loadCredits() {
-  try {
-    const credits = await fetchJson(`${API}/credits`);
-    document.getElementById('creditsBody').innerHTML = credits.length
-      ? credits.map(c => `
-          <tr>
-            <td><strong>${esc(c.playerName)}</strong></td>
-            <td class="mono text-green">${c.creditTix.toFixed(4)} TIX</td>
-            <td class="muted">${new Date(c.lastTradeAt).toLocaleDateString('no-NO')}</td>
-            <td><button class="btn-secondary btn-small" onclick="adjustCredit('${esc(c.playerName)}')">Juster</button></td>
-          </tr>`).join('')
-      : '<tr><td colspan="4" class="loading muted">Ingen credits.</td></tr>';
-  } catch(e) {
-    document.getElementById('creditsBody').innerHTML =
-      `<tr><td colspan="4" class="loading text-red">Feil: ${e.message}</td></tr>`;
-  }
+async function loadCredits(){
+  try{
+    const credits=await fetchJson(`${API}/credits`);
+    document.getElementById('creditsBody').innerHTML=credits.length
+      ?credits.map(c=>`<tr><td><strong>${esc(c.playerName)}</strong></td><td class="mono text-green">${c.creditTix.toFixed(4)} TIX</td><td class="muted">${new Date(c.lastTradeAt).toLocaleDateString('no-NO')}</td><td><button class="btn-secondary btn-small" onclick="adjustCredit('${esc(c.playerName)}')">Juster</button></td></tr>`).join('')
+      :'<tr><td colspan="4" class="loading muted">Ingen credits.</td></tr>';
+  }catch(e){document.getElementById('creditsBody').innerHTML=`<tr><td colspan="4" class="loading text-red">Feil: ${e.message}</td></tr>`;}
 }
 
-async function purgeCredits() {
-  if (!confirm('Slette credits for spillere inaktive >90 dager?')) return;
-  const r = await fetchJson(`${API}/credits/purge-inactive`, 'POST');
-  toast(`🧹 Slettet credits for ${r.purged} spillere`);
-  loadCredits();
-}
+async function purgeCredits(){if(!confirm('Slette credits for spillere inaktive >90 dager?'))return;const r=await fetchJson(`${API}/credits/purge-inactive`,'POST');toast(`🧹 Slettet credits for ${r.purged} spillere`);loadCredits();}
 
-async function adjustCredit(player) {
-  const delta  = parseFloat(prompt(`Juster credit for ${player}:`));
-  if (isNaN(delta)) return;
-  const reason = prompt('Årsak:') || 'Manuell justering';
-  await fetchJson(`${API}/credits/${player}/adjust`, 'POST', { delta, reason });
-  toast(`✅ Credit justert for ${player}`);
-  loadCredits();
-}
+async function adjustCredit(player){const delta=parseFloat(prompt(`Juster credit for ${player}:`));if(isNaN(delta))return;const reason=prompt('Årsak:')||'Manuell justering';await fetchJson(`${API}/credits/${player}/adjust`,'POST',{delta,reason});toast(`✅ Credit justert for ${player}`);loadCredits();}
 
 // ── Misc ──────────────────────────────────────────────────────────
-async function triggerPriceFeed() {
-  await fetchJson(`${API}/pricefeed/refresh`, 'POST');
-  toast('🔄 Prisoppdatering startet...');
-}
+async function triggerPriceFeed(){await fetchJson(`${API}/pricefeed/refresh`,'POST');toast('🔄 Prisoppdatering startet...');}
 
 // ── Helpers ───────────────────────────────────────────────────────
-async function fetchJson(url, method = 'GET', body = null) {
-  const opts = { method, headers: { 'Content-Type': 'application/json' } };
-  if (body) opts.body = JSON.stringify(body);
-  const res = await fetch(url, opts);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+async function fetchJson(url,method='GET',body=null){
+  const opts={method,headers:{'Content-Type':'application/json'}};
+  if(body)opts.body=JSON.stringify(body);
+  const res=await fetch(url,opts);
+  if(!res.ok)throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
-function rarityPill(r) {
-  const cls = { M: 'm', R: 'r', U: 'u', C: 'c' }[r] ?? 'c';
-  return `<span class="pill ${cls}">${r || '?'}</span>`;
-}
+function rarityPill(r){const cls={M:'m',R:'r',U:'u',C:'c'}[r]??'c';return `<span class="pill ${cls}">${r||'?'}</span>`;}
 
-function esc(s) {
-  return String(s ?? '').replace(/[&<>"']/g,
-    c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
-function toast(msg) {
-  const el = document.createElement('div');
-  el.textContent = msg;
-  Object.assign(el.style, {
-    position:'fixed', bottom:'20px', right:'20px', background:'#1a1d27',
-    border:'1px solid #6c63ff', color:'#e8e9f0', padding:'10px 18px',
-    borderRadius:'8px', fontSize:'13px', zIndex:9999, boxShadow:'0 4px 20px rgba(0,0,0,.4)'
-  });
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 3000);
-}
+function toast(msg){const el=document.createElement('div');el.textContent=msg;Object.assign(el.style,{position:'fixed',bottom:'20px',right:'20px',background:'#1a1d27',border:'1px solid #6c63ff',color:'#e8e9f0',padding:'10px 18px',borderRadius:'8px',fontSize:'13px',zIndex:9999,boxShadow:'0 4px 20px rgba(0,0,0,.4)'});document.body.appendChild(el);setTimeout(()=>el.remove(),3000);}
 
 // ── Init ──────────────────────────────────────────────────────────
 loadInventory();
