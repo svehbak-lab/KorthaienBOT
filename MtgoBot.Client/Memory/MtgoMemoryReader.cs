@@ -48,8 +48,6 @@ public class MtgoMemoryReader : IDisposable
             throw new InvalidOperationException("MTGO.exe is not running.");
 
         _mtgoProcess = processes[0];
-
-        // Get the root automation element for the MTGO window
         _mtgoRoot = AutomationElement.FromHandle(_mtgoProcess.MainWindowHandle);
         if (_mtgoRoot == null)
             throw new InvalidOperationException("Could not get UI Automation root for MTGO.");
@@ -74,12 +72,10 @@ public class MtgoMemoryReader : IDisposable
 
         try
         {
-            // Find the trade window — name starts with "Trade: "
             var tradeWindow = FindTradeWindow();
             if (tradeWindow == null)
                 return null;
 
-            // Get player name from window title ("Trade: playername")
             string windowName = tradeWindow.Current.Name ?? "";
             string playerName = windowName.StartsWith("Trade: ", StringComparison.OrdinalIgnoreCase)
                 ? windowName.Substring(7).Trim().ToLowerInvariant()
@@ -87,16 +83,9 @@ public class MtgoMemoryReader : IDisposable
 
             _logger.LogDebug("Trade window found: [{Name}]", windowName);
 
-            // Find all Custom elements inside the trade window
             var allItems = tradeWindow.FindAll(
                 TreeScope.Descendants,
                 new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Custom));
-
-            // Parse card rows from column elements.
-            // Each card row has elements with Name like:
-            //   "Cardslot: Flamebraider, Column Display Index: 6"  (card name)
-            //   "Cardslot: Flamebraider, Column Display Index: 12" (set code)
-            // We group by card slot name and extract name (col 6) and set (col 12).
 
             var playerOffers = new List<OfferedCard>();
             var botOffers    = new List<OfferedCard>();
@@ -106,7 +95,6 @@ public class MtgoMemoryReader : IDisposable
                 var windowRect = tradeWindow.Current.BoundingRectangle;
                 double midX = windowRect.Left + windowRect.Width / 2;
 
-                // Group elements by their slot key (everything before ", Column Display Index:")
                 var slotGroups = new Dictionary<string, Dictionary<int, (string text, double x)>>();
 
                 foreach (AutomationElement item in allItems)
@@ -119,7 +107,6 @@ public class MtgoMemoryReader : IDisposable
                         string name = item.Current.Name ?? "";
                         if (!name.Contains("Column Display Index:")) continue;
 
-                        // Parse: "Cardslot: <cardname>, Column Display Index: <N>"
                         int colIdx = name.LastIndexOf(", Column Display Index:", StringComparison.Ordinal);
                         if (colIdx < 0) continue;
 
@@ -128,12 +115,10 @@ public class MtgoMemoryReader : IDisposable
 
                         if (!int.TryParse(colPart, out int col)) continue;
 
-                        // Extract card name from "Cardslot: <name>"
                         string slotName = slotPart.StartsWith("Cardslot:", StringComparison.OrdinalIgnoreCase)
                             ? slotPart.Substring("Cardslot:".Length).Trim()
                             : slotPart;
 
-                        // Use slot+x position as key to group columns of same row
                         string groupKey = $"{slotName}|{(rect.Left < midX ? "L" : "R")}|{rect.Top:F0}";
 
                         if (!slotGroups.ContainsKey(groupKey))
@@ -144,7 +129,6 @@ public class MtgoMemoryReader : IDisposable
                     catch { }
                 }
 
-                // Build OfferedCard from each slot group
                 foreach (var kvp in slotGroups)
                 {
                     try
@@ -152,7 +136,6 @@ public class MtgoMemoryReader : IDisposable
                         var cols = kvp.Value;
                         if (cols.Count == 0) continue;
 
-                        // Column 6 = card name, column 12 = set code (from AccessibilityInsights)
                         string cardName = cols.ContainsKey(6)  ? cols[6].text  :
                                           cols.ContainsKey(5)  ? cols[5].text  :
                                           cols.First().Value.text;
@@ -163,7 +146,6 @@ public class MtgoMemoryReader : IDisposable
                         if (string.IsNullOrWhiteSpace(cardName)) continue;
 
                         bool isTix = cardName.Contains("Event Ticket") || cardName.Contains("Ticket");
-                        // CardId = "name|set" so the trade engine can look up by both
                         string cardId = isTix ? "EVENT_TICKET" : $"{cardName}|{setCode}";
 
                         double xPos = cols.First().Value.Item2;
@@ -201,7 +183,6 @@ public class MtgoMemoryReader : IDisposable
     {
         try
         {
-            // Search the entire desktop — trade window may be a separate top-level window
             var searchRoot = AutomationElement.RootElement;
             var allElements = searchRoot.FindAll(
                 TreeScope.Descendants,
@@ -232,7 +213,6 @@ public class MtgoMemoryReader : IDisposable
     {
         try
         {
-            // If the Accept button is visible and enabled, both sides have submitted
             var accept = tradeWindow.FindFirst(
                 TreeScope.Descendants,
                 new AndCondition(
@@ -244,6 +224,244 @@ public class MtgoMemoryReader : IDisposable
     }
 
     // ─────────────────────────────────────────────────────────────────
+    // Binder search box
+    // ─────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Types text into the binder search box (AutomationId: 50004).
+    /// Clears existing text first.
+    /// </summary>
+    public bool TypeInSearchBox(string text)
+    {
+        try
+        {
+            var tradeWindow = FindTradeWindow();
+            if (tradeWindow == null) return false;
+
+            var searchBox = tradeWindow.FindFirst(
+                TreeScope.Descendants,
+                new PropertyCondition(AutomationElement.AutomationIdProperty, "50004"));
+
+            if (searchBox == null)
+            {
+                _logger.LogDebug("Search box (50004) not found.");
+                return false;
+            }
+
+            // Focus and clear
+            searchBox.SetFocus();
+            Thread.Sleep(100);
+
+            if (searchBox.TryGetCurrentPattern(ValuePattern.Pattern, out var patternObj)
+                && patternObj is ValuePattern valuePattern)
+            {
+                valuePattern.SetValue(text);
+                _logger.LogDebug("Search box set to: {Text}", text);
+                Thread.Sleep(300); // wait for results to filter
+                return true;
+            }
+
+            // Fallback: use keyboard
+            searchBox.SetFocus();
+            Thread.Sleep(100);
+            System.Windows.Forms.SendKeys.SendWait("^a"); // select all
+            System.Windows.Forms.SendKeys.SendWait("{DELETE}");
+            System.Windows.Forms.SendKeys.SendWait(text);
+            Thread.Sleep(300);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "TypeInSearchBox failed.");
+            return false;
+        }
+    }
+
+    /// <summary>Clears the binder search box.</summary>
+    public void ClearSearchBox()
+    {
+        TypeInSearchBox("");
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Adding items to bot's side of trade window
+    // ─────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Adds TIX to the bot's side of the trade window by:
+    /// 1. Typing "Event Ticket" in the search box
+    /// 2. Double-clicking the first TIX result
+    /// 3. Repeating for each TIX needed
+    /// </summary>
+    public bool AddTixToBotSide(int quantity)
+    {
+        if (quantity <= 0) return true;
+
+        try
+        {
+            _logger.LogInformation("Adding {Qty} TIX to bot's side...", quantity);
+
+            // Search for Event Ticket in binder
+            if (!TypeInSearchBox("Event Ticket"))
+                return false;
+
+            Thread.Sleep(400);
+
+            var tradeWindow = FindTradeWindow();
+            if (tradeWindow == null) return false;
+
+            for (int i = 0; i < quantity; i++)
+            {
+                var tixElement = FindCardInBinder(tradeWindow, "Event Ticket");
+                if (tixElement == null)
+                {
+                    _logger.LogWarning("TIX element not found in binder at slot {I}.", i);
+                    break;
+                }
+
+                DoubleClickElement(tixElement);
+                Thread.Sleep(200);
+            }
+
+            ClearSearchBox();
+            _logger.LogInformation("✅ Added {Qty} TIX to bot's side.", quantity);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "AddTixToBotSide failed.");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Adds a specific card from the customer's binder to the bot's side.
+    /// Searches by card name, double-clicks first match.
+    /// </summary>
+    public bool AddCardToBotSide(string cardName, int quantity = 1)
+    {
+        if (quantity <= 0) return true;
+
+        try
+        {
+            _logger.LogInformation("Adding {Qty}x {Card} to bot's side...", quantity, cardName);
+
+            if (!TypeInSearchBox(cardName))
+                return false;
+
+            Thread.Sleep(400);
+
+            var tradeWindow = FindTradeWindow();
+            if (tradeWindow == null) return false;
+
+            for (int i = 0; i < quantity; i++)
+            {
+                var cardElement = FindCardInBinder(tradeWindow, cardName);
+                if (cardElement == null)
+                {
+                    _logger.LogWarning("Card {Card} not found in binder at slot {I}.", cardName, i);
+                    break;
+                }
+
+                DoubleClickElement(cardElement);
+                Thread.Sleep(200);
+            }
+
+            ClearSearchBox();
+            _logger.LogInformation("✅ Added {Qty}x {Card} to bot's side.", quantity, cardName);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "AddCardToBotSide({Card}) failed.", cardName);
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Finds a card element in the binder (top area of trade window) by name.
+    /// Looks for "CardSlot: {cardName}" Custom elements.
+    /// </summary>
+    private AutomationElement? FindCardInBinder(AutomationElement tradeWindow, string cardName)
+    {
+        try
+        {
+            var allCustom = tradeWindow.FindAll(
+                TreeScope.Descendants,
+                new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Custom));
+
+            if (allCustom == null) return null;
+
+            // Binder area: top portion of trade window (above the "You Will Receive" panels)
+            // Based on observed BoundingRectangle: binder is at t=80, b=720
+            var windowRect = tradeWindow.Current.BoundingRectangle;
+            double binderBottom = windowRect.Top + (windowRect.Height * 0.65); // approx top 65%
+
+            foreach (AutomationElement el in allCustom)
+            {
+                try
+                {
+                    var rect = el.Current.BoundingRectangle;
+                    if (rect.IsEmpty) continue;
+
+                    // Must be in binder area (top portion)
+                    if (rect.Top > binderBottom) continue;
+
+                    string name = el.Current.Name ?? "";
+                    if (name.StartsWith("Cardslot:", StringComparison.OrdinalIgnoreCase)
+                        && name.Contains(cardName, StringComparison.OrdinalIgnoreCase)
+                        && name.Contains("Column Display Index:"))
+                    {
+                        return el;
+                    }
+                }
+                catch { }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "FindCardInBinder failed.");
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Double-clicks an AutomationElement using mouse simulation.
+    /// </summary>
+    private void DoubleClickElement(AutomationElement element)
+    {
+        try
+        {
+            var rect = element.Current.BoundingRectangle;
+            int x = (int)(rect.Left + rect.Width / 2);
+            int y = (int)(rect.Top + rect.Height / 2);
+
+            // Move mouse and double-click
+            System.Windows.Forms.Cursor.Position = new System.Drawing.Point(x, y);
+            Thread.Sleep(50);
+
+            // Use mouse_event via P/Invoke for reliable double-click
+            mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+            mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+            Thread.Sleep(50);
+            mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+            mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+
+            _logger.LogDebug("Double-clicked element at ({X},{Y}): {Name}", x, y,
+                element.Current.Name?.Substring(0, Math.Min(40, element.Current.Name.Length)));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "DoubleClickElement failed.");
+        }
+    }
+
+    [DllImport("user32.dll")]
+    private static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint dwData, int dwExtraInfo);
+    private const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
+    private const uint MOUSEEVENTF_LEFTUP   = 0x0004;
+
+    // ─────────────────────────────────────────────────────────────────
     // UI interactions
     // ─────────────────────────────────────────────────────────────────
 
@@ -251,10 +469,8 @@ public class MtgoMemoryReader : IDisposable
     {
         try
         {
-            // Search the entire desktop — the trade request dialog is a popup window
             var desktop = AutomationElement.RootElement;
 
-            // First look for a window containing "Trade Request" 
             var tradeRequestWindow = desktop.FindFirst(
                 TreeScope.Descendants,
                 new PropertyCondition(AutomationElement.NameProperty, "Trade Request"));
