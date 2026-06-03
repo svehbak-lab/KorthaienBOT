@@ -238,9 +238,12 @@ public class MtgoMemoryReader : IDisposable
             var tradeWindow = FindTradeWindow();
             if (tradeWindow == null) return false;
 
+            // Find the search/filter Edit box in the binder area
             var searchBox = tradeWindow.FindFirst(
                 TreeScope.Descendants,
-                new PropertyCondition(AutomationElement.AutomationIdProperty, "50004"));
+                new AndCondition(
+                    new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Edit),
+                    new PropertyCondition(AutomationElement.IsKeyboardFocusableProperty, true)));
 
             if (searchBox == null)
             {
