@@ -13,6 +13,7 @@ public class TradeBotLoop : BackgroundService
     private const int PollIntervalMs   = 500;
     private const int ScanningDelayMs  = 1500;
     private const int ReplenishDelayMs = 300;
+    private const int SubmitDelayMs    = 2000; // wait before clicking Submit
 
     private readonly string _botId;
     private readonly MtgoMemoryReader _memory;
@@ -72,10 +73,17 @@ public class TradeBotLoop : BackgroundService
             return;
         }
 
-        // ── Ongoing trade ────────────────────────────────────────────
+        // ── Both submitted — click Accept ─────────────────────────────
         if (snapshot.BothSubmitted)
         {
             await HandleBothSubmittedAsync(snapshot);
+            return;
+        }
+
+        // ── Bot submitted but waiting for player ──────────────────────
+        if (_session.BotHasSubmitted && !snapshot.BothSubmitted)
+        {
+            // Just wait — no action needed
             return;
         }
 
@@ -99,7 +107,14 @@ public class TradeBotLoop : BackgroundService
         if (filtered.Count == 0)
         {
             await _chat.SendNoMatchesFoundAsync(playerName);
-            _session = new ActiveSession(playerName, userCredit.CreditTix, sets, [], new ReplenishQueue());
+            // Bot has nothing to offer — click Submit immediately to signal done
+            await Task.Delay(SubmitDelayMs, ct);
+            _memory.ClickSubmit();
+            _logger.LogInformation("No matches — clicked Submit.");
+            _session = new ActiveSession(playerName, userCredit.CreditTix, sets, [], new ReplenishQueue())
+            {
+                BotHasSubmitted = true
+            };
             return;
         }
 
@@ -117,9 +132,15 @@ public class TradeBotLoop : BackgroundService
 
         await _chat.SendTradeStatusAsync(playerName, balance, userCredit.CreditTix, userCredit.CreditTix);
 
+        // Wait for MTGO to settle, then click Submit
+        await Task.Delay(SubmitDelayMs, ct);
+        _memory.ClickSubmit();
+        _logger.LogInformation("✅ Clicked Submit after loading cards.");
+
         _session = new ActiveSession(playerName, userCredit.CreditTix, sets, botSideCards, queue)
         {
-            LastBalance = balance
+            LastBalance     = balance,
+            BotHasSubmitted = true
         };
     }
 
@@ -170,7 +191,12 @@ public class TradeBotLoop : BackgroundService
             _session.PlayerName, creditLeft);
 
         await _engine.CommitTradeAsync(balance, creditLeft);
+
+        // Small delay then click Accept to complete the trade
+        await Task.Delay(500);
         _memory.ClickAccept();
+        _logger.LogInformation("✅ Clicked Accept to complete trade.");
+
         await _chat.SendTradeCompleteAsync(_session.PlayerName, _session.OldCredit + creditLeft);
         _session = null;
     }
@@ -205,6 +231,7 @@ internal class ActiveSession
     public List<TradeWindowCard> BotSideCards { get; }
     public ReplenishQueue ReplenishQueue { get; }
     public TradeBalance? LastBalance { get; set; }
+    public bool BotHasSubmitted { get; set; }
 
     public ActiveSession(string playerName, decimal oldCredit,
         Dictionary<string, MagicSet> sets, List<TradeWindowCard> botSideCards,
