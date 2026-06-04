@@ -105,6 +105,15 @@ public class CardRepository
         return rows.ToList();
     }
 
+    /// <summary>Returns the trade mode for a bot: BUY, SELL, or BOTH.</summary>
+    public async Task<string> GetBotTradeModeAsync(string botId)
+    {
+        using var conn = Open();
+        return await conn.QuerySingleOrDefaultAsync<string>(
+            "SELECT COALESCE(trade_mode, 'BOTH') FROM bots WHERE bot_id = @BotId",
+            new { BotId = botId }) ?? "BOTH";
+    }
+
     public async Task UpdateMarketPriceAsync(string cardId, decimal newPrice)
     {
         using var conn = Open();
