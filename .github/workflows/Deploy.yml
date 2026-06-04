@@ -17,5 +17,6 @@ jobs:
             cd C:\KorthaienBOT
             git fetch origin main
             git reset --hard origin/main
+            Stop-Service -Name "KorthaienDashboard"
             dotnet publish MtgoBot.Dashboard\MtgoBot.Dashboard.csproj -c Release -o C:\KorthaienBOT\publish\dashboard
-            Restart-Service -Name "KorthaienDashboard"
+            Start-Service -Name "KorthaienDashboard"
