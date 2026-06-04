@@ -4,18 +4,17 @@
 //  WHERE THIS FILE GOES:
 //      KorthaienBOT/MtgoBot.Core/Data/BuylistRepository.cs
 //
-//  This is a NEW, self-contained file. You do not edit any existing
-//  class to use it. It talks to PostgreSQL through the existing
-//  DatabaseConnectionFactory.
+//  New, self-contained file. You do not edit any existing class. It talks
+//  to PostgreSQL through the existing DatabaseConnectionFactory.
 //
-//  A bot's buylist is DERIVED, not stored: every card in the sets the
-//  bot is enabled for (i.e. has a row in bot_set_rules), where the bot
-//  currently holds fewer than its target, priced by the effective buy
-//  price. The trade loop walks this list and types each CardName into
-//  the MTGO trade-window search field, double-clicking matches up to
-//  QtyNeeded.
+//  A bot's buylist is DERIVED, not stored: every card in the sets the bot
+//  is ENABLED for (a row in bot_set_rules with enabled = true), where the
+//  bot currently holds fewer than its target, priced by the effective buy
+//  price. The trade loop walks this list and types each CardName into the
+//  MTGO trade-window search field, double-clicking matches up to QtyNeeded.
 //
-//  Requires the bot_set_rules table (see 001_bot_set_rules.sql).
+//  Matches the live bot_set_rules schema, which includes an `enabled`
+//  flag — so a configured-but-paused set is correctly excluded.
 // ════════════════════════════════════════════════════════════════════
 
 using System.Data;
@@ -54,7 +53,7 @@ public class BuylistRepository
     /// <summary>
     /// Build the buylist for <paramref name="botId"/>.
     ///
-    /// Scope:  sets the bot is enabled for (rows in bot_set_rules).
+    /// Scope:  sets the bot is enabled for (bot_set_rules rows where enabled = true).
     /// Target: custom_max_stock (card) ?? max_local_stock (bot+set) ?? default_max_stock (set).
     /// Need:   target - current stock on THIS bot, only where > 0.
     /// Price:  custom_buy_price (card) ?? market_price_tix * (bot buy_mult ?? set buy_mult).
@@ -87,6 +86,7 @@ public class BuylistRepository
                    ON bi.bot_id  = r.bot_id
                   AND bi.card_id = c.card_id
             WHERE r.bot_id = @BotId
+              AND r.enabled = true
               AND COALESCE(c.custom_max_stock, r.max_local_stock, s.default_max_stock)
                   > COALESCE(bi.quantity, 0)
               AND COALESCE(
