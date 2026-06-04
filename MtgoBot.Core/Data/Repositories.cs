@@ -74,6 +74,37 @@ public class CardRepository
             """, new { SetCode = setCode, FoilFilter = foilFilter });
     }
 
+    /// <summary>
+    /// Returns the bot active buylist — cards it still needs, with buy prices and quantities needed.
+    /// Only includes cards from enabled sets where current stock is below max stock.
+    /// </summary>
+    public async Task<List<BuylistEntry>> GetBuylistAsync(string botId)
+    {
+        using var conn = Open();
+        var rows = await conn.QueryAsync<BuylistEntry>("""
+            SELECT
+                c.card_id,
+                c.card_name,
+                c.set_code,
+                c.is_foil,
+                c.rarity,
+                COALESCE(c.custom_buy_price,  c.market_price_tix * s.default_buy_multiplier)  AS buy_price,
+                COALESCE(c.custom_max_stock,  bsr.max_local_stock, s.default_max_stock)        AS max_stock,
+                COALESCE(bi.quantity, 0)                                                        AS current_stock,
+                COALESCE(c.custom_max_stock,  bsr.max_local_stock, s.default_max_stock)
+                    - COALESCE(bi.quantity, 0)                                                  AS qty_needed
+            FROM cards c
+            JOIN sets s ON c.set_code = s.set_code
+            JOIN bot_set_rules bsr ON bsr.set_code = c.set_code AND bsr.bot_id = @BotId
+            LEFT JOIN bot_inventory bi ON bi.card_id = c.card_id AND bi.bot_id = @BotId
+            WHERE bsr.enabled = true
+              AND COALESCE(bi.quantity, 0) < COALESCE(c.custom_max_stock, bsr.max_local_stock, s.default_max_stock)
+              AND COALESCE(c.custom_buy_price, c.market_price_tix * s.default_buy_multiplier) > 0
+            ORDER BY c.set_code, c.is_foil, c.card_name
+            """, new { BotId = botId });
+        return rows.ToList();
+    }
+
     public async Task UpdateMarketPriceAsync(string cardId, decimal newPrice)
     {
         using var conn = Open();
@@ -386,3 +417,16 @@ public class CreditRepository
 }
 
 public record TransferOrder(string CardId, string CardName, int Quantity);
+
+public class BuylistEntry
+{
+    public string CardId       { get; set; } = string.Empty;
+    public string CardName     { get; set; } = string.Empty;
+    public string SetCode      { get; set; } = string.Empty;
+    public bool   IsFoil       { get; set; }
+    public string Rarity       { get; set; } = string.Empty;
+    public decimal BuyPrice    { get; set; }
+    public int    MaxStock     { get; set; }
+    public int    CurrentStock { get; set; }
+    public int    QtyNeeded    { get; set; }
+}
