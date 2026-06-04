@@ -182,13 +182,13 @@ app.MapGet("/api/bots", async (DatabaseConnectionFactory dbf) =>
                b.transfer_to, b.tix_reserve, b.max_local_stock,
                b.card_transfer_to, b.fullset_transfer_to, b.trade_message,
                b.fullset_buy_enabled, b.fullset_sell_enabled, b.max_sets_per_trade,
-               b.is_online, b.last_seen,
+               b.trade_mode, b.is_online, b.last_seen,
                COALESCE(SUM(bi.quantity), 0) AS total_cards
         FROM bots b
         LEFT JOIN bot_inventory bi ON b.bot_id = bi.bot_id
         GROUP BY b.bot_id, b.account_name, b.bot_type, b.description, b.transfer_to, b.is_online, b.last_seen,
                  b.tix_reserve, b.max_local_stock, b.card_transfer_to, b.fullset_transfer_to, b.trade_message,
-                 b.fullset_buy_enabled, b.fullset_sell_enabled, b.max_sets_per_trade
+                 b.fullset_buy_enabled, b.fullset_sell_enabled, b.max_sets_per_trade, b.trade_mode
         ORDER BY b.bot_type, b.bot_id
         """);
     return Results.Ok(bots);
@@ -199,16 +199,16 @@ app.MapPut("/api/bots/{botId}", async (string botId, BotUpdateRequest req, Datab
     using var conn = (Npgsql.NpgsqlConnection)await dbf.CreateConnectionAsync();
     await conn.ExecuteAsync("""
         INSERT INTO bots (bot_id, account_name, bot_type, description, transfer_to, tix_reserve, max_local_stock,
-            card_transfer_to, fullset_transfer_to, trade_message, fullset_buy_enabled, fullset_sell_enabled, max_sets_per_trade, is_online)
-        VALUES (@BotId, @Account, @Type, @Desc, @TransferTo, @TixReserve, @MaxLocal, @CardXfer, @FullsetXfer, @TradeMsg, @FsBuy, @FsSell, @MaxSets, false)
+            card_transfer_to, fullset_transfer_to, trade_message, fullset_buy_enabled, fullset_sell_enabled, max_sets_per_trade, trade_mode, is_online)
+        VALUES (@BotId, @Account, @Type, @Desc, @TransferTo, @TixReserve, @MaxLocal, @CardXfer, @FullsetXfer, @TradeMsg, @FsBuy, @FsSell, @MaxSets, @TradeMode, false)
         ON CONFLICT (bot_id) DO UPDATE SET
             account_name=@Account, bot_type=@Type, description=@Desc, transfer_to=@TransferTo,
             tix_reserve=@TixReserve, max_local_stock=@MaxLocal, card_transfer_to=@CardXfer,
             fullset_transfer_to=@FullsetXfer, trade_message=@TradeMsg,
-            fullset_buy_enabled=@FsBuy, fullset_sell_enabled=@FsSell, max_sets_per_trade=@MaxSets
+            fullset_buy_enabled=@FsBuy, fullset_sell_enabled=@FsSell, max_sets_per_trade=@MaxSets, trade_mode=@TradeMode
         """, new { BotId=botId, Account=req.AccountName, Type=req.BotType, Desc=req.Description, TransferTo=req.TransferTo,
                    TixReserve=req.TixReserve, MaxLocal=req.MaxLocalStock, CardXfer=req.CardTransferTo, FullsetXfer=req.FullsetTransferTo,
-                   TradeMsg=req.TradeMessage, FsBuy=req.FullsetBuyEnabled, FsSell=req.FullsetSellEnabled, MaxSets=req.MaxSetsPerTrade });
+                   TradeMsg=req.TradeMessage, FsBuy=req.FullsetBuyEnabled, FsSell=req.FullsetSellEnabled, MaxSets=req.MaxSetsPerTrade, TradeMode=req.TradeMode });
     return Results.Ok(new { message = $"Bot {botId} updated" });
 });
 
@@ -307,7 +307,7 @@ record CreditAdjustRequest(decimal Delta, string? Reason);
 record ApplyKeepRequest(int KeepValue);
 record FullsetPricingRequest(decimal? FullsetBuy, decimal? FullsetSell, bool FullsetEnabled);
 record FoilMultiplierRequest(decimal Value);
-record BotUpdateRequest(string AccountName, string BotType, string? Description, string? TransferTo, int TixReserve = 500, int MaxLocalStock = 4, string? CardTransferTo = null, string? FullsetTransferTo = null, string? TradeMessage = null, bool FullsetBuyEnabled = false, bool FullsetSellEnabled = true, int MaxSetsPerTrade = 1);
+record BotUpdateRequest(string AccountName, string BotType, string? Description, string? TransferTo, int TixReserve = 500, int MaxLocalStock = 4, string? CardTransferTo = null, string? FullsetTransferTo = null, string? TradeMessage = null, bool FullsetBuyEnabled = false, bool FullsetSellEnabled = true, int MaxSetsPerTrade = 1, string TradeMode = "BOTH");
 record BotSetRuleRequest(bool? Enabled, int? MaxLocalStock, int? KeepLocal, int? MaxPerTrade, decimal? BuyMultiplier = null, decimal? SellMultiplier = null);
 record BotCardRuleRequest(decimal? CustomBuyPrice, decimal? CustomSellPrice, int? CustomMaxStock, int RedeemReserved = 0, int MaxPerTrade = 4);
 record EnabledSetsRequest(List<string> EnabledSets);
