@@ -83,13 +83,10 @@ public class TradeBotLoop : BackgroundService
         // ── Bot submitted but waiting for player ──────────────────────
         if (_session.BotHasSubmitted && !snapshot.BothSubmitted)
         {
-            // If bot submit was reset (player added/removed cards), re-click Submit
-            if (!snapshot.BotSubmitted)
-            {
-                _logger.LogInformation("Bot submit was reset — re-clicking Submit.");
-                await Task.Delay(500);
-                _memory.ClickSubmit();
-            }
+            // Player may have changed their offer, resetting the bot submit.
+            // Re-click Submit to keep the bot side committed.
+            await Task.Delay(500);
+            _memory.ClickSubmit();
             return;
         }
 
