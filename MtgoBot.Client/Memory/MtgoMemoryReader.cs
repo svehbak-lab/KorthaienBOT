@@ -496,6 +496,150 @@ public class MtgoMemoryReader : IDisposable
     private const uint MOUSEEVENTF_LEFTUP   = 0x0004;
 
     // ─────────────────────────────────────────────────────────────────
+    // Deck import (Search Tools → Import Deck → file picker)
+    // ─────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Imports a .dek file into the current trade via Search Tools → Import Deck.
+    /// MTGO auto-adds matching cards (by CatID) from the customer binder to the bot side.
+    /// Returns true if the import dialog flow was driven successfully.
+    /// </summary>
+    public bool ImportDeck(string dekFilePath)
+    {
+        try
+        {
+            var tradeWindow = FindTradeWindow();
+            if (tradeWindow == null)
+            {
+                _logger.LogWarning("ImportDeck: no trade window.");
+                return false;
+            }
+
+            // 1. Click "Search Tools" (Text control — use mouse click)
+            var searchTools = tradeWindow.FindFirst(
+                TreeScope.Descendants,
+                new PropertyCondition(AutomationElement.NameProperty, "Search Tools"));
+
+            if (searchTools == null)
+            {
+                _logger.LogWarning("ImportDeck: 'Search Tools' not found.");
+                return false;
+            }
+            ClickElement(searchTools);
+            Thread.Sleep(800);
+
+            // 2. Click "Import Deck" button (search whole desktop — it is a popup)
+            var desktop = AutomationElement.RootElement;
+            var importBtn = desktop.FindFirst(
+                TreeScope.Descendants,
+                new AndCondition(
+                    new PropertyCondition(AutomationElement.NameProperty, "Import Deck"),
+                    new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button)));
+
+            if (importBtn == null)
+            {
+                _logger.LogWarning("ImportDeck: 'Import Deck' button not found.");
+                return false;
+            }
+
+            if (importBtn.TryGetCurrentPattern(InvokePattern.Pattern, out var invObj)
+                && invObj is InvokePattern inv)
+            {
+                inv.Invoke();
+            }
+            else
+            {
+                ClickElement(importBtn);
+            }
+            Thread.Sleep(1200); // wait for Windows file picker
+
+            // 3. Type the full path into the file picker and confirm.
+            //    The file name Edit field has focus by default in the Open dialog.
+            if (!TypeIntoFilePicker(dekFilePath))
+            {
+                _logger.LogWarning("ImportDeck: could not drive file picker.");
+                return false;
+            }
+
+            _logger.LogInformation("✅ ImportDeck triggered for {Path}", dekFilePath);
+            Thread.Sleep(1500); // let MTGO process the deck
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "ImportDeck failed.");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Drives the standard Windows 'Open' file dialog: types the path into the
+    /// file name box and presses Enter.
+    /// </summary>
+    private bool TypeIntoFilePicker(string fullPath)
+    {
+        try
+        {
+            var desktop = AutomationElement.RootElement;
+
+            // The Open dialog window — title is localized ("Open", "Select Deck(s)", "Åpne"...).
+            // Find a window that contains a ComboBox/Edit for the file name.
+            // Simplest robust approach: find the focused element's window, type, Enter.
+            Thread.Sleep(300);
+
+            // Find the file name Edit/ComboBox by ControlType across the desktop.
+            var fileNameEdit = desktop.FindFirst(
+                TreeScope.Descendants,
+                new AndCondition(
+                    new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Edit),
+                    new PropertyCondition(AutomationElement.IsKeyboardFocusableProperty, true)));
+
+            if (fileNameEdit != null
+                && fileNameEdit.TryGetCurrentPattern(ValuePattern.Pattern, out var vObj)
+                && vObj is ValuePattern vp)
+            {
+                fileNameEdit.SetFocus();
+                Thread.Sleep(150);
+                vp.SetValue(fullPath);
+                Thread.Sleep(200);
+                System.Windows.Forms.SendKeys.SendWait("{ENTER}");
+                return true;
+            }
+
+            // Fallback: just type the path (assumes file name box is focused) and Enter.
+            Thread.Sleep(150);
+            System.Windows.Forms.SendKeys.SendWait(EscapeForSendKeys(fullPath));
+            Thread.Sleep(200);
+            System.Windows.Forms.SendKeys.SendWait("{ENTER}");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "TypeIntoFilePicker failed.");
+            return false;
+        }
+    }
+
+    /// <summary>Single left-click at an element center via mouse simulation.</summary>
+    private void ClickElement(AutomationElement element)
+    {
+        try
+        {
+            var rect = element.Current.BoundingRectangle;
+            int x = (int)(rect.Left + rect.Width / 2);
+            int y = (int)(rect.Top + rect.Height / 2);
+            System.Windows.Forms.Cursor.Position = new System.Drawing.Point(x, y);
+            Thread.Sleep(50);
+            mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+            mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "ClickElement failed.");
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────
     // UI interactions
     // ─────────────────────────────────────────────────────────────────
 
