@@ -581,36 +581,67 @@ public class MtgoMemoryReader : IDisposable
         try
         {
             var desktop = AutomationElement.RootElement;
+            Thread.Sleep(500); // let the dialog fully open
 
-            // The Open dialog window — title is localized ("Open", "Select Deck(s)", "Åpne"...).
-            // Find a window that contains a ComboBox/Edit for the file name.
-            // Simplest robust approach: find the focused element's window, type, Enter.
-            Thread.Sleep(300);
-
-            // Find the file name Edit/ComboBox by ControlType across the desktop.
+            // The file name field is an Edit control named "File name:".
             var fileNameEdit = desktop.FindFirst(
                 TreeScope.Descendants,
                 new AndCondition(
                     new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Edit),
-                    new PropertyCondition(AutomationElement.IsKeyboardFocusableProperty, true)));
+                    new PropertyCondition(AutomationElement.NameProperty, "File name:")));
 
-            if (fileNameEdit != null
-                && fileNameEdit.TryGetCurrentPattern(ValuePattern.Pattern, out var vObj)
-                && vObj is ValuePattern vp)
+            if (fileNameEdit == null)
             {
-                fileNameEdit.SetFocus();
-                Thread.Sleep(150);
-                vp.SetValue(fullPath);
-                Thread.Sleep(200);
-                System.Windows.Forms.SendKeys.SendWait("{ENTER}");
-                return true;
+                // Some locales/styles wrap it in a ComboBox — try finding any Edit in a window
+                // whose name suggests an open dialog.
+                fileNameEdit = desktop.FindFirst(
+                    TreeScope.Descendants,
+                    new AndCondition(
+                        new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Edit),
+                        new PropertyCondition(AutomationElement.IsKeyboardFocusableProperty, true)));
             }
 
-            // Fallback: just type the path (assumes file name box is focused) and Enter.
+            if (fileNameEdit == null)
+            {
+                _logger.LogWarning("File picker: filename Edit not found.");
+                return false;
+            }
+
+            fileNameEdit.SetFocus();
             Thread.Sleep(150);
-            System.Windows.Forms.SendKeys.SendWait(EscapeForSendKeys(fullPath));
-            Thread.Sleep(200);
-            System.Windows.Forms.SendKeys.SendWait("{ENTER}");
+
+            if (fileNameEdit.TryGetCurrentPattern(ValuePattern.Pattern, out var vObj)
+                && vObj is ValuePattern vp)
+            {
+                vp.SetValue(fullPath);
+            }
+            else
+            {
+                System.Windows.Forms.SendKeys.SendWait(EscapeForSendKeys(fullPath));
+            }
+            Thread.Sleep(300);
+
+            // Click the "Open" button.
+            var openBtn = desktop.FindFirst(
+                TreeScope.Descendants,
+                new AndCondition(
+                    new PropertyCondition(AutomationElement.NameProperty, "Open"),
+                    new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button)));
+
+            if (openBtn != null
+                && openBtn.TryGetCurrentPattern(InvokePattern.Pattern, out var iObj)
+                && iObj is InvokePattern ip)
+            {
+                ip.Invoke();
+                _logger.LogDebug("File picker: clicked Open.");
+            }
+            else
+            {
+                // Fallback: press Enter to confirm.
+                System.Windows.Forms.SendKeys.SendWait("{ENTER}");
+                _logger.LogDebug("File picker: pressed Enter (Open button not found).");
+            }
+
             return true;
         }
         catch (Exception ex)
@@ -738,20 +769,14 @@ public class MtgoMemoryReader : IDisposable
             }
 
             chatBox.SetFocus();
-            Thread.Sleep(100);
+            Thread.Sleep(200);
 
-            if (chatBox.TryGetCurrentPattern(ValuePattern.Pattern, out var patternObj)
-                && patternObj is ValuePattern valuePattern)
-            {
-                valuePattern.SetValue(message);
-            }
-            else
-            {
-                System.Windows.Forms.SendKeys.SendWait(EscapeForSendKeys(message));
-            }
-
-            Thread.Sleep(100);
+            // Type via real keystrokes so MTGO registers the input, then press Enter.
+            // ValuePattern.SetValue alone often does not trigger MTGO's send handler.
+            System.Windows.Forms.SendKeys.SendWait(EscapeForSendKeys(message));
+            Thread.Sleep(200);
             System.Windows.Forms.SendKeys.SendWait("{ENTER}");
+            Thread.Sleep(100);
             _logger.LogInformation("[CHAT] {Msg}", message);
         }
         catch (Exception ex)
