@@ -228,7 +228,42 @@ public class MtgoMemoryReader : IDisposable
     // ─────────────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Types text into the binder search box (AutomationId: 50004).
+    /// Finds an Edit control in the trade window by horizontal position.
+    /// leftSide=true → binder search box (X &lt; 400).
+    /// leftSide=false → chat input box (X &gt; 1500).
+    /// </summary>
+    private AutomationElement? FindEditControl(AutomationElement tradeWindow, bool leftSide)
+    {
+        try
+        {
+            var edits = tradeWindow.FindAll(
+                TreeScope.Descendants,
+                new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Edit));
+
+            if (edits == null) return null;
+
+            foreach (AutomationElement edit in edits)
+            {
+                try
+                {
+                    var rect = edit.Current.BoundingRectangle;
+                    if (rect.IsEmpty) continue;
+
+                    if (leftSide && rect.Left < 400) return edit;
+                    if (!leftSide && rect.Left > 1200) return edit;
+                }
+                catch { }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "FindEditControl failed.");
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Types text into the binder search box (left Edit control).
     /// Clears existing text first.
     /// </summary>
     public bool TypeInSearchBox(string text)
@@ -238,16 +273,12 @@ public class MtgoMemoryReader : IDisposable
             var tradeWindow = FindTradeWindow();
             if (tradeWindow == null) return false;
 
-            // Find the search/filter Edit box in the binder area
-            var searchBox = tradeWindow.FindFirst(
-                TreeScope.Descendants,
-                new AndCondition(
-                    new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Edit),
-                    new PropertyCondition(AutomationElement.IsKeyboardFocusableProperty, true)));
-
+            // Find the search/filter Edit box — it is on the LEFT side of the window (X < 400).
+            // The chat input box is also an Edit control but on the far RIGHT (X > 1500).
+            var searchBox = FindEditControl(tradeWindow, leftSide: true);
             if (searchBox == null)
             {
-                _logger.LogDebug("Search box (50004) not found.");
+                _logger.LogDebug("Search box (left Edit) not found.");
                 return false;
             }
 
@@ -540,10 +571,104 @@ public class MtgoMemoryReader : IDisposable
         }
     }
 
+    /// <summary>
+    /// Sends a chat message in the trade window by typing into the chat
+    /// input box (right Edit control, X &gt; 1500) and pressing Enter.
+    /// </summary>
     public void SendChatMessage(string message)
     {
-        // TODO: find chat input box and send message
-        _logger.LogInformation("[CHAT] {Msg}", message);
+        try
+        {
+            var tradeWindow = FindTradeWindow();
+            if (tradeWindow == null)
+            {
+                _logger.LogDebug("[CHAT] No trade window — message not sent: {Msg}", message);
+                return;
+            }
+
+            var chatBox = FindEditControl(tradeWindow, leftSide: false);
+            if (chatBox == null)
+            {
+                _logger.LogDebug("[CHAT] Chat box not found — message not sent: {Msg}", message);
+                return;
+            }
+
+            chatBox.SetFocus();
+            Thread.Sleep(100);
+
+            if (chatBox.TryGetCurrentPattern(ValuePattern.Pattern, out var patternObj)
+                && patternObj is ValuePattern valuePattern)
+            {
+                valuePattern.SetValue(message);
+            }
+            else
+            {
+                System.Windows.Forms.SendKeys.SendWait(EscapeForSendKeys(message));
+            }
+
+            Thread.Sleep(100);
+            System.Windows.Forms.SendKeys.SendWait("{ENTER}");
+            _logger.LogInformation("[CHAT] {Msg}", message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "SendChatMessage failed.");
+        }
+    }
+
+    /// <summary>Escapes characters that have special meaning to SendKeys.</summary>
+    private static string EscapeForSendKeys(string text)
+    {
+        var sb = new StringBuilder();
+        foreach (char c in text)
+        {
+            if ("+^%~(){}[]".IndexOf(c) >= 0)
+                sb.Append('{').Append(c).Append('}');
+            else
+                sb.Append(c);
+        }
+        return sb.ToString();
+    }
+
+    /// <summary>
+    /// Reads the most recent chat messages from the trade window chat panel.
+    /// Returns the raw text of visible chat lines (newest last).
+    /// </summary>
+    public List<string> ReadChatMessages()
+    {
+        var messages = new List<string>();
+        try
+        {
+            var tradeWindow = FindTradeWindow();
+            if (tradeWindow == null) return messages;
+
+            // Chat messages are Text elements on the right side of the window (X > 1500)
+            var texts = tradeWindow.FindAll(
+                TreeScope.Descendants,
+                new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Text));
+
+            if (texts == null) return messages;
+
+            foreach (AutomationElement t in texts)
+            {
+                try
+                {
+                    var rect = t.Current.BoundingRectangle;
+                    if (rect.IsEmpty) continue;
+                    if (rect.Left < 1400) continue; // chat panel is on the right
+
+                    string txt = t.Current.Name ?? "";
+                    if (!string.IsNullOrWhiteSpace(txt))
+                        messages.Add(txt);
+                }
+                catch { }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "ReadChatMessages failed.");
+        }
+        return messages;
     }
 
     public void Dispose()
