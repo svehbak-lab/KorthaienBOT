@@ -489,9 +489,9 @@ async function initPricesTab() {
   if (sel.options.length > 1) return; // already loaded
   try {
     const sets = await fetchJson('/api/sets');
-    const entries = Object.values(sets).sort((a, b) => (a.set_name || a.set_code).localeCompare(b.set_name || b.set_code));
+    const entries = Object.values(sets).sort((a, b) => (a.setName || a.setCode).localeCompare(b.setName || b.setCode));
     sel.innerHTML = '<option value="">— Velg sett —</option>' +
-      entries.map(s => `<option value="${esc(s.set_code)}">${esc(s.set_name || s.set_code)} (${esc(s.set_code)})</option>`).join('');
+      entries.map(s => `<option value="${esc(s.setCode)}">${esc(s.setName || s.setCode)} (${esc(s.setCode)})</option>`).join('');
   } catch(e) { toast('⚠️ Kunne ikke laste sett: ' + e.message); }
 }
 
@@ -850,9 +850,9 @@ async function initFullsetsTab() {
   if (sel.options.length > 1) return;
   try {
     const sets = await fetchJson('/api/sets');
-    const entries = Object.values(sets).sort((a, b) => (a.set_name||a.set_code).localeCompare(b.set_name||b.set_code));
+    const entries = Object.values(sets).sort((a, b) => (a.setName||a.setCode).localeCompare(b.setName||b.setCode));
     sel.innerHTML = '<option value="">— Velg sett —</option>' +
-      entries.map(s => `<option value="${esc(s.set_code)}">${esc(s.set_name||s.set_code)} (${esc(s.set_code)})</option>`).join('');
+      entries.map(s => `<option value="${esc(s.setCode)}">${esc(s.setName||s.setCode)} (${esc(s.setCode)})</option>`).join('');
   } catch(e) { toast('⚠️ Kunne ikke laste sett: ' + e.message); }
 }
 
