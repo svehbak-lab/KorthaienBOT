@@ -182,7 +182,9 @@ app.MapGet("/api/bots", async (DatabaseConnectionFactory dbf) =>
                b.transfer_to, b.tix_reserve, b.max_local_stock,
                b.card_transfer_to, b.fullset_transfer_to, b.trade_message,
                b.fullset_buy_enabled, b.fullset_sell_enabled, b.max_sets_per_trade,
-               b.trade_mode, b.is_online, b.last_seen,
+               b.trade_mode,
+               (b.is_online AND b.last_seen > NOW() - INTERVAL '90 seconds') AS is_online,
+               b.last_seen,
                COALESCE(SUM(bi.quantity), 0) AS total_cards
         FROM bots b
         LEFT JOIN bot_inventory bi ON b.bot_id = bi.bot_id
