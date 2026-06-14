@@ -66,6 +66,12 @@ var host = Host.CreateDefaultBuilder(args)
             credits: sp.GetRequiredService<CreditRepository>(),
             logger:  sp.GetRequiredService<ILogger<TradeBotLoop>>()));
         services.AddHostedService(sp => sp.GetRequiredService<TradeBotLoop>());
+
+        // ── Heartbeat (online/offline indicator) ─────────────────────
+        services.AddHostedService(sp => new HeartbeatService(
+            botId,
+            sp.GetRequiredService<DatabaseConnectionFactory>(),
+            sp.GetRequiredService<ILogger<HeartbeatService>>()));
     })
     .Build();
 
