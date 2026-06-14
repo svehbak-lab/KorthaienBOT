@@ -1,34 +1,29 @@
 using Npgsql;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
 using MtgoBot.Core.Data;
 using Dapper;
 
 namespace MtgoBot.Client.Loop;
 
 /// <summary>
-/// Pings the DB every 60 seconds to mark this bot as online.
-/// Dashboard reads last_seen to determine online/offline status.
-/// Bot is considered offline if last_seen > 2 minutes ago.
+/// Pings the DB every 30 seconds to mark this bot as online (is_online=true, last_seen=NOW()).
+/// Dashboard treats a bot as offline if last_seen is older than ~90 seconds, so a crash
+/// (no clean shutdown) still flips the indicator to red automatically.
 /// </summary>
 public class HeartbeatService : BackgroundService
 {
-    private static readonly TimeSpan Interval = TimeSpan.FromSeconds(60);
-    private static readonly TimeSpan OfflineThreshold = TimeSpan.FromMinutes(2);
+    private static readonly TimeSpan Interval = TimeSpan.FromSeconds(30);
 
     private readonly DatabaseConnectionFactory _db;
     private readonly ILogger<HeartbeatService> _logger;
     private readonly string _botId;
 
-    public HeartbeatService(
-        DatabaseConnectionFactory db,
-        ILogger<HeartbeatService> logger,
-        IConfiguration config)
+    public HeartbeatService(string botId, DatabaseConnectionFactory db, ILogger<HeartbeatService> logger)
     {
-        _db    = db;
+        _botId  = botId;
+        _db     = db;
         _logger = logger;
-        _botId  = config["BotSettings:BotId"] ?? "Bot_1";
     }
 
     protected override async Task ExecuteAsync(CancellationToken ct)
@@ -38,7 +33,7 @@ public class HeartbeatService : BackgroundService
         {
             try
             {
-                using var conn = (Npgsql.NpgsqlConnection)_db.CreateConnectionAsync().Result;
+                using var conn = (NpgsqlConnection)(await _db.CreateConnectionAsync());
                 await conn.ExecuteAsync("""
                     UPDATE bots SET is_online = true, last_seen = NOW()
                     WHERE bot_id = @BotId
@@ -48,16 +43,19 @@ public class HeartbeatService : BackgroundService
             {
                 _logger.LogWarning(ex, "Heartbeat failed.");
             }
-            await Task.Delay(Interval, ct);
+
+            try { await Task.Delay(Interval, ct); }
+            catch (TaskCanceledException) { break; }
         }
 
-        // Mark offline on shutdown
+        // Mark offline on clean shutdown
         try
         {
-            using var conn = (Npgsql.NpgsqlConnection)_db.CreateConnectionAsync().Result;
+            using var conn = (NpgsqlConnection)(await _db.CreateConnectionAsync());
             await conn.ExecuteAsync(
                 "UPDATE bots SET is_online = false WHERE bot_id = @BotId",
                 new { BotId = _botId });
+            _logger.LogInformation("Heartbeat: marked {BotId} offline on shutdown.", _botId);
         }
         catch { }
     }
