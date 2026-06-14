@@ -19,6 +19,7 @@ builder.Services.AddSingleton<CardRepository>();
 builder.Services.AddSingleton<InventoryRepository>();
 builder.Services.AddSingleton<CreditRepository>();
 builder.Services.AddHttpClient("GoatBots");
+builder.Services.AddSingleton<MtgoBot.Core.Pricing.PriceImportService>();
 builder.Services.AddCors(o => o.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 builder.Services.AddEndpointsApiExplorer();
 
@@ -299,6 +300,19 @@ app.MapPut("/api/settings/foil-multiplier", async (FoilMultiplierRequest req, Da
 });
 
 app.MapGet("/api/status", () => Results.Ok(new { service="KorthaienBOT Dashboard", timestamp=DateTime.UtcNow, version="1.0.0" }));
+
+app.MapPost("/api/pricefeed/refresh", async (MtgoBot.Core.Pricing.PriceImportService importer) =>
+{
+    try
+    {
+        int updated = await importer.RefreshPricesAsync();
+        return Results.Ok(new { updated });
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem("Price import failed: " + ex.Message);
+    }
+});
 
 app.Run();
 
