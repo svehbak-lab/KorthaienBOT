@@ -184,13 +184,17 @@ public class MtgoMemoryReader : IDisposable
         try
         {
             var searchRoot = AutomationElement.RootElement;
-            var allElements = searchRoot.FindAll(
-                TreeScope.Descendants,
-                new PropertyCondition(AutomationElement.IsEnabledProperty, true));
 
-            if (allElements != null)
+            // Trade windows are top-level windows, so search direct CHILDREN only.
+            // Walking all Descendants of the desktop is extremely slow (thousands
+            // of elements across every open app) and was the main cause of lag.
+            var windows = searchRoot.FindAll(
+                TreeScope.Children,
+                new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Window));
+
+            if (windows != null)
             {
-                foreach (AutomationElement el in allElements)
+                foreach (AutomationElement el in windows)
                 {
                     try
                     {
@@ -768,8 +772,9 @@ public class MtgoMemoryReader : IDisposable
     }
 
     /// <summary>
-    /// Sends a chat message in the trade window by typing into the chat
-    /// input box (right Edit control, X &gt; 1500) and pressing Enter.
+    /// Sends a chat message: types into the chat input box (right Edit control),
+    /// then clicks the "Send" text control. Clicking Send is far more reliable
+    /// than simulating Enter, which fails in this UI-Automation context.
     /// </summary>
     public void SendChatMessage(string message)
     {
@@ -790,37 +795,40 @@ public class MtgoMemoryReader : IDisposable
             }
 
             chatBox.SetFocus();
-            Thread.Sleep(200);
+            Thread.Sleep(150);
 
-            // Put the text in via ValuePattern (reliable), then press Enter via
-            // keybd_event. SendKeys.SendWait throws a Win32 error in this context.
+            // Put the text in via ValuePattern.
             if (chatBox.TryGetCurrentPattern(ValuePattern.Pattern, out var vObj)
                 && vObj is ValuePattern vp)
             {
                 vp.SetValue(message);
-                Thread.Sleep(150);
-
-                // Bring the trade window to the foreground so the Enter keystroke
-                // is delivered to MTGO's chat input.
-                try
-                {
-                    var hwnd = new IntPtr(tradeWindow.Current.NativeWindowHandle);
-                    if (hwnd != IntPtr.Zero) SetForegroundWindow(hwnd);
-                }
-                catch { }
-                Thread.Sleep(100);
-
-                chatBox.SetFocus();
-                Thread.Sleep(100);
-                PressEnter();
             }
             else
             {
-                _logger.LogDebug("[CHAT] chat box has no ValuePattern — cannot send: {Msg}", message);
+                _logger.LogDebug("[CHAT] chat box has no ValuePattern — cannot set text: {Msg}", message);
                 return;
             }
+            Thread.Sleep(150);
+
+            // Click the "Send" text control (it does not support Invoke, so mouse-click).
+            var sendBtn = tradeWindow.FindFirst(
+                TreeScope.Descendants,
+                new PropertyCondition(AutomationElement.NameProperty, "Send"));
+
+            if (sendBtn != null)
+            {
+                ClickElement(sendBtn);
+                _logger.LogInformation("[CHAT] {Msg}", message);
+            }
+            else
+            {
+                // Fallback: focus + Enter via keybd_event.
+                chatBox.SetFocus();
+                Thread.Sleep(100);
+                PressEnter();
+                _logger.LogInformation("[CHAT] {Msg} (via Enter — Send button not found)", message);
+            }
             Thread.Sleep(100);
-            _logger.LogInformation("[CHAT] {Msg}", message);
         }
         catch (Exception ex)
         {
