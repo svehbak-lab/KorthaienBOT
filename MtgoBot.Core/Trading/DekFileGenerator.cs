@@ -37,11 +37,15 @@ public static class DekFileGenerator
 
             foreach (var entry in buylist)
             {
-                if (entry.QtyNeeded <= 0) continue;
+                // The buylist query already filters to cards we still need
+                // (current_stock < max_stock), so every entry is wanted.
+                // Use QtyNeeded when positive, otherwise fall back to a sane default.
+                int qty = entry.QtyNeeded > 0 ? entry.QtyNeeded
+                        : (entry.MaxStock > 0 ? entry.MaxStock : 4);
 
                 writer.WriteStartElement("Cards");
                 writer.WriteAttributeString("CatID", entry.CardId);
-                writer.WriteAttributeString("Quantity", entry.QtyNeeded.ToString());
+                writer.WriteAttributeString("Quantity", qty.ToString());
                 writer.WriteAttributeString("Sideboard", "false");
                 writer.WriteAttributeString("Name", entry.CardName);
                 writer.WriteAttributeString("Annotation", "0");
