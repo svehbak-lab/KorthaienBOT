@@ -799,6 +799,17 @@ public class MtgoMemoryReader : IDisposable
             {
                 vp.SetValue(message);
                 Thread.Sleep(150);
+
+                // Bring the trade window to the foreground so the Enter keystroke
+                // is delivered to MTGO's chat input.
+                try
+                {
+                    var hwnd = new IntPtr(tradeWindow.Current.NativeWindowHandle);
+                    if (hwnd != IntPtr.Zero) SetForegroundWindow(hwnd);
+                }
+                catch { }
+                Thread.Sleep(100);
+
                 chatBox.SetFocus();
                 Thread.Sleep(100);
                 PressEnter();
