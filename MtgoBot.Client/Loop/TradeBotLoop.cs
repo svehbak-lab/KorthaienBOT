@@ -184,7 +184,6 @@ public class TradeBotLoop : BackgroundService
         // Price the cards now sitting on the bot's side (cards the bot will receive).
         decimal totalValue = 0m;
         var priced = new List<TradeWindowCard>();
-        var buyLookup = buylist.ToDictionary(b => b.CardId, b => b);
 
         foreach (var offer in afterImport.BotOffers)
         {
