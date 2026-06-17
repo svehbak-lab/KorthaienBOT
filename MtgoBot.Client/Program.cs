@@ -23,6 +23,10 @@ string botId = args.Length > 0 && args[0].StartsWith("--bot-id=")
     ? args[0]["--bot-id=".Length..]
     : "Bot_1";
 
+// Defensive: strip stray whitespace, quotes, or trailing backslashes that can
+// sneak in from shell line-continuation when copy-pasting the launch command.
+botId = botId.Trim().Trim('\\', '"', '\'', ' ');
+
 // ── Serilog: structured logs to console + rolling file ──────────────
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
