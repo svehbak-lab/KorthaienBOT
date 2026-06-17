@@ -495,6 +495,21 @@ public class MtgoMemoryReader : IDisposable
     private const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
     private const uint MOUSEEVENTF_LEFTUP   = 0x0004;
 
+    [DllImport("user32.dll")]
+    private static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
+    private const byte VK_RETURN = 0x0D;
+    private const uint KEYEVENTF_KEYUP = 0x0002;
+
+    [DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+    /// <summary>Presses and releases Enter via low-level keybd_event (avoids SendKeys bug).</summary>
+    private static void PressEnter()
+    {
+        keybd_event(VK_RETURN, 0, 0, 0);
+        keybd_event(VK_RETURN, 0, KEYEVENTF_KEYUP, 0);
+    }
+
     // ─────────────────────────────────────────────────────────────────
     // Deck import (Search Tools → Import Deck → file picker)
     // ─────────────────────────────────────────────────────────────────
@@ -526,19 +541,25 @@ public class MtgoMemoryReader : IDisposable
                 return false;
             }
             ClickElement(searchTools);
-            Thread.Sleep(800);
+            Thread.Sleep(1200);
 
-            // 2. Click "Import Deck" button (search whole desktop — it is a popup)
+            // 2. Click "Import Deck" button (search whole desktop — it is a popup).
+            //    Poll for up to ~5s since the dialog can be slow to appear.
             var desktop = AutomationElement.RootElement;
-            var importBtn = desktop.FindFirst(
-                TreeScope.Descendants,
-                new AndCondition(
-                    new PropertyCondition(AutomationElement.NameProperty, "Import Deck"),
-                    new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button)));
+            AutomationElement? importBtn = null;
+            for (int attempt = 0; attempt < 10 && importBtn == null; attempt++)
+            {
+                importBtn = desktop.FindFirst(
+                    TreeScope.Descendants,
+                    new AndCondition(
+                        new PropertyCondition(AutomationElement.NameProperty, "Import Deck"),
+                        new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button)));
+                if (importBtn == null) Thread.Sleep(500);
+            }
 
             if (importBtn == null)
             {
-                _logger.LogWarning("ImportDeck: 'Import Deck' button not found.");
+                _logger.LogWarning("ImportDeck: 'Import Deck' button not found after retries.");
                 return false;
             }
 
@@ -771,11 +792,22 @@ public class MtgoMemoryReader : IDisposable
             chatBox.SetFocus();
             Thread.Sleep(200);
 
-            // Type via real keystrokes so MTGO registers the input, then press Enter.
-            // ValuePattern.SetValue alone often does not trigger MTGO's send handler.
-            System.Windows.Forms.SendKeys.SendWait(EscapeForSendKeys(message));
-            Thread.Sleep(200);
-            System.Windows.Forms.SendKeys.SendWait("{ENTER}");
+            // Put the text in via ValuePattern (reliable), then press Enter via
+            // keybd_event. SendKeys.SendWait throws a Win32 error in this context.
+            if (chatBox.TryGetCurrentPattern(ValuePattern.Pattern, out var vObj)
+                && vObj is ValuePattern vp)
+            {
+                vp.SetValue(message);
+                Thread.Sleep(150);
+                chatBox.SetFocus();
+                Thread.Sleep(100);
+                PressEnter();
+            }
+            else
+            {
+                _logger.LogDebug("[CHAT] chat box has no ValuePattern — cannot send: {Msg}", message);
+                return;
+            }
             Thread.Sleep(100);
             _logger.LogInformation("[CHAT] {Msg}", message);
         }
