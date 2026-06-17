@@ -16,16 +16,16 @@ public class PriceImportService
 {
     private const string PriceZipUrl = "https://www.goatbots.com/download/prices/price-history.zip";
 
-    private readonly IHttpClientFactory _httpFactory;
+    // A single shared HttpClient is the recommended pattern (avoids socket exhaustion).
+    private static readonly HttpClient _http = new() { Timeout = TimeSpan.FromMinutes(2) };
+
     private readonly DatabaseConnectionFactory _db;
     private readonly ILogger<PriceImportService> _logger;
 
     public PriceImportService(
-        IHttpClientFactory httpFactory,
         DatabaseConnectionFactory db,
         ILogger<PriceImportService> logger)
     {
-        _httpFactory = httpFactory;
         _db = db;
         _logger = logger;
     }
@@ -38,16 +38,14 @@ public class PriceImportService
         _logger.LogInformation("💲 Price import: downloading {Url}", PriceZipUrl);
 
         // 1. Download the ZIP into memory.
-        var client = _httpFactory.CreateClient("GoatBots");
-        client.Timeout = TimeSpan.FromMinutes(2);
-        // Some sites reject requests without a User-Agent.
-        if (!client.DefaultRequestHeaders.Contains("User-Agent"))
-            client.DefaultRequestHeaders.Add("User-Agent", "KorthaienBOT/1.0");
-
         byte[] zipBytes;
         try
         {
-            zipBytes = await client.GetByteArrayAsync(PriceZipUrl, ct);
+            using var req = new HttpRequestMessage(HttpMethod.Get, PriceZipUrl);
+            req.Headers.Add("User-Agent", "KorthaienBOT/1.0");
+            using var resp = await _http.SendAsync(req, ct);
+            resp.EnsureSuccessStatusCode();
+            zipBytes = await resp.Content.ReadAsByteArrayAsync(ct);
         }
         catch (Exception ex)
         {
