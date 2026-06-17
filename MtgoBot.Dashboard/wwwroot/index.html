@@ -124,7 +124,7 @@
           <option value="">Alle botter</option>
         </select>
         <input type="text" id="searchInput" placeholder="🔍  Søk kortnavn..." oninput="loadInventory()">
-        <select id="setFilter" onchange="loadInventory()"><option value="">Alle sett</option></select>
+        <select id="setFilter" onchange="loadInventory()"><option value="">— Velg sett —</option></select>
         <select id="rarityFilter" onchange="loadInventory()">
           <option value="">Alle sjeldenhet</option>
           <option value="M">Mythic</option><option value="R">Rare</option>
@@ -405,7 +405,7 @@ function showTab(name) {
   document.getElementById('tab-' + name).style.display = 'block';
   document.querySelectorAll('nav a').forEach(a =>
     a.classList.toggle('active', a.getAttribute('onclick')?.includes(name)));
-  if (name === 'inventory') loadInventory();
+  if (name === 'inventory') { initInventorySets(); loadInventory(); }
   if (name === 'sets')      initFilterTab();
   if (name === 'credits')   loadCredits();
   if (name === 'bots')      loadBots();
@@ -433,10 +433,35 @@ async function loadBotStatusBar() {
 }
 
 // ── Inventory ─────────────────────────────────────────────────────
+async function initInventorySets() {
+  const sel = document.getElementById('setFilter');
+  if (sel.options.length > 1) return; // already populated
+  try {
+    const sets = await fetchJson('/api/sets');
+    const entries = Object.values(sets).sort((a, b) => (a.setName || a.setCode).localeCompare(b.setName || b.setCode));
+    sel.innerHTML = '<option value="">— Velg sett —</option>' +
+      entries.map(s => `<option value="${esc(s.setCode)}">${esc(s.setName || s.setCode)} (${esc(s.setCode)})</option>`).join('');
+  } catch(e) { /* leave default */ }
+}
+
 async function loadInventory() {
   const search = document.getElementById('searchInput').value;
   const set    = document.getElementById('setFilter').value;
   const botId  = document.getElementById('inventoryBotFilter').value;
+
+  // Require a set or a search term — loading all 101k cards at once hangs the page.
+  if (!set && !search) {
+    document.getElementById('inventoryBody').innerHTML =
+      '<tr><td colspan="10" class="loading muted">Velg et sett (eller søk på kortnavn) for å se kort.</td></tr>';
+    document.getElementById('statCards').textContent = '—';
+    document.getElementById('statValue').textContent = '—';
+    document.getElementById('statRedeem').textContent = '—';
+    return;
+  }
+
+  document.getElementById('inventoryBody').innerHTML =
+    '<tr><td colspan="10" class="loading">Laster...</td></tr>';
+
   let url = `${API}/inventory?`;
   if (search) url += `search=${encodeURIComponent(search)}&`;
   if (set)    url += `set=${encodeURIComponent(set)}&`;
@@ -965,6 +990,7 @@ async function clearFullsetOverride() {
 }
 
 // ── Init ──────────────────────────────────────────────────────────
+initInventorySets();
 loadInventory();
 document.getElementById('lastFeed').textContent = new Date().toLocaleTimeString('no-NO');
 </script>
