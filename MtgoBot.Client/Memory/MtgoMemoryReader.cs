@@ -104,6 +104,11 @@ public class MtgoMemoryReader : IDisposable
                         var rect = item.Current.BoundingRectangle;
                         if (rect.IsEmpty || rect.Width < 5 || rect.Height < 5) continue;
 
+                        // PERFORMANCE: only the two offer panels matter (bottom of the
+                        // window, Top > 760). Skip the huge scrollable binder above —
+                        // scanning thousands of binder rows every poll was the main lag.
+                        if (rect.Top < 760) continue;
+
                         string name = item.Current.Name ?? "";
                         if (!name.Contains("Column Display Index:")) continue;
 
