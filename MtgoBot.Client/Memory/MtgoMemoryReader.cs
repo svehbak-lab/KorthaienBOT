@@ -539,7 +539,21 @@ public class MtgoMemoryReader : IDisposable
     [DllImport("user32.dll")]
     private static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
     private const byte VK_RETURN = 0x0D;
+    private const byte VK_CONTROL = 0x11;
+    private const byte VK_V = 0x56;
     private const uint KEYEVENTF_KEYUP = 0x0002;
+
+    /// <summary>Puts text on the clipboard (STA thread) for paste operations.</summary>
+    private static void SetClipboardText(string text)
+    {
+        var t = new Thread(() =>
+        {
+            try { System.Windows.Forms.Clipboard.SetText(text); } catch { }
+        });
+        t.SetApartmentState(ApartmentState.STA);
+        t.Start();
+        t.Join();
+    }
 
     [DllImport("user32.dll")]
     private static extern bool SetForegroundWindow(IntPtr hWnd);
@@ -716,14 +730,35 @@ public class MtgoMemoryReader : IDisposable
             fileNameEdit.SetFocus();
             Thread.Sleep(150);
 
+            bool valueSet = false;
             if (fileNameEdit.TryGetCurrentPattern(ValuePattern.Pattern, out var vObj)
                 && vObj is ValuePattern vp)
             {
-                vp.SetValue(fullPath);
+                try
+                {
+                    vp.SetValue(fullPath);
+                    Thread.Sleep(200);
+                    string readBack = "";
+                    try { readBack = vp.Current.Value ?? ""; } catch { }
+                    _logger.LogInformation("File picker: filename field now = '{Val}'", readBack);
+                    valueSet = !string.IsNullOrEmpty(readBack);
+                }
+                catch (Exception ex) { _logger.LogDebug(ex, "ValuePattern.SetValue failed."); }
             }
-            else
+
+            // Fallback: clipboard paste (reliable when ValuePattern/SendKeys fail).
+            if (!valueSet)
             {
-                System.Windows.Forms.SendKeys.SendWait(EscapeForSendKeys(fullPath));
+                _logger.LogDebug("File picker: using clipboard paste fallback.");
+                SetClipboardText(fullPath);
+                fileNameEdit.SetFocus();
+                Thread.Sleep(150);
+                // Ctrl+V
+                keybd_event(VK_CONTROL, 0, 0, 0);
+                keybd_event(VK_V, 0, 0, 0);
+                keybd_event(VK_V, 0, KEYEVENTF_KEYUP, 0);
+                keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
+                Thread.Sleep(200);
             }
             Thread.Sleep(300);
 
