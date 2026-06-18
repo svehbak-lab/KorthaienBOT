@@ -27,6 +27,10 @@ string botId = args.Length > 0 && args[0].StartsWith("--bot-id=")
 // sneak in from shell line-continuation when copy-pasting the launch command.
 botId = botId.Trim().Trim('\\', '"', '\'', ' ');
 
+// CRITICAL: enable Dapper snake_case → PascalCase mapping (card_id → CardId, etc.).
+// Without this, BuylistEntry.CardId is empty and the generated .dek has no CatIDs.
+MtgoBot.Core.Data.DapperConfig.Initialize();
+
 // ── Serilog: structured logs to console + rolling file ──────────────
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
