@@ -624,13 +624,57 @@ public class MtgoMemoryReader : IDisposable
             }
 
             _logger.LogInformation("✅ ImportDeck triggered for {Path}", dekFilePath);
-            Thread.Sleep(1500); // let MTGO process the deck
+            Thread.Sleep(2000); // let MTGO process the deck and show any warning
+
+            // MTGO shows a "cards not found" warning listing every card the customer
+            // lacks (most of the 1520). Dismiss it by clicking OK so the matched
+            // cards commit to the trade and the dialog stops covering the window.
+            DismissWarningDialog();
+            Thread.Sleep(800);
             return true;
         }
         catch (Exception ex)
         {
             _logger.LogDebug(ex, "ImportDeck failed.");
             return false;
+        }
+    }
+
+    /// <summary>
+    /// Finds and clicks the OK button on MTGO's post-import warning dialog
+    /// ("The following cards ... were not found"). Safe to call when no dialog exists.
+    /// </summary>
+    private void DismissWarningDialog()
+    {
+        try
+        {
+            var desktop = AutomationElement.RootElement;
+            // Try a few times — the dialog can take a moment to render.
+            for (int attempt = 0; attempt < 6; attempt++)
+            {
+                var okBtn = desktop.FindFirst(
+                    TreeScope.Descendants,
+                    new AndCondition(
+                        new PropertyCondition(AutomationElement.NameProperty, "OK"),
+                        new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button)));
+
+                if (okBtn != null)
+                {
+                    if (okBtn.TryGetCurrentPattern(InvokePattern.Pattern, out var iObj)
+                        && iObj is InvokePattern ip)
+                        ip.Invoke();
+                    else
+                        ClickElement(okBtn);
+                    _logger.LogInformation("Dismissed import warning dialog (OK).");
+                    return;
+                }
+                Thread.Sleep(400);
+            }
+            _logger.LogDebug("No warning dialog to dismiss.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "DismissWarningDialog failed.");
         }
     }
 
