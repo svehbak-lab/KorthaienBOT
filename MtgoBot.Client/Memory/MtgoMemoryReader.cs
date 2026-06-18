@@ -108,6 +108,10 @@ public class MtgoMemoryReader : IDisposable
             {
                 var windowRect = tradeWindow.Current.BoundingRectangle;
                 double midX = windowRect.Left + windowRect.Width / 2;
+                // The two offer panels occupy roughly the bottom third of the trade
+                // window; the binder fills the top. Compute the boundary from the
+                // window's own geometry so it adapts to different resolutions.
+                double offerTop = windowRect.Top + windowRect.Height * 0.68;
 
                 var slotGroups = new Dictionary<string, Dictionary<int, (string text, double x)>>();
 
@@ -119,8 +123,8 @@ public class MtgoMemoryReader : IDisposable
                         var rect = item.Cached.BoundingRectangle;
                         if (rect.IsEmpty || rect.Width < 5 || rect.Height < 5) continue;
 
-                        // Only the two offer panels matter (bottom, Top > 760).
-                        if (rect.Top < 760) continue;
+                        // Only the two offer panels (bottom of the window) matter.
+                        if (rect.Top < offerTop) continue;
 
                         string name = item.Cached.Name ?? "";
                         if (!name.Contains("Column Display Index:")) continue;
