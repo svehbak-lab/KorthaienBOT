@@ -28,6 +28,7 @@ public class MtgoMemoryReader : IDisposable
     private readonly ILogger<MtgoMemoryReader> _logger;
     private Process? _mtgoProcess;
     private AutomationElement? _mtgoRoot;
+    private AutomationElement? _cachedTradeWindow;
     private bool _disposed;
 
     public bool IsAttached => _mtgoProcess != null && !_mtgoProcess.HasExited;
@@ -83,9 +84,22 @@ public class MtgoMemoryReader : IDisposable
 
             _logger.LogDebug("Trade window found: [{Name}]", windowName);
 
-            var allItems = tradeWindow.FindAll(
-                TreeScope.Descendants,
-                new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Custom));
+            // PERFORMANCE: batch all property reads into ONE cross-process call.
+            // Without caching, every .Name / .BoundingRectangle below is a separate
+            // round-trip to MTGO — thousands of them — which made each tick take
+            // many seconds. With a CacheRequest we fetch everything at once.
+            var cacheRequest = new CacheRequest();
+            cacheRequest.Add(AutomationElement.NameProperty);
+            cacheRequest.Add(AutomationElement.BoundingRectangleProperty);
+            cacheRequest.TreeScope = TreeScope.Element | TreeScope.Descendants;
+
+            AutomationElementCollection allItems;
+            using (cacheRequest.Activate())
+            {
+                allItems = tradeWindow.FindAll(
+                    TreeScope.Descendants,
+                    new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Custom));
+            }
 
             var playerOffers = new List<OfferedCard>();
             var botOffers    = new List<OfferedCard>();
@@ -101,15 +115,14 @@ public class MtgoMemoryReader : IDisposable
                 {
                     try
                     {
-                        var rect = item.Current.BoundingRectangle;
+                        // Use Cached.* — no cross-process call, reads from the snapshot.
+                        var rect = item.Cached.BoundingRectangle;
                         if (rect.IsEmpty || rect.Width < 5 || rect.Height < 5) continue;
 
-                        // PERFORMANCE: only the two offer panels matter (bottom of the
-                        // window, Top > 760). Skip the huge scrollable binder above —
-                        // scanning thousands of binder rows every poll was the main lag.
+                        // Only the two offer panels matter (bottom, Top > 760).
                         if (rect.Top < 760) continue;
 
-                        string name = item.Current.Name ?? "";
+                        string name = item.Cached.Name ?? "";
                         if (!name.Contains("Column Display Index:")) continue;
 
                         int colIdx = name.LastIndexOf(", Column Display Index:", StringComparison.Ordinal);
@@ -186,13 +199,25 @@ public class MtgoMemoryReader : IDisposable
 
     private AutomationElement? FindTradeWindow()
     {
+        // Reuse the cached window if it is still alive — avoids re-scanning the
+        // desktop on every call (ReadTradeWindow, SendChatMessage, etc. all call this).
+        if (_cachedTradeWindow != null)
+        {
+            try
+            {
+                string cachedName = _cachedTradeWindow.Current.Name ?? "";
+                if (cachedName.StartsWith("Trade: ", StringComparison.OrdinalIgnoreCase))
+                    return _cachedTradeWindow;
+            }
+            catch { /* stale — fall through and re-find */ }
+            _cachedTradeWindow = null;
+        }
+
         try
         {
             var searchRoot = AutomationElement.RootElement;
 
             // Trade windows are top-level windows, so search direct CHILDREN only.
-            // Walking all Descendants of the desktop is extremely slow (thousands
-            // of elements across every open app) and was the main cause of lag.
             var windows = searchRoot.FindAll(
                 TreeScope.Children,
                 new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Window));
@@ -205,7 +230,10 @@ public class MtgoMemoryReader : IDisposable
                     {
                         string name = el.Current.Name ?? "";
                         if (name.StartsWith("Trade: ", StringComparison.OrdinalIgnoreCase))
+                        {
+                            _cachedTradeWindow = el;
                             return el;
+                        }
                     }
                     catch { }
                 }
