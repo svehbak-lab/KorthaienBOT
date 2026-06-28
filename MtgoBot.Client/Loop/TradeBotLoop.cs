@@ -212,7 +212,7 @@ public class TradeBotLoop : BackgroundService
         _session.NewCredit    = newCredit;
 
         _memory.SendChatMessage(
-            $"I'll buy these for {totalValue:0.00} TIX. " +
+            $"I'll buy these {priced.Count} cards for {totalValue:0.00} TIX. " +
             $"Please add {tixToPay} TIX to your side. " +
             $"({newCredit:0.00} TIX will be saved as your credit.)");
 
