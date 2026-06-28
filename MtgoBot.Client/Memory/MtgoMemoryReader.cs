@@ -86,10 +86,14 @@ public class MtgoMemoryReader : IDisposable
             double midX     = windowRect.Left + windowRect.Width / 2;
             double offerTop = windowRect.Top + windowRect.Height * 0.68;
 
-            var scrollable = FindBotOfferScrollable(tradeWindow, midX, offerTop);
+            // Position the cursor over the middle of the bot's (left) offer panel so
+            // mouse-wheel events scroll THAT list. Telerik panels don't reliably expose
+            // a ScrollPattern, so wheel scrolling is the robust approach.
+            int panelCx = (int)(windowRect.Left + windowRect.Width * 0.25);
+            int panelCy = (int)(windowRect.Top + windowRect.Height * 0.85);
 
             int stableRounds = 0;
-            for (int iteration = 0; iteration < 60 && stableRounds < 2; iteration++)
+            for (int iteration = 0; iteration < 80 && stableRounds < 3; iteration++)
             {
                 int before = seen.Count;
                 CollectVisibleBotNames(tradeWindow, midX, offerTop, names, seen);
@@ -97,15 +101,11 @@ public class MtgoMemoryReader : IDisposable
                 if (seen.Count == before) stableRounds++;
                 else stableRounds = 0;
 
-                if (scrollable != null
-                    && scrollable.TryGetCurrentPattern(ScrollPattern.Pattern, out var sObj)
-                    && sObj is ScrollPattern sp && sp.Current.VerticallyScrollable)
-                {
-                    if (sp.Current.VerticalScrollPercent >= 99.0) break;
-                    sp.ScrollVertical(ScrollAmount.LargeIncrement);
-                    Thread.Sleep(250);
-                }
-                else break;
+                // Scroll the panel down via mouse wheel (negative = down).
+                System.Windows.Forms.Cursor.Position = new System.Drawing.Point(panelCx, panelCy);
+                Thread.Sleep(40);
+                mouse_event(MOUSEEVENTF_WHEEL, 0, 0, unchecked((uint)(-WHEEL_DELTA * 3)), 0);
+                Thread.Sleep(200);
             }
         }
         catch (Exception ex)
@@ -117,7 +117,7 @@ public class MtgoMemoryReader : IDisposable
         return names;
     }
 
-    private AutomationElement? FindBotOfferScrollable(AutomationElement tradeWindow, double midX, double offerTop)
+    private AutomationElement? FindBotOfferScrollable_unused(AutomationElement tradeWindow, double midX, double offerTop)
     {
         try
         {
@@ -686,6 +686,8 @@ public class MtgoMemoryReader : IDisposable
     private static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint dwData, int dwExtraInfo);
     private const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
     private const uint MOUSEEVENTF_LEFTUP   = 0x0004;
+    private const uint MOUSEEVENTF_WHEEL    = 0x0800;
+    private const int  WHEEL_DELTA          = 120;
 
     [DllImport("user32.dll")]
     private static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
