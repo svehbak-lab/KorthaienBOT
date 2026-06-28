@@ -155,41 +155,49 @@ public class TradeBotLoop : BackgroundService
         // Give MTGO time to add the matching cards to the bot side.
         await Task.Delay(2500, ct);
 
-        // Re-read the window to see what got added to the bot's side.
-        var afterImport = _memory.ReadTradeWindow();
-        if (afterImport == null)
+        // Read ALL card names on the bot's side (scrolling through the panel).
+        var offeredNames = _memory.ReadAllBotOfferNames();
+        if (offeredNames.Count == 0)
         {
-            _logger.LogWarning("Window gone after import.");
+            _memory.SendChatMessage("I didn't find any cards I need in your collection. Thanks for the look!");
+            _logger.LogInformation("No cards on bot side after import.");
             return;
         }
 
-        // Price the cards now sitting on the bot's side (cards the bot will receive).
+        // Price each card. Bot is one-set + one-foil, so each name maps to exactly
+        // one buylist entry — match by exact (case-insensitive) name.
         decimal totalValue = 0m;
         var priced = new List<TradeWindowCard>();
+        var buyByName = new Dictionary<string, BuylistEntry>(StringComparer.OrdinalIgnoreCase);
+        foreach (var b in buylist)
+            buyByName[b.CardName.Trim()] = b; // last wins; names unique per set+foil
 
-        foreach (var offer in afterImport.BotOffers)
+        int matched = 0, unmatched = 0;
+        foreach (var name in offeredNames)
         {
-            // offer.CardId is "name|set" from the reader — we can't trust set/foil here,
-            // so price by matching name against the buylist (best-effort) OR by DB name lookup.
-            // Better: the .dek only added cards we asked for, so value ≈ sum of buylist prices
-            // for the cards that were actually added. We approximate by name match.
-            var match = buylist.FirstOrDefault(b =>
-                offer.CardName.StartsWith(b.CardName, StringComparison.OrdinalIgnoreCase));
-            if (match != null)
+            if (buyByName.TryGetValue(name.Trim(), out var match))
             {
-                totalValue += match.BuyPrice * offer.Quantity;
+                totalValue += match.BuyPrice; // one copy per card
                 priced.Add(new TradeWindowCard
                 {
                     CardId = match.CardId, CardName = match.CardName,
-                    Quantity = offer.Quantity, Side = TradeSide.BotSide, PriceTix = match.BuyPrice
+                    Quantity = 1, Side = TradeSide.BotSide, PriceTix = match.BuyPrice
                 });
+                matched++;
+            }
+            else
+            {
+                unmatched++;
+                _logger.LogDebug("Unmatched offered card: '{Name}'", name);
             }
         }
+        _logger.LogInformation("Priced {Matched} cards ({Unmatched} unmatched), value={Val:0.00}",
+            matched, unmatched, totalValue);
 
         if (priced.Count == 0)
         {
             _memory.SendChatMessage("I didn't find any cards I need in your collection. Thanks for the look!");
-            _logger.LogInformation("No buylist matches found in customer binder.");
+            _logger.LogInformation("No buylist matches among offered cards.");
             return;
         }
 
