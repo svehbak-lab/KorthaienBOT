@@ -214,7 +214,8 @@ public class TradeBotLoop : BackgroundService
         _memory.SendChatMessage(
             $"I'll buy these {priced.Count} cards for {totalValue:0.00} TIX. " +
             $"Please add {tixToPay} TIX to your side. " +
-            $"({newCredit:0.00} TIX will be saved as your credit.)");
+            $"({newCredit:0.00} TIX will be saved as your credit.) " +
+            $"Note: I take 1 copy of each card per trade — open another trade to sell more copies.");
 
         _logger.LogInformation("BUY: value={Val:0.00} payTix={Pay} newCredit={Cr:0.00}",
             totalValue, tixToPay, newCredit);
