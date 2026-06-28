@@ -226,8 +226,8 @@ public class TradeBotLoop : BackgroundService
             $"Your remaining credit will be {newCredit:0.00} TIX. " +
             $"Note: I take 1 copy of each card per trade — open another trade to sell more copies.");
 
-        _logger.LogInformation("BUY: value={Val:0.00} payTix={Pay} newCredit={Cr:0.00}",
-            totalValue, tixToPay, newCredit);
+        _logger.LogInformation("BUY: value={Val:0.00} takeTix={Take} newCredit={Cr:0.00}",
+            totalValue, tixToTake, newCredit);
 
         // Bot does NOT submit yet — it waits for the customer to add the correct TIX.
         _session.AwaitingCustomerTix = true;
