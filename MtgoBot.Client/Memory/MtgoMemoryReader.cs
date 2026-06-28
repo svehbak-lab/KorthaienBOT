@@ -67,6 +67,148 @@ public class MtgoMemoryReader : IDisposable
     // Trade window reading
     // ─────────────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Reads ALL card names in the bot's "You Will Receive" panel (left side),
+    /// scrolling through the list to capture cards beyond the visible area.
+    /// One distinct card name = one copy (quantity isn't readable from the panel).
+    /// </summary>
+    public List<string> ReadAllBotOfferNames()
+    {
+        var names = new List<string>();
+        var seen = new HashSet<string>();
+
+        try
+        {
+            var tradeWindow = FindTradeWindow();
+            if (tradeWindow == null) return names;
+
+            var windowRect = tradeWindow.Current.BoundingRectangle;
+            double midX     = windowRect.Left + windowRect.Width / 2;
+            double offerTop = windowRect.Top + windowRect.Height * 0.68;
+
+            var scrollable = FindBotOfferScrollable(tradeWindow, midX, offerTop);
+
+            int stableRounds = 0;
+            for (int iteration = 0; iteration < 60 && stableRounds < 2; iteration++)
+            {
+                int before = seen.Count;
+                CollectVisibleBotNames(tradeWindow, midX, offerTop, names, seen);
+
+                if (seen.Count == before) stableRounds++;
+                else stableRounds = 0;
+
+                if (scrollable != null
+                    && scrollable.TryGetCurrentPattern(ScrollPattern.Pattern, out var sObj)
+                    && sObj is ScrollPattern sp && sp.Current.VerticallyScrollable)
+                {
+                    if (sp.Current.VerticalScrollPercent >= 99.0) break;
+                    sp.ScrollVertical(ScrollAmount.LargeIncrement);
+                    Thread.Sleep(250);
+                }
+                else break;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "ReadAllBotOfferNames failed.");
+        }
+
+        _logger.LogInformation("Read {Count} card names from bot offer panel.", names.Count);
+        return names;
+    }
+
+    private AutomationElement? FindBotOfferScrollable(AutomationElement tradeWindow, double midX, double offerTop)
+    {
+        try
+        {
+            var lists = tradeWindow.FindAll(
+                TreeScope.Descendants,
+                new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.List));
+            foreach (AutomationElement lst in lists)
+            {
+                try
+                {
+                    var r = lst.Current.BoundingRectangle;
+                    if (r.IsEmpty) continue;
+                    if (r.Left < midX && r.Top > offerTop - 80) return lst;
+                }
+                catch { }
+            }
+        }
+        catch { }
+        return null;
+    }
+
+    private void CollectVisibleBotNames(
+        AutomationElement tradeWindow, double midX, double offerTop,
+        List<string> names, HashSet<string> seen)
+    {
+        var cacheRequest = new CacheRequest();
+        cacheRequest.Add(AutomationElement.NameProperty);
+        cacheRequest.Add(AutomationElement.BoundingRectangleProperty);
+        cacheRequest.TreeScope = TreeScope.Element | TreeScope.Descendants;
+
+        AutomationElementCollection items;
+        using (cacheRequest.Activate())
+        {
+            items = tradeWindow.FindAll(
+                TreeScope.Descendants,
+                new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Custom));
+        }
+        if (items == null) return;
+
+        var rowsByY = new Dictionary<string, string>();
+        foreach (AutomationElement item in items)
+        {
+            try
+            {
+                var rect = item.Cached.BoundingRectangle;
+                if (rect.IsEmpty || rect.Top < offerTop) continue;
+                if (rect.Left >= midX) continue; // bot side = left only
+
+                string raw = item.Cached.Name ?? "";
+                if (!raw.Contains("Column Display Index:")) continue;
+
+                int ci = raw.LastIndexOf(", Column Display Index:", StringComparison.Ordinal);
+                if (ci < 0) continue;
+                string slotPart = raw.Substring(0, ci).Trim();
+                string slotName = slotPart.StartsWith("Item: CardSlot:", StringComparison.OrdinalIgnoreCase)
+                    ? slotPart.Substring("Item: CardSlot:".Length).Trim()
+                    : (slotPart.StartsWith("CardSlot:", StringComparison.OrdinalIgnoreCase)
+                        ? slotPart.Substring("CardSlot:".Length).Trim()
+                        : slotPart);
+
+                slotName = CollapseDoubledName(slotName);
+                if (string.IsNullOrWhiteSpace(slotName)) continue;
+
+                rowsByY[$"{rect.Top:F0}"] = slotName;
+            }
+            catch { }
+        }
+
+        foreach (var kv in rowsByY)
+        {
+            if (seen.Add(kv.Value))
+                names.Add(kv.Value);
+        }
+    }
+
+    private static string CollapseDoubledName(string s)
+    {
+        s = s.Trim();
+        if (s.Length % 2 == 1)
+        {
+            int mid = s.Length / 2;
+            if (s[mid] == ' ')
+            {
+                string a = s.Substring(0, mid).Trim();
+                string b = s.Substring(mid + 1).Trim();
+                if (a == b) return a;
+            }
+        }
+        return s;
+    }
+
     public TradeWindowSnapshot? ReadTradeWindow()
     {
         if (!IsAttached || _mtgoRoot == null) return null;
