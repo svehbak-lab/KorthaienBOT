@@ -758,16 +758,17 @@ public class MtgoMemoryReader : IDisposable
     {
         try
         {
-            SystemParametersInfo(SPI_SETFOREGROUNDLOCKTIMEOUT, 0, IntPtr.Zero, SPIF_SENDCHANGE);
+            // Note: do NOT pass SPIF_SENDCHANGE — broadcasting the change can block
+            // for a long time if any top-level window is unresponsive.
+            SystemParametersInfo(SPI_SETFOREGROUNDLOCKTIMEOUT, 0, IntPtr.Zero, 0);
         }
         catch { }
     }
 
     /// <summary>
-    /// Forcibly brings MTGO's main window to the foreground so mouse/keyboard
-    /// simulation lands on it. Combines several Win32 workarounds: an ALT-key nudge
-    /// (which Windows treats as user input, unlocking the foreground), thread-input
-    /// attachment, and BringWindowToTop + SetForegroundWindow.
+    /// Brings MTGO's main window to the foreground. Best-effort and fast — does not
+    /// block. Reliable unattended foregrounding over RDP is handled at the environment
+    /// level (keeping the console session active), not forced from here.
     /// </summary>
     public void ForegroundMtgo()
     {
@@ -778,27 +779,8 @@ public class MtgoMemoryReader : IDisposable
             if (h == IntPtr.Zero) return;
 
             ShowWindow(h, SW_RESTORE);
-
-            // ALT-key nudge: a synthesized key event makes Windows treat the next
-            // SetForegroundWindow as user-initiated, bypassing the foreground lock.
-            keybd_event(VK_MENU, 0, 0, 0);
-            keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP, 0);
-
-            IntPtr fg = GetForegroundWindow();
-            uint fgThread = GetWindowThreadProcessId(fg, out _);
-            uint thisThread = GetCurrentThreadId();
-            uint targetThread = GetWindowThreadProcessId(h, out _);
-
-            if (fgThread != thisThread) AttachThreadInput(thisThread, fgThread, true);
-            if (targetThread != fgThread) AttachThreadInput(targetThread, fgThread, true);
-
-            BringWindowToTop(h);
             SetForegroundWindow(h);
-
-            if (targetThread != fgThread) AttachThreadInput(targetThread, fgThread, false);
-            if (fgThread != thisThread) AttachThreadInput(thisThread, fgThread, false);
-
-            Thread.Sleep(200);
+            Thread.Sleep(120);
         }
         catch (Exception ex)
         {
