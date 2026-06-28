@@ -942,7 +942,7 @@ public class MtgoMemoryReader : IDisposable
                 _logger.LogDebug("[CHAT] chat box has no ValuePattern — cannot set text: {Msg}", message);
                 return;
             }
-            Thread.Sleep(150);
+            Thread.Sleep(250);
 
             // Click the "Send" text control (it does not support Invoke, so mouse-click).
             var sendBtn = tradeWindow.FindFirst(
@@ -951,7 +951,24 @@ public class MtgoMemoryReader : IDisposable
 
             if (sendBtn != null)
             {
+                // Click Send, wait, and verify the chat box cleared (= message sent).
+                // If it didn't clear, click once more.
                 ClickElement(sendBtn);
+                Thread.Sleep(400);
+
+                bool sent = false;
+                try
+                {
+                    string remaining = vp.Current.Value ?? "";
+                    sent = string.IsNullOrEmpty(remaining);
+                }
+                catch { }
+
+                if (!sent)
+                {
+                    ClickElement(sendBtn);
+                    Thread.Sleep(300);
+                }
                 _logger.LogInformation("[CHAT] {Msg}", message);
             }
             else
