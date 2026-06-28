@@ -87,8 +87,8 @@ public class TradeBotLoop : BackgroundService
             };
             _logger.LogInformation("📬 Trade opened by [{Player}] (credit {Cr:0.0000})", playerName, _session.OldCredit);
             _memory.SendChatMessage(
-                "Hi! Type 'sell' if you want to sell cards to me. " +
-                "Otherwise, pick cards from my binder and I'll add the TIX.");
+                "Hi! I'm a buy bot — I'll scan your collection for cards I want and " +
+                "add them to my side, then tell you the total in TIX. One moment...");
             return;
         }
 
@@ -99,28 +99,10 @@ public class TradeBotLoop : BackgroundService
             return;
         }
 
-        // ── Read chat for the "sell" command (triggers bot buying) ───
-        if (!_session.BuyStarted && !_session.SellStarted)
+        // ── Buy-only: automatically scan & buy once per trade ────────
+        if (!_session.BuyStarted)
         {
-            if (CustomerWantsToSell(playerName))
-            {
-                await HandleBuyFlowAsync(snapshot, ct);
-                return;
-            }
-
-            // Otherwise: customer is browsing the bot's binder (sell flow).
-            // We watch for cards appearing on the customer's side.
-            if (snapshot.PlayerOffers.Count > 0)
-            {
-                await HandleSellFlowAsync(snapshot, ct);
-                return;
-            }
-        }
-
-        // ── Sell flow: customer keeps changing their picks ───────────
-        if (_session.SellStarted && !_session.BotHasSubmitted)
-        {
-            await HandleSellFlowAsync(snapshot, ct);
+            await HandleBuyFlowAsync(snapshot, ct);
             return;
         }
     }
