@@ -725,10 +725,26 @@ public class MtgoMemoryReader : IDisposable
     private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
     private const int SW_RESTORE = 9;
 
+    [DllImport("user32.dll")]
+    private static extern bool BringWindowToTop(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetForegroundWindow();
+
+    [DllImport("user32.dll")]
+    private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+    [DllImport("kernel32.dll")]
+    private static extern uint GetCurrentThreadId();
+
+    [DllImport("user32.dll")]
+    private static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
+
     /// <summary>
-    /// Brings the MTGO process's main window to the foreground so mouse/keyboard
-    /// simulation lands on it. Essential for unattended operation — without this,
-    /// the bot only works when MTGO is already the active window.
+    /// Forcibly brings MTGO's main window to the foreground so mouse/keyboard
+    /// simulation lands on it. SetForegroundWindow alone is unreliable when called
+    /// from a background process, so we attach to the current foreground thread's
+    /// input queue first (the standard Win32 workaround), which lets the call succeed.
     /// </summary>
     public void ForegroundMtgo()
     {
@@ -736,12 +752,27 @@ public class MtgoMemoryReader : IDisposable
         {
             if (_mtgoProcess == null || _mtgoProcess.HasExited) return;
             IntPtr h = _mtgoProcess.MainWindowHandle;
-            if (h != IntPtr.Zero)
-            {
-                ShowWindow(h, SW_RESTORE);
-                SetForegroundWindow(h);
-                Thread.Sleep(150);
-            }
+            if (h == IntPtr.Zero) return;
+
+            ShowWindow(h, SW_RESTORE);
+
+            IntPtr fg = GetForegroundWindow();
+            uint fgThread = GetWindowThreadProcessId(fg, out _);
+            uint thisThread = GetCurrentThreadId();
+            uint targetThread = GetWindowThreadProcessId(h, out _);
+
+            // Attach our input thread (and the target's) to the current foreground
+            // thread so Windows allows the focus change.
+            if (fgThread != thisThread) AttachThreadInput(thisThread, fgThread, true);
+            if (targetThread != fgThread) AttachThreadInput(targetThread, fgThread, true);
+
+            BringWindowToTop(h);
+            SetForegroundWindow(h);
+
+            if (targetThread != fgThread) AttachThreadInput(targetThread, fgThread, false);
+            if (fgThread != thisThread) AttachThreadInput(thisThread, fgThread, false);
+
+            Thread.Sleep(200);
         }
         catch (Exception ex)
         {
