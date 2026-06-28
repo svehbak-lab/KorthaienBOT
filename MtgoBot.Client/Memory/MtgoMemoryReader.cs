@@ -173,10 +173,12 @@ public class MtgoMemoryReader : IDisposable
                         double xPos = cols.First().Value.Item2;
                         var card = new OfferedCard(cardId, cardName, 1, setCode);
 
+                        // Panel layout: the bot's "You Will Receive" is on the LEFT,
+                        // the customer's "[name] Will Receive" is on the RIGHT.
                         if (xPos < midX)
-                            playerOffers.Add(card);
-                        else
                             botOffers.Add(card);
+                        else
+                            playerOffers.Add(card);
                     }
                     catch { }
                 }
