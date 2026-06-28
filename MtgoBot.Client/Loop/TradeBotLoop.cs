@@ -201,20 +201,29 @@ public class TradeBotLoop : BackgroundService
             return;
         }
 
-        // Apply existing credit, then round: customer pays floor(value), remainder saved as credit.
-        decimal net      = totalValue + _session.OldCredit;
-        int tixToPay      = (int)Math.Floor(net);
-        decimal newCredit = net - tixToPay;
+        // BUY flow: the bot RECEIVES the cards. The CUSTOMER adds TIX to their own
+        // side to take payment, based on the amount the bot calculates here.
+        // Value owed = card value + any credit the customer already had.
+        // The customer takes whole TIX (floor); the fractional remainder becomes
+        // their credit balance (carried to a future trade).
+        decimal owed     = totalValue + _session.OldCredit;
+        int tixToTake     = (int)Math.Floor(owed);
+        decimal newCredit = owed - tixToTake;
 
         _session.BotSideCards = priced;
         _session.BuyValue     = totalValue;
-        _session.TixExpected  = tixToPay;
+        _session.TixExpected  = tixToTake;   // TIX the CUSTOMER should add to their side
         _session.NewCredit    = newCredit;
+
+        string creditLine = _session.OldCredit > 0
+            ? $"Including your existing credit of {_session.OldCredit:0.00} TIX, "
+            : "";
 
         _memory.SendChatMessage(
             $"I'll buy these {priced.Count} cards for {totalValue:0.00} TIX. " +
-            $"Please add {tixToPay} TIX to your side. " +
-            $"({newCredit:0.00} TIX will be saved as your credit.) " +
+            creditLine +
+            $"Please add {tixToTake} TIX to your side. " +
+            $"Your remaining credit will be {newCredit:0.00} TIX. " +
             $"Note: I take 1 copy of each card per trade — open another trade to sell more copies.");
 
         _logger.LogInformation("BUY: value={Val:0.00} payTix={Pay} newCredit={Cr:0.00}",
