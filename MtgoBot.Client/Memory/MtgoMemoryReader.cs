@@ -29,6 +29,7 @@ public class MtgoMemoryReader : IDisposable
     private Process? _mtgoProcess;
     private AutomationElement? _mtgoRoot;
     private AutomationElement? _cachedTradeWindow;
+    private AutomationElement? _botOfferGrid;
     private bool _disposed;
 
     public bool IsAttached => _mtgoProcess != null && !_mtgoProcess.HasExited;
@@ -86,14 +87,21 @@ public class MtgoMemoryReader : IDisposable
             double midX     = windowRect.Left + windowRect.Width / 2;
             double offerTop = windowRect.Top + windowRect.Height * 0.68;
 
+            // Find the bot's (left) DataGrid once so cell scans are scoped to it
+            // instead of the whole window (which includes the huge binder).
+            _botOfferGrid = FindBotOfferGrid(tradeWindow, midX, offerTop);
+
             // Position the cursor over the middle of the bot's (left) offer panel so
-            // mouse-wheel events scroll THAT list. Telerik panels don't reliably expose
-            // a ScrollPattern, so wheel scrolling is the robust approach.
+            // mouse-wheel events scroll THAT list.
             int panelCx = (int)(windowRect.Left + windowRect.Width * 0.25);
             int panelCy = (int)(windowRect.Top + windowRect.Height * 0.85);
 
+            // Park the cursor once.
+            System.Windows.Forms.Cursor.Position = new System.Drawing.Point(panelCx, panelCy);
+            Thread.Sleep(60);
+
             int stableRounds = 0;
-            for (int iteration = 0; iteration < 80 && stableRounds < 3; iteration++)
+            for (int iteration = 0; iteration < 60 && stableRounds < 2; iteration++)
             {
                 int before = seen.Count;
                 CollectVisibleBotNames(tradeWindow, midX, offerTop, names, seen);
@@ -101,11 +109,10 @@ public class MtgoMemoryReader : IDisposable
                 if (seen.Count == before) stableRounds++;
                 else stableRounds = 0;
 
-                // Scroll the panel down via mouse wheel (negative = down).
-                System.Windows.Forms.Cursor.Position = new System.Drawing.Point(panelCx, panelCy);
-                Thread.Sleep(40);
-                mouse_event(MOUSEEVENTF_WHEEL, 0, 0, unchecked((uint)(-WHEEL_DELTA * 3)), 0);
-                Thread.Sleep(200);
+                // Scroll ~6 rows per step (2 wheel clicks). Visible window is ~10 rows,
+                // so this overlaps and never skips cards, while still moving fast.
+                mouse_event(MOUSEEVENTF_WHEEL, 0, 0, unchecked((uint)(-WHEEL_DELTA * 2)), 0);
+                Thread.Sleep(90);
             }
         }
         catch (Exception ex)
@@ -117,20 +124,21 @@ public class MtgoMemoryReader : IDisposable
         return names;
     }
 
-    private AutomationElement? FindBotOfferScrollable_unused(AutomationElement tradeWindow, double midX, double offerTop)
+    /// <summary>Finds the bot's (left) offer DataGrid so scans can be scoped to it.</summary>
+    private AutomationElement? FindBotOfferGrid(AutomationElement tradeWindow, double midX, double offerTop)
     {
         try
         {
-            var lists = tradeWindow.FindAll(
+            var grids = tradeWindow.FindAll(
                 TreeScope.Descendants,
-                new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.List));
-            foreach (AutomationElement lst in lists)
+                new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataGrid));
+            foreach (AutomationElement g in grids)
             {
                 try
                 {
-                    var r = lst.Current.BoundingRectangle;
+                    var r = g.Current.BoundingRectangle;
                     if (r.IsEmpty) continue;
-                    if (r.Left < midX && r.Top > offerTop - 80) return lst;
+                    if (r.Left < midX && r.Top > offerTop - 120) return g;
                 }
                 catch { }
             }
@@ -149,9 +157,10 @@ public class MtgoMemoryReader : IDisposable
         cacheRequest.TreeScope = TreeScope.Element | TreeScope.Descendants;
 
         AutomationElementCollection items;
+        AutomationElement scanRoot = _botOfferGrid ?? tradeWindow;
         using (cacheRequest.Activate())
         {
-            items = tradeWindow.FindAll(
+            items = scanRoot.FindAll(
                 TreeScope.Descendants,
                 new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Custom));
         }
