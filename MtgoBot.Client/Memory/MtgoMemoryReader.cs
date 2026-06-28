@@ -82,6 +82,7 @@ public class MtgoMemoryReader : IDisposable
         {
             var tradeWindow = FindTradeWindow();
             if (tradeWindow == null) return names;
+            ForegroundMtgo();
 
             var windowRect = tradeWindow.Current.BoundingRectangle;
             double midX     = windowRect.Left + windowRect.Width / 2;
@@ -720,6 +721,34 @@ public class MtgoMemoryReader : IDisposable
     [DllImport("user32.dll")]
     private static extern bool SetForegroundWindow(IntPtr hWnd);
 
+    [DllImport("user32.dll")]
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    private const int SW_RESTORE = 9;
+
+    /// <summary>
+    /// Brings the MTGO process's main window to the foreground so mouse/keyboard
+    /// simulation lands on it. Essential for unattended operation — without this,
+    /// the bot only works when MTGO is already the active window.
+    /// </summary>
+    public void ForegroundMtgo()
+    {
+        try
+        {
+            if (_mtgoProcess == null || _mtgoProcess.HasExited) return;
+            IntPtr h = _mtgoProcess.MainWindowHandle;
+            if (h != IntPtr.Zero)
+            {
+                ShowWindow(h, SW_RESTORE);
+                SetForegroundWindow(h);
+                Thread.Sleep(150);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "ForegroundMtgo failed.");
+        }
+    }
+
     /// <summary>Presses and releases Enter via low-level keybd_event (avoids SendKeys bug).</summary>
     private static void PressEnter()
     {
@@ -746,6 +775,7 @@ public class MtgoMemoryReader : IDisposable
                 _logger.LogWarning("ImportDeck: no trade window.");
                 return false;
             }
+            ForegroundMtgo();
 
             // 1. Click "Search Tools" (Text control — use mouse click) and wait for
             //    the "Import Deck" button to appear. The click sometimes misses or the
@@ -1081,6 +1111,7 @@ public class MtgoMemoryReader : IDisposable
                 return;
             }
 
+            ForegroundMtgo();
             chatBox.SetFocus();
             Thread.Sleep(150);
 
