@@ -196,6 +196,13 @@ public class MtgoMemoryReader : IDisposable
                 BotOffers:     botOffers,
                 BothSubmitted: bothSubmitted);
         }
+        catch (System.Windows.Automation.ElementNotAvailableException)
+        {
+            // The cached trade window went stale (e.g. previous trade closed).
+            // Clear the cache so the next call re-finds a fresh window.
+            _cachedTradeWindow = null;
+            return null;
+        }
         catch (Exception ex)
         {
             _logger.LogDebug(ex, "ReadTradeWindow failed.");
@@ -587,31 +594,40 @@ public class MtgoMemoryReader : IDisposable
                 return false;
             }
 
-            // 1. Click "Search Tools" (Text control — use mouse click)
-            var searchTools = tradeWindow.FindFirst(
-                TreeScope.Descendants,
-                new PropertyCondition(AutomationElement.NameProperty, "Search Tools"));
-
-            if (searchTools == null)
-            {
-                _logger.LogWarning("ImportDeck: 'Search Tools' not found.");
-                return false;
-            }
-            ClickElement(searchTools);
-            Thread.Sleep(1200);
-
-            // 2. Click "Import Deck" button (search whole desktop — it is a popup).
-            //    Poll for up to ~5s since the dialog can be slow to appear.
+            // 1. Click "Search Tools" (Text control — use mouse click) and wait for
+            //    the "Import Deck" button to appear. The click sometimes misses or the
+            //    dialog is slow, so retry the whole open a few times.
             var desktop = AutomationElement.RootElement;
             AutomationElement? importBtn = null;
-            for (int attempt = 0; attempt < 10 && importBtn == null; attempt++)
+
+            for (int openAttempt = 0; openAttempt < 3 && importBtn == null; openAttempt++)
             {
-                importBtn = desktop.FindFirst(
+                var searchTools = tradeWindow.FindFirst(
                     TreeScope.Descendants,
-                    new AndCondition(
-                        new PropertyCondition(AutomationElement.NameProperty, "Import Deck"),
-                        new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button)));
-                if (importBtn == null) Thread.Sleep(500);
+                    new PropertyCondition(AutomationElement.NameProperty, "Search Tools"));
+
+                if (searchTools == null)
+                {
+                    _logger.LogWarning("ImportDeck: 'Search Tools' not found.");
+                    return false;
+                }
+
+                ClickElement(searchTools);
+                Thread.Sleep(1000);
+
+                // Poll for the Import Deck button (up to ~3s per open attempt).
+                for (int attempt = 0; attempt < 6 && importBtn == null; attempt++)
+                {
+                    importBtn = desktop.FindFirst(
+                        TreeScope.Descendants,
+                        new AndCondition(
+                            new PropertyCondition(AutomationElement.NameProperty, "Import Deck"),
+                            new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button)));
+                    if (importBtn == null) Thread.Sleep(500);
+                }
+
+                if (importBtn == null)
+                    _logger.LogDebug("ImportDeck: dialog not open after attempt {N}, retrying.", openAttempt + 1);
             }
 
             if (importBtn == null)
