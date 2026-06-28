@@ -96,10 +96,16 @@ public class CardRepository
             FROM cards c
             JOIN sets s ON c.set_code = s.set_code
             JOIN bot_set_rules bsr ON bsr.set_code = c.set_code AND bsr.bot_id = @BotId
+            JOIN bots b ON b.bot_id = @BotId
             LEFT JOIN bot_inventory bi ON bi.card_id = c.card_id AND bi.bot_id = @BotId
             WHERE bsr.enabled = true
               AND COALESCE(bi.quantity, 0) < COALESCE(c.custom_max_stock, bsr.max_local_stock, s.default_max_stock)
               AND COALESCE(c.custom_buy_price, c.market_price_tix * s.default_buy_multiplier) > 0
+              -- Respect the bot's foil mode: NONFOIL → non-foils only, FOIL → foils only,
+              -- BOTH (or anything else) → no foil filter.
+              AND (b.foil_mode = 'BOTH'
+                   OR (b.foil_mode = 'NONFOIL' AND c.is_foil = false)
+                   OR (b.foil_mode = 'FOIL'    AND c.is_foil = true))
             ORDER BY c.set_code, c.is_foil, c.card_name
             """, new { BotId = botId });
         return rows.ToList();
